@@ -74,3 +74,24 @@ functional modularity?
   `doc/phase0_pythia160m_raw_score_all_seed_baseline.md`.
 - Created checkpoint deck:
   `presentations/2026-05-21-1535-raw-score-checkpoint/raw_score_checkpoint.pdf`.
+
+## 2026-05-21 Phase 1 Role-Specialization Proxy
+
+- Added `scripts/attention_role_specialization.py`.
+- The script estimates simple head role scores for:
+  - BOS attention;
+  - previous-token attention;
+  - synthetic repeat-match / induction-style attention.
+- Ran Pythia-160M seeds 1 through 9 with revision `step143000`, using the
+  all-seed raw-score Hungarian alignment from Phase 0.
+- Aggregate role consistency:
+  - BOS: raw distribution similarity 0.8317, aligned 0.8566, random 0.8310;
+  - previous-token: raw 0.7531, aligned 0.8116, random 0.7531;
+  - repeat-match: raw 0.5152, aligned 0.6191, random 0.5057.
+- Key finding:
+  - repeat-match is highly concentrated in layers 0 and 1;
+  - layer 1 repeat-match mean max specialization is 0.8045;
+  - layer 1 raw top-head match rate is 0.0833;
+  - layer 1 aligned top-head match rate is 0.7778.
+- Recorded the result in
+  `doc/phase1_pythia160m_attention_role_specialization.md`.
