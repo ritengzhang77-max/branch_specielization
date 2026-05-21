@@ -274,6 +274,39 @@ def write_metrics_csv(path: Path, metrics: list[LayerPairMetrics]) -> None:
             writer.writerow(row)
 
 
+def write_layer_summary_csv(path: Path, metrics: list[LayerPairMetrics]) -> None:
+    fieldnames = [
+        "layer",
+        "n_seed_pairs",
+        "raw_diag_mean",
+        "matched_mean",
+        "random_perm_mean",
+        "matched_minus_random_mean",
+        "matched_minus_random_min",
+        "matched_minus_random_max",
+    ]
+    layers = sorted({item.layer for item in metrics})
+    with path.open("w", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fieldnames)
+        writer.writeheader()
+        for layer in layers:
+            layer_items = [item for item in metrics if item.layer == layer]
+            raw_values = [item.raw_diag_mean for item in layer_items if item.raw_diag_mean is not None]
+            gaps = [item.matched_minus_random for item in layer_items]
+            writer.writerow(
+                {
+                    "layer": layer,
+                    "n_seed_pairs": len(layer_items),
+                    "raw_diag_mean": None if not raw_values else float(np.mean(raw_values)),
+                    "matched_mean": float(np.mean([item.matched_mean for item in layer_items])),
+                    "random_perm_mean": float(np.mean([item.random_perm_mean for item in layer_items])),
+                    "matched_minus_random_mean": float(np.mean(gaps)),
+                    "matched_minus_random_min": float(np.min(gaps)),
+                    "matched_minus_random_max": float(np.max(gaps)),
+                }
+            )
+
+
 def summarize(metrics: list[LayerPairMetrics]) -> dict:
     raw_values = [m.raw_diag_mean for m in metrics if m.raw_diag_mean is not None]
     matched_values = [m.matched_mean for m in metrics]
@@ -341,6 +374,7 @@ def main() -> None:
                     similarity_payload[f"{seed_a}_vs_{seed_b}_layer_{layer_idx}"] = similarity
 
     write_metrics_csv(args.output_dir / "layer_pair_metrics.csv", all_metrics)
+    write_layer_summary_csv(args.output_dir / "layer_summary.csv", all_metrics)
     summary = {
         "args": vars(args) | {"output_dir": str(args.output_dir), "probe_file": str(args.probe_file) if args.probe_file else None},
         "model_names": model_names,
@@ -359,4 +393,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

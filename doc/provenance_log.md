@@ -33,3 +33,12 @@ functional modularity?
   - Hungarian-matched similarity mean: 0.6828;
   - matched-minus-random mean: 0.1115.
 - Recorded the smoke result in `doc/phase0_smoke_report.md`.
+- Ran a successful Pythia-160M two-seed Phase 0 pilot:
+  - seeds: 1, 2;
+  - probe texts: 8;
+  - raw same-index similarity mean: 0.7082;
+  - Hungarian-matched similarity mean: 0.8220;
+  - matched-minus-random mean: 0.0989.
+- Added `doc/phase0_pythia160m_pilot.md`.
+- Updated `scripts/attention_stability.py` to write `layer_summary.csv` in
+  addition to pairwise layer metrics.
