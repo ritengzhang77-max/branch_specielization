@@ -1,0 +1,72 @@
+{
+  "args": {
+    "model_template": "EleutherAI/pythia-{model_size}-seed{seed}",
+    "model_size": "160m",
+    "seeds": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9"
+    ],
+    "revision": "step143000",
+    "role_scores": "results/phase1_pythia160m_attention_role_specialization/head_role_scores.csv",
+    "alignment_summary": "results/phase0_pythia160m_seed1_to_9_step143000_raw_scores/summary.json",
+    "role": "repeat_match",
+    "layers": "0,1",
+    "top_k_per_layer": 1,
+    "random_controls": 8,
+    "eval_sequences": 64,
+    "repeat_length": 32,
+    "batch_size": 8,
+    "synthetic_token_low": 1000,
+    "device": "auto",
+    "dtype": "float32",
+    "output_dir": "results/phase1_repeat_match_ablation_pythia160m"
+  },
+  "model_names": {
+    "1": "EleutherAI/pythia-160m-seed1",
+    "2": "EleutherAI/pythia-160m-seed2",
+    "3": "EleutherAI/pythia-160m-seed3",
+    "4": "EleutherAI/pythia-160m-seed4",
+    "5": "EleutherAI/pythia-160m-seed5",
+    "6": "EleutherAI/pythia-160m-seed6",
+    "7": "EleutherAI/pythia-160m-seed7",
+    "8": "EleutherAI/pythia-160m-seed8",
+    "9": "EleutherAI/pythia-160m-seed9"
+  },
+  "summary_by_condition": {
+    "own_random": {
+      "n": 72.0,
+      "loss_delta_mean": 0.24026227173291975,
+      "loss_delta_std": 0.4841800693232621,
+      "target_logit_delta_mean": -0.7183818022410074,
+      "target_logit_delta_std": 1.2686678986420235
+    },
+    "own_top": {
+      "n": 9.0,
+      "loss_delta_mean": 1.5243516564369202,
+      "loss_delta_std": 0.441099247989855,
+      "target_logit_delta_mean": -2.068871339162191,
+      "target_logit_delta_std": 0.630560071317156
+    },
+    "source_aligned": {
+      "n": 72.0,
+      "loss_delta_mean": 1.0538380864179797,
+      "loss_delta_std": 0.7024411689911721,
+      "target_logit_delta_mean": -1.5749824245770772,
+      "target_logit_delta_std": 0.9407700207265496
+    },
+    "source_same_index": {
+      "n": 72.0,
+      "loss_delta_mean": 0.2571002207696438,
+      "loss_delta_std": 0.36309466902632803,
+      "target_logit_delta_mean": -0.7014164196120368,
+      "target_logit_delta_std": 1.1374509770565275
+    }
+  }
+}

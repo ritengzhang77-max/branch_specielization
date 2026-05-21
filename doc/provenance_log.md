@@ -95,3 +95,31 @@ functional modularity?
   - layer 1 aligned top-head match rate is 0.7778.
 - Recorded the result in
   `doc/phase1_pythia160m_attention_role_specialization.md`.
+- Created checkpoint deck:
+  `presentations/2026-05-21-1553-role-specialization-checkpoint/role_specialization_checkpoint.pdf`.
+
+## 2026-05-21 Phase 1 Repeat-Match Causal Ablation
+
+- Added `scripts/repeat_match_ablation.py`.
+- The script ablates selected Pythia/GPT-NeoX heads by zeroing per-head
+  attention outputs before the attention output projection.
+- Ran Pythia-160M seeds 1 through 9 with revision `step143000`.
+- Evaluation used 64 shared synthetic repeated-token sequences of length
+  `[x_1, ..., x_32, x_1, ..., x_32]`, scoring second-half continuation loss.
+- Ablated top repeat-match heads from layers 0 and 1, one head per layer.
+- Aggregate loss deltas:
+  - own top repeat-match heads: 1.5244;
+  - own random same-layer controls: 0.2403;
+  - source heads transferred by raw-score alignment: 1.0538;
+  - source heads transferred by same layer/head index: 0.2571.
+- Paired source-transfer comparison:
+  - aligned minus same-index loss delta mean: 0.7967;
+  - aligned beat same-index in 59 of 72 target/source pairs.
+- Key finding:
+  - repeat-match heads are causally relevant on the synthetic task;
+  - raw-score alignment transfers the causal role across seeds much better than
+    same-index transfer.
+- Recorded the result in
+  `doc/phase1_repeat_match_ablation_pythia160m.md`.
+- Created checkpoint deck:
+  `presentations/2026-05-21-1603-repeat-match-ablation-checkpoint/repeat_match_ablation_checkpoint.pdf`.
