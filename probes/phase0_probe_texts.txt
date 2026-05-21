@@ -1,0 +1,8 @@
+The lawyer gave the client a contract because the client asked for legal advice.
+When Mary and John went to the store, John gave a book to Mary before dinner.
+A B A C A B A
+Paris is in France. Berlin is in Germany. Rome is in Italy.
+The quick brown fox jumped over the lazy dog and then ran back to the yard.
+If the sequence is red blue red green red blue, the next repeated color is
+The teacher praised the student because the student solved the difficult problem.
+In 2019 the company grew quickly, but in 2020 the market changed sharply.
