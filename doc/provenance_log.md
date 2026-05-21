@@ -63,3 +63,14 @@ functional modularity?
   - Hungarian-matched similarity mean: 0.6831;
   - matched-minus-random mean: 0.3444.
 - Recorded this result in `doc/phase0_pythia160m_raw_score_pilot.md`.
+- Ran the all-seed Pythia-160M raw-score baseline:
+  - seeds: 1 through 9;
+  - revision: `step143000`;
+  - seed pairs x layers: 36 x 12 = 432 layer-pair comparisons;
+  - raw same-index similarity mean: 0.3735;
+  - Hungarian-matched similarity mean: 0.6692;
+  - matched-minus-random mean: 0.2982.
+- Recorded this result in
+  `doc/phase0_pythia160m_raw_score_all_seed_baseline.md`.
+- Created checkpoint deck:
+  `presentations/2026-05-21-1535-raw-score-checkpoint/raw_score_checkpoint.pdf`.
