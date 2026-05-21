@@ -9,6 +9,7 @@ similarity, Hungarian-matched similarity, and a random-permutation baseline.
 from __future__ import annotations
 
 import argparse
+import contextlib
 import csv
 import json
 from dataclasses import asdict, dataclass
@@ -17,8 +18,10 @@ from typing import Iterable
 
 import numpy as np
 import torch
+import torch.nn.functional as F
 from scipy.optimize import linear_sum_assignment
 from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers.models.gpt_neox import modeling_gpt_neox
 
 
 DEFAULT_PROBE_TEXTS = [
@@ -74,6 +77,18 @@ def parse_args() -> argparse.Namespace:
         default="float32",
         choices=["float32", "float16", "bfloat16"],
         help="Model dtype. Use float32 on CPU.",
+    )
+    parser.add_argument(
+        "--attention-representation",
+        default="probabilities",
+        choices=["probabilities", "raw_scores"],
+        help="Compare returned attention probabilities or GPT-NeoX pre-softmax QK scores.",
+    )
+    parser.add_argument(
+        "--entry-mask",
+        default="causal",
+        choices=["causal", "full"],
+        help="Which token-token entries to compare within each unpadded sequence.",
     )
     parser.add_argument("--random-permutations", type=int, default=200)
     parser.add_argument("--output-dir", type=Path, default=Path("results/phase0_attention_stability"))
@@ -139,6 +154,80 @@ def load_model_and_tokenizer(
     return model, tokenizer
 
 
+@contextlib.contextmanager
+def capture_gpt_neox_raw_attention_scores(enabled: bool):
+    """Capture pre-mask, pre-softmax GPT-NeoX QK scores while preserving forward behavior."""
+    if not enabled:
+        yield None
+        return
+
+    captured_scores = []
+    original_forward = modeling_gpt_neox.eager_attention_forward
+
+    def capturing_attention_forward(
+        module,
+        query,
+        key,
+        value,
+        attention_mask,
+        scaling,
+        dropout=0.0,
+        head_mask=None,
+        **kwargs,
+    ):
+        raw_scores = torch.matmul(query, key.transpose(2, 3)) * scaling
+        captured_scores.append(raw_scores.detach().float().cpu())
+
+        attn_weights = raw_scores
+        if attention_mask is not None:
+            causal_mask = attention_mask[:, :, :, : key.shape[-2]]
+            attn_weights = attn_weights + causal_mask
+
+        attn_weights = F.softmax(attn_weights, dim=-1, dtype=torch.float32).to(query.dtype)
+        if head_mask is not None:
+            attn_weights = attn_weights * head_mask
+        attn_weights = F.dropout(attn_weights, p=dropout, training=module.training)
+        attn_output = torch.matmul(attn_weights, value)
+        attn_output = attn_output.transpose(1, 2).contiguous()
+        return attn_output, attn_weights
+
+    modeling_gpt_neox.eager_attention_forward = capturing_attention_forward
+    try:
+        yield captured_scores
+    finally:
+        modeling_gpt_neox.eager_attention_forward = original_forward
+
+
+def flatten_token_pairs(matrix: torch.Tensor, length: int, entry_mask: str) -> torch.Tensor:
+    valid = matrix[:length, :length]
+    if entry_mask == "full":
+        return valid.reshape(-1)
+    if entry_mask == "causal":
+        keep = torch.tril(torch.ones((length, length), dtype=torch.bool))
+        return valid[keep]
+    raise ValueError(f"Unsupported entry mask: {entry_mask}")
+
+
+def attention_tensors_to_layer_vectors(
+    attention_tensors: Iterable[torch.Tensor],
+    lengths: list[int],
+    entry_mask: str,
+) -> list[torch.Tensor]:
+    layer_vectors = []
+    for attention in attention_tensors:
+        # attention: [batch, heads, seq, seq]
+        attention = attention.detach().float().cpu()
+        n_heads = attention.shape[1]
+        head_vectors = []
+        for head_idx in range(n_heads):
+            pieces = []
+            for batch_idx, length in enumerate(lengths):
+                pieces.append(flatten_token_pairs(attention[batch_idx, head_idx], length, entry_mask))
+            head_vectors.append(torch.cat(pieces))
+        layer_vectors.append(torch.stack(head_vectors, dim=0))
+    return layer_vectors
+
+
 def extract_attention_vectors(
     model: AutoModelForCausalLM,
     tokenizer: AutoTokenizer,
@@ -146,9 +235,12 @@ def extract_attention_vectors(
     max_length: int,
     batch_size: int,
     device: torch.device,
+    attention_representation: str,
+    entry_mask: str,
 ) -> list[np.ndarray]:
     """Return one array per layer with shape [n_heads, flattened_probe_entries]."""
     layer_chunks: list[list[torch.Tensor]] | None = None
+    capture_raw_scores = attention_representation == "raw_scores"
 
     for text_batch in batched(texts, batch_size):
         encoded = tokenizer(
@@ -161,7 +253,7 @@ def extract_attention_vectors(
         encoded = {key: value.to(device) for key, value in encoded.items()}
         lengths = encoded["attention_mask"].sum(dim=1).tolist()
 
-        with torch.inference_mode():
+        with torch.inference_mode(), capture_gpt_neox_raw_attention_scores(capture_raw_scores) as raw_scores:
             outputs = model(
                 **encoded,
                 output_attentions=True,
@@ -172,20 +264,16 @@ def extract_attention_vectors(
         if outputs.attentions is None:
             raise RuntimeError("Model did not return attentions. Try an eager attention implementation.")
 
-        if layer_chunks is None:
-            layer_chunks = [[] for _ in outputs.attentions]
+        attention_tensors = raw_scores if capture_raw_scores else outputs.attentions
+        if attention_tensors is None:
+            raise RuntimeError("Raw score capture failed.")
 
-        for layer_idx, attention in enumerate(outputs.attentions):
-            # attention: [batch, heads, seq, seq]
-            attention = attention.detach().float().cpu()
-            n_heads = attention.shape[1]
-            head_vectors = []
-            for head_idx in range(n_heads):
-                pieces = []
-                for batch_idx, length in enumerate(lengths):
-                    pieces.append(attention[batch_idx, head_idx, :length, :length].reshape(-1))
-                head_vectors.append(torch.cat(pieces))
-            layer_chunks[layer_idx].append(torch.stack(head_vectors, dim=0))
+        if layer_chunks is None:
+            layer_chunks = [[] for _ in attention_tensors]
+
+        layer_vectors = attention_tensors_to_layer_vectors(attention_tensors, lengths, entry_mask)
+        for layer_idx, layer_vector in enumerate(layer_vectors):
+            layer_chunks[layer_idx].append(layer_vector)
 
     if layer_chunks is None:
         raise RuntimeError("No attention chunks were collected.")
@@ -344,6 +432,8 @@ def main() -> None:
             max_length=args.max_length,
             batch_size=args.batch_size,
             device=device,
+            attention_representation=args.attention_representation,
+            entry_mask=args.entry_mask,
         )
         del model
         if device.type == "cuda":

@@ -53,3 +53,13 @@ functional modularity?
 - Recorded the all-seed result in `doc/phase0_pythia160m_all_seed_baseline.md`.
 - Noted an important limitation: current extraction compares Hugging Face
   returned attention probabilities, not pre-softmax raw attention scores.
+- Updated `scripts/attention_stability.py` to support:
+  - `--attention-representation raw_scores`, implemented for GPT-NeoX/Pythia by
+    capturing pre-mask, pre-softmax scaled `QK^T` scores;
+  - `--entry-mask causal`, which compares only valid lower-triangular causal
+    token pairs by default.
+- Ran a Pythia-160M seed 1 vs seed 2 raw-score pilot:
+  - raw same-index similarity mean: 0.3342;
+  - Hungarian-matched similarity mean: 0.6831;
+  - matched-minus-random mean: 0.3444.
+- Recorded this result in `doc/phase0_pythia160m_raw_score_pilot.md`.
