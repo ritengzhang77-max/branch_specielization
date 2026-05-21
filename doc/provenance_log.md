@@ -42,3 +42,14 @@ functional modularity?
 - Added `doc/phase0_pythia160m_pilot.md`.
 - Updated `scripts/attention_stability.py` to write `layer_summary.csv` in
   addition to pairwise layer metrics.
+- Ran the all-seed Pythia-160M Phase 0 baseline:
+  - seeds: 1 through 9;
+  - revision: `step143000`;
+  - seed pairs x layers: 36 x 12 = 432 layer-pair comparisons;
+  - raw same-index similarity mean: 0.7127;
+  - Hungarian-matched similarity mean: 0.8127;
+  - matched-minus-random mean: 0.0998;
+  - all layers had positive matched-minus-random gaps.
+- Recorded the all-seed result in `doc/phase0_pythia160m_all_seed_baseline.md`.
+- Noted an important limitation: current extraction compares Hugging Face
+  returned attention probabilities, not pre-softmax raw attention scores.
