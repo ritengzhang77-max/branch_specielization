@@ -386,3 +386,44 @@ functional modularity?
 - Recorded the result in `doc/phase3_toy_competition_two_attractor.md`.
 - Created checkpoint deck:
   `presentations/2026-05-22-1152-two-attractor/two_attractor_checkpoint.pdf`.
+
+## 2026-05-22 Phase 3 Toy Explicit Branch Isolation
+
+- Added `scripts/toy_branch_isolation_intervention.py`.
+- Added `scripts/analyze_branch_isolation.py`.
+- Tested explicit two-branch transformer variants on the same local-vs-induction
+  competition task:
+  - `branch_sum`: two separate branch towers, both active at every scored
+    position;
+  - `oracle_route`: local scored positions use branch 0 and induction scored
+    positions use branch 1.
+- Both variants used:
+  - two branch towers;
+  - branch head dimensions `[64]`;
+  - shared token embedding and unembedding;
+  - separate attention/MLP towers;
+  - local weight 0.25 and induction weight 1.0;
+  - seeds 1 through 5;
+  - 1200 steps.
+- Both variants learned the task:
+  - `branch_sum`: local accuracy 1.0000, induction accuracy 0.9998;
+  - `oracle_route`: local accuracy 0.9999, induction accuracy 0.9987.
+- Main modularity result:
+  - `branch_sum`: same top branch rate 0.60, routed role match 0.20,
+    branch-distribution distance 0.0411;
+  - `oracle_route`: same top branch rate 0.00, routed role match 1.00,
+    branch-distribution distance 1.0000.
+- Branch ablation effects:
+  - `branch_sum`: both branches support both roles;
+  - `oracle_route`: ablating branch 0 hurts only local, and ablating branch 1
+    hurts only induction.
+- Key interpretation:
+  - separate branch towers are not enough for modularity;
+  - explicit routing can produce role-specific functional modularity in the toy
+    setting;
+  - the project should split the architectural claim into capacity
+    heterogeneity for stable specialization and routing/separation for
+    modularity.
+- Recorded the result in `doc/phase3_toy_branch_isolation.md`.
+- Created checkpoint deck:
+  `presentations/2026-05-22-1230-branch-isolation/branch_isolation_checkpoint.pdf`.
