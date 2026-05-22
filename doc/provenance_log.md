@@ -280,3 +280,39 @@ functional modularity?
   `doc/phase3_toy_competition_layout_permutations.md`.
 - Created checkpoint deck:
   `presentations/2026-05-22-0858-layout-permutation/layout_permutation_checkpoint.pdf`.
+
+## 2026-05-22 Phase 3 Toy Competition Weight Sweep
+
+- Added `scripts/analyze_competition_weight_sweep.py`.
+- Tested the most diagnostic heterogeneous layout from the prior checkpoint:
+  `hetero4_64second = [16, 64, 16, 32]`.
+- Swept local objective weight while keeping induction weight at 1.0:
+  - `local_weight = 0.00`;
+  - `local_weight = 0.01`;
+  - `local_weight = 0.10`;
+  - `local_weight = 0.25`;
+  - reused the existing `local_weight = 1.00` baseline.
+- Each new condition used:
+  - seeds: 1 through 5;
+  - steps: 1200;
+  - batch size: 128;
+  - eval examples: 512;
+  - local pairs: 8;
+  - repeat length: 16.
+- Main results:
+  - `local_weight = 0.00`: induction top head was 64-dim in 5/5 seeds;
+  - `local_weight = 0.01`: local and induction top heads were both 64-dim in
+    5/5 seeds, with local accuracy 0.9963 and induction accuracy 0.9976;
+  - `local_weight = 0.10`: induction top head was 64-dim in 2/5 seeds;
+  - `local_weight = 0.25`: induction top head was 64-dim in 2/5 seeds;
+  - `local_weight = 1.00`: induction top head was 64-dim in 1/5 seeds.
+- Interpretation:
+  - induction can occupy the 64-dim slot when local pressure is absent;
+  - weak local pressure can cohabit the 64-dim slot;
+  - stronger local pressure often displaces induction to 16-dim or 32-dim
+    secondary slots;
+  - the best current mechanism is capacity-slot competition, not fixed
+    dimension-to-function semantics.
+- Recorded the result in `doc/phase3_toy_competition_weight_sweep.md`.
+- Created checkpoint deck:
+  `presentations/2026-05-22-0921-weight-sweep/weight_sweep_checkpoint.pdf`.
