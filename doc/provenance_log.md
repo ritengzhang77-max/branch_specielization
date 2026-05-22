@@ -123,3 +123,44 @@ functional modularity?
   `doc/phase1_repeat_match_ablation_pythia160m.md`.
 - Created checkpoint deck:
   `presentations/2026-05-21-1603-repeat-match-ablation-checkpoint/repeat_match_ablation_checkpoint.pdf`.
+
+## 2026-05-21 Phase 3 Toy Head-Dimension Intervention
+
+- Added `scripts/toy_head_dim_intervention.py`.
+- The script trains tiny decoder-only transformers on a synthetic key-value
+  recall task:
+  `[k_1, v_1, ..., k_8, v_8, k_q] -> v_q`.
+- Compared matched total attention dimension configurations:
+  - `uniform4`: `[32, 32, 32, 32]`;
+  - `hetero4`: `[16, 16, 32, 64]`;
+  - `uniform2`: `[64, 64]`;
+  - position control `hetero4_64first`: `[64, 16, 16, 32]`.
+- Used single-head ablation loss delta as the primary toy specialization score.
+- All configs solved the task:
+  - `uniform4` eval accuracy mean: 0.9992;
+  - `hetero4` eval accuracy mean: 0.9980;
+  - `uniform2` eval accuracy mean: 0.9996;
+  - `hetero4_64first` eval accuracy mean: 1.0000.
+- Main pilot result:
+  - `uniform4` top specialization: 0.4414;
+  - `hetero4` top specialization: 0.9741;
+  - `uniform2` top specialization: 0.7704;
+  - `hetero4_64first` top specialization: 0.9807.
+- Causal top-head loss deltas:
+  - `uniform4`: 0.1380;
+  - `hetero4`: 1.6084;
+  - `uniform2`: 0.9343;
+  - `hetero4_64first`: 1.4581.
+- Key structural result:
+  - in `hetero4`, the top causal head was the 64-dim head at index 3 in 5/5
+    seeds and both layers;
+  - in `hetero4_64first`, the top causal head moved to the 64-dim head at index
+    0 in 5/5 seeds and both layers.
+- Interpretation:
+  - in this toy setting, structural head-dimension heterogeneity induced stable
+    functional specialization;
+  - the position control suggests the role followed head dimension, not fixed
+    head index.
+- Recorded the result in `doc/phase3_toy_head_dim_intervention.md`.
+- Created checkpoint deck:
+  `presentations/2026-05-21-2248-toy-head-dim-intervention/toy_head_dim_intervention_checkpoint.pdf`.

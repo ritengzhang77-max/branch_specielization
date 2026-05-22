@@ -1,0 +1,64 @@
+{
+  "args": {
+    "configs": [
+      "hetero4_64first"
+    ],
+    "seeds": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "steps": 1200,
+    "batch_size": 128,
+    "eval_examples": 512,
+    "num_pairs": 8,
+    "key_vocab": 96,
+    "value_vocab": 96,
+    "d_model": 128,
+    "n_layers": 2,
+    "mlp_dim": 256,
+    "lr": 0.001,
+    "weight_decay": 0.01,
+    "random_controls": 8,
+    "random_permutations": 100,
+    "role_target": "value",
+    "role_metric": "ablation",
+    "device": "auto",
+    "output_dir": "results/phase3_toy_head_dim_position_control"
+  },
+  "head_dims_by_config": {
+    "hetero4_64first": [
+      64,
+      16,
+      16,
+      32
+    ]
+  },
+  "summary_by_config": {
+    "hetero4_64first": {
+      "n_models": 5,
+      "eval_loss_mean": 0.003189027332700789,
+      "eval_accuracy_mean": 1.0,
+      "top_specialization_mean": 0.980723213137377,
+      "own_top_loss_delta_mean": 1.4581314891343937,
+      "random_same_layer_loss_delta_mean": 0.00844479655934265,
+      "raw_diag_mean": 0.5777873039245606,
+      "matched_mean": 0.5805286571383477,
+      "random_perm_mean": 0.5757000059485435,
+      "matched_minus_random_mean": 0.0048286511898040785,
+      "raw_role_similarity_mean": 0.9611319940465812,
+      "aligned_role_similarity_mean": 0.7198208960988297,
+      "random_role_similarity_mean": 0.2625152014261736,
+      "raw_top_head_match_rate": 1.0,
+      "aligned_top_head_match_rate": 0.75,
+      "top_head_dim_counts": {
+        "64": 5
+      },
+      "top_head_dim_fraction": {
+        "64": 1.0
+      }
+    }
+  }
+}

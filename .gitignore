@@ -6,6 +6,7 @@ __pycache__/
 .ruff_cache/
 
 # Large local artifacts should be reproducible from scripts.
+.tools/
 data/
 cache/
 artifacts/
