@@ -354,3 +354,35 @@ functional modularity?
   `doc/phase3_toy_competition_all_layout_weight_sweep.md`.
 - Created checkpoint deck:
   `presentations/2026-05-22-1135-all-layout-weight-sweep/all_layout_weight_sweep_checkpoint.pdf`.
+
+## 2026-05-22 Phase 3 Toy Competition Two-Attractor Test
+
+- Added three two-48 heterogeneous presets:
+  - `hetero4_two48_center`: `[16, 48, 48, 16]`;
+  - `hetero4_two48_skip`: `[48, 16, 48, 16]`;
+  - `hetero4_two48_front`: `[48, 48, 16, 16]`.
+- Added `scripts/analyze_competition_two_attractor.py`.
+- Ran the two-48 layouts at the strongest competition setting from the prior
+  sweep:
+  - local weight: 0.25;
+  - induction weight: 1.0;
+  - seeds: 1 through 5;
+  - steps: 1200;
+  - batch size: 128;
+  - eval examples: 512.
+- Added a `uniform2 = [64, 64]` control at the same local weight.
+- Main results:
+  - two-48 layouts solved the task, but local top heads were 48-dim in only
+    5/15 models and induction top heads were 48-dim in only 4/15 models;
+  - two-48 local and induction roles shared the same top slot in 12/15 models;
+  - distinct max-dim role slots appeared in only 1/15 two-48 models;
+  - `uniform2` put both roles on 64-dim heads by construction, but still shared
+    the same exact top slot in 4/5 models.
+- Key interpretation:
+  - adding a second high-dimensional head does not automatically create modular
+    role separation;
+  - structural heterogeneity can stabilize functional specialization, but
+    functional modularity requires more than differentiated capacity.
+- Recorded the result in `doc/phase3_toy_competition_two_attractor.md`.
+- Created checkpoint deck:
+  `presentations/2026-05-22-1152-two-attractor/two_attractor_checkpoint.pdf`.

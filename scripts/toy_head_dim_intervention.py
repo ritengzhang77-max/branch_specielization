@@ -34,6 +34,9 @@ CONFIG_PRESETS = {
     "hetero4_64first": [64, 16, 16, 32],
     "hetero4_64second": [16, 64, 16, 32],
     "hetero4_64third": [16, 32, 64, 16],
+    "hetero4_two48_center": [16, 48, 48, 16],
+    "hetero4_two48_skip": [48, 16, 48, 16],
+    "hetero4_two48_front": [48, 48, 16, 16],
     "uniform2": [64, 64],
 }
 
