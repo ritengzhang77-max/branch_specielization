@@ -637,3 +637,41 @@ functional modularity?
 - Recorded the result in `doc/phase3_toy_bottleneck_router.md`.
 - Created checkpoint deck:
   `presentations/2026-05-22-1609-bottleneck-router/bottleneck_router_checkpoint.pdf`.
+
+## 2026-05-22 Phase 3 Conflict-Heavy Branch Routing
+
+- Extended `scripts/toy_branch_isolation_intervention.py` with a
+  `--task-variant bidirectional_lookup` option.
+- The conflict task samples a prefix `[y_0, ..., y_15]` and scores the same query
+  token under two incompatible role rules:
+  - local role: `y_i -> y_{i-1}`;
+  - induction role: `y_i -> y_{i+1}`.
+- Added `scripts/analyze_conflict_router_experiment.py`.
+- Ran 5 seeds each with 64-dim branch heads, equal local/induction weights, and
+  1600 steps for:
+  - unconstrained `learned_token_router`;
+  - balance-only `learned_token_router`;
+  - entropy 0.05 plus balance 1.0 `learned_token_router`;
+  - weak-label `weak_token_router` with supervision weight 0.05;
+  - `oracle_route`.
+- All conditions solved the conflict task.
+- Main conflict-task result:
+  - unconstrained: same-top-branch rate 1.00, routed role match 0.00, branch
+    distance 0.0237;
+  - balance-only: same-top-branch rate 1.00, routed role match 0.00, branch
+    distance 0.0283;
+  - entropy 0.05 plus balance 1.0: same-top-branch rate 1.00, routed role match
+    0.00, branch distance 0.2069.
+- Positive controls:
+  - weak-label conflict router: routed role match 1.00, branch distance 0.9773;
+  - oracle conflict router: routed role match 1.00, branch distance 1.0000.
+- Key interpretation:
+  - direct predecessor-vs-successor role conflict is not enough for generic
+    unlabeled gate pressure to discover causal role modularity;
+  - role-informative routing pressure remains the reliable mechanism observed so
+    far;
+  - the next test should anneal weak labels to see whether the role signal is
+    needed only early as a symmetry breaker or throughout training.
+- Recorded the result in `doc/phase3_toy_conflict_router.md`.
+- Created checkpoint deck:
+  `presentations/2026-05-22-1626-conflict-router/conflict_router_checkpoint.pdf`.

@@ -220,12 +220,19 @@ Current toy-pilot status as of 2026-05-22:
   0.00 across 5 seeds. Oracle routing still achieved routed role match 1.00,
   so the bottlenecked architecture can support modularity when routing is
   correct.
+- A conflict-heavy `bidirectional_lookup` task made the same query token require
+  predecessor lookup in the local role and successor lookup in the induction
+  role. This still did not rescue unlabeled modularity: unconstrained,
+  balance-only, and entropy+balance conflict-task routers all had
+  same-top-branch rate 1.00 and routed role match 0.00 across 5 seeds. Weak
+  labels and oracle routing both achieved routed role match 1.00.
 
 The next Phase 3 question is therefore:
 
 ```text
-Can stronger task conflict make unlabeled routing pressure align with functional
-roles when simple branch bottlenecks do not?
+Is role-informative pressure needed only as an early symmetry breaker, or must it
+remain active throughout training for branch-level functional modularity to
+persist?
 ```
 
 ### Phase 4: Mechanistic Interpretation

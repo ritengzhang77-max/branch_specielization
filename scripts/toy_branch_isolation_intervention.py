@@ -37,6 +37,9 @@ import torch
 import torch.nn as nn
 
 from toy_competition_head_dim_intervention import (
+    GLOBAL_SEP,
+    LOCAL_SEP,
+    TOKEN_LOW,
     combined_loss_accuracy,
     iter_batches,
     make_competition_dataset,
@@ -56,6 +59,7 @@ VALID_MODES = {
 POSITION_ROUTER_MODES = {"learned_position_router", "weak_position_router"}
 TOKEN_ROUTER_MODES = {"learned_token_router", "weak_token_router"}
 WEAK_SUPERVISION_MODES = {"weak_position_router", "weak_token_router"}
+TASK_VARIANTS = {"standard", "bidirectional_lookup"}
 
 
 @dataclass
@@ -129,6 +133,16 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--local-pairs", type=int, default=8)
     parser.add_argument("--repeat-length", type=int, default=16)
     parser.add_argument("--vocab-size", type=int, default=160)
+    parser.add_argument(
+        "--task-variant",
+        default="standard",
+        choices=sorted(TASK_VARIANTS),
+        help=(
+            "standard keeps the original local-copy plus induction task; "
+            "bidirectional_lookup makes shared query tokens require predecessor "
+            "lookup in the local role and successor lookup in the induction role."
+        ),
+    )
     parser.add_argument("--d-model", type=int, default=128)
     parser.add_argument("--n-layers", type=int, default=2)
     parser.add_argument("--mlp-dim", type=int, default=256)
@@ -144,6 +158,90 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--device", default="auto", choices=["auto", "cpu", "cuda"])
     parser.add_argument("--output-dir", type=Path, default=Path("results/phase3_toy_branch_isolation"))
     return parser.parse_args()
+
+
+def conflict_sequence_layout(local_pairs: int, repeat_length: int) -> dict[str, torch.Tensor | int]:
+    if repeat_length < local_pairs + 2:
+        raise ValueError("bidirectional_lookup requires repeat_length >= local_pairs + 2.")
+
+    query_indices = torch.arange(1, local_pairs + 1, dtype=torch.long)
+    local_start = 1 + repeat_length + 1
+    second_copy_start = local_start + 2 * local_pairs + 1
+    local_positions = local_start + 2 * torch.arange(local_pairs, dtype=torch.long)
+    induction_positions = second_copy_start + query_indices
+    return {
+        "seq_len": second_copy_start + repeat_length,
+        "local_positions": local_positions,
+        "local_prev_positions": local_positions,
+        "induction_positions": induction_positions,
+        "induction_match_positions": 1 + query_indices,
+        "induction_source_next_positions": 1 + query_indices + 1,
+        "local_source_positions": query_indices,
+        "conflict_query_indices": query_indices,
+    }
+
+
+def make_bidirectional_lookup_dataset(
+    rng: np.random.Generator,
+    n_examples: int,
+    local_pairs: int,
+    repeat_length: int,
+    vocab_size: int,
+) -> torch.Tensor:
+    if repeat_length < local_pairs + 2:
+        raise ValueError("bidirectional_lookup requires repeat_length >= local_pairs + 2.")
+    if vocab_size - TOKEN_LOW < repeat_length:
+        raise ValueError("vocab_size is too small for the requested task.")
+
+    token_ids = np.arange(TOKEN_LOW, vocab_size)
+    query_indices = np.arange(1, local_pairs + 1)
+    rows = []
+    for _ in range(n_examples):
+        base = rng.choice(token_ids, size=repeat_length, replace=False)
+        row = [GLOBAL_SEP]
+        row.extend(int(token) for token in base)
+        row.append(LOCAL_SEP)
+        for idx in query_indices:
+            # At the query token, the local target is the predecessor in the
+            # prefix. The induction target for the same query token is the
+            # successor in the prefix, creating a direct role conflict.
+            row.extend([int(base[idx]), int(base[idx - 1])])
+        row.append(GLOBAL_SEP)
+        row.extend(int(token) for token in base)
+        rows.append(row)
+    return torch.tensor(np.stack(rows), dtype=torch.long)
+
+
+def build_layout(args: argparse.Namespace) -> dict[str, torch.Tensor | int]:
+    if args.task_variant == "standard":
+        return sequence_layout(args.local_pairs, args.repeat_length)
+    if args.task_variant == "bidirectional_lookup":
+        return conflict_sequence_layout(args.local_pairs, args.repeat_length)
+    raise ValueError(f"Unknown task variant: {args.task_variant}")
+
+
+def make_task_dataset(
+    rng: np.random.Generator,
+    n_examples: int,
+    args: argparse.Namespace,
+) -> torch.Tensor:
+    if args.task_variant == "standard":
+        return make_competition_dataset(
+            rng,
+            n_examples,
+            args.local_pairs,
+            args.repeat_length,
+            args.vocab_size,
+        )
+    if args.task_variant == "bidirectional_lookup":
+        return make_bidirectional_lookup_dataset(
+            rng,
+            n_examples,
+            args.local_pairs,
+            args.repeat_length,
+            args.vocab_size,
+        )
+    raise ValueError(f"Unknown task variant: {args.task_variant}")
 
 
 class BranchTower(nn.Module):
@@ -275,13 +373,7 @@ def train_model(
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
     last_loss = 0.0
     for step in range(args.steps):
-        input_ids = make_competition_dataset(
-            train_rng,
-            args.batch_size,
-            args.local_pairs,
-            args.repeat_length,
-            args.vocab_size,
-        ).to(device)
+        input_ids = make_task_dataset(train_rng, args.batch_size, args).to(device)
         optimizer.zero_grad(set_to_none=True)
         logits = model(input_ids)
         loss, _ = combined_loss_accuracy(logits, input_ids, layout, args.local_weight, args.induction_weight)
@@ -510,21 +602,19 @@ def write_config_summary(path: Path, summary_by_config: dict[str, dict[str, obje
 def main() -> None:
     args = parse_args()
     device = resolve_device(args.device)
-    layout = sequence_layout(args.local_pairs, args.repeat_length)
+    layout = build_layout(args)
     args.output_dir.mkdir(parents=True, exist_ok=True)
-    eval_ids = make_competition_dataset(
-        np.random.default_rng(12345),
-        args.eval_examples,
-        args.local_pairs,
-        args.repeat_length,
-        args.vocab_size,
-    )
+    eval_ids = make_task_dataset(np.random.default_rng(12345), args.eval_examples, args)
 
     model_rows: list[ModelSummary] = []
     branch_rows: list[BranchScore] = []
 
     for config in args.configs:
-        print(f"config={config} branch_head_dims={args.branch_head_dims}", flush=True)
+        print(
+            f"config={config} task_variant={args.task_variant} "
+            f"branch_head_dims={args.branch_head_dims}",
+            flush=True,
+        )
         for seed in args.seeds:
             print(f"training config={config} seed={seed}", flush=True)
             torch.manual_seed(seed)

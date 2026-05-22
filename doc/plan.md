@@ -205,6 +205,15 @@ These three numbers (S, C, M) are what the project should report for each archit
   produced routed role match 1.00, so the architecture can support modularity
   when routing is correct. The next intervention should change task conflict
   rather than only shrink branch capacity.
+- A conflict-heavy `bidirectional_lookup` task then made the same query token
+  require predecessor lookup in the local role and successor lookup in the
+  induction role. This also did not rescue unlabeled modularity: the
+  unconstrained, balance-only, and entropy+balance conflict-task routers all had
+  same-top-branch rate 1.00 and routed role match 0.00 across 5 seeds. Weak
+  labels and oracle routing both reached routed role match 1.00. The current toy
+  evidence therefore points to role-informative routing pressure, not capacity
+  bottlenecks or conflict alone, as the reliable mechanism for branch-level
+  functional modularity.
 
 ### C. Resources concretely available (with HF / GitHub paths)
 - Pythia seeds: `EleutherAI/pythia-{14m,70m,160m,410m}-seed{1..9}`, plus `pythia-160m-weight-seed{1-3}` and `pythia-160m-data-seed{1-3}`. 154 checkpoints per model (steps 0, 1, 2, 4, 8, …, 143000). GitHub: `EleutherAI/pythia`.
