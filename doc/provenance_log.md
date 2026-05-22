@@ -164,3 +164,44 @@ functional modularity?
 - Recorded the result in `doc/phase3_toy_head_dim_intervention.md`.
 - Created checkpoint deck:
   `presentations/2026-05-21-2248-toy-head-dim-intervention/toy_head_dim_intervention_checkpoint.pdf`.
+
+## 2026-05-22 Phase 3 Toy Induction Head-Dimension Intervention
+
+- Added `scripts/toy_induction_head_dim_intervention.py`.
+- The script trains tiny decoder-only transformers on repeated random-token
+  sequences `[x_1, ..., x_16, x_1, ..., x_16]`, scoring second-half
+  next-token prediction.
+- Compared:
+  - `uniform4`: `[32, 32, 32, 32]`;
+  - `hetero4`: `[16, 16, 32, 64]`;
+  - `uniform2`: `[64, 64]`;
+  - `hetero4_64first`: `[64, 16, 16, 32]`.
+- Used single-head ablation loss delta as the primary specialization score.
+- All configs solved the task:
+  - `uniform4` eval accuracy mean: 0.9993;
+  - `hetero4` eval accuracy mean: 0.9991;
+  - `uniform2` eval accuracy mean: 0.9993;
+  - `hetero4_64first` eval accuracy mean: 0.9992.
+- Main result:
+  - `uniform4` top specialization: 0.5796;
+  - `hetero4` top specialization: 0.9830;
+  - `uniform2` top specialization: 0.6578;
+  - `hetero4_64first` top specialization: 0.9882.
+- Causal top-head loss deltas:
+  - `uniform4`: 0.0587;
+  - `hetero4`: 1.0195;
+  - `uniform2`: 0.2989;
+  - `hetero4_64first`: 1.5637.
+- Structural slot result:
+  - in `hetero4`, the top causal head was the 64-dim head at index 3 in both
+    layers and 5/5 seeds;
+  - in `hetero4_64first`, the top causal head moved to the 64-dim head at index
+    0 in both layers and 5/5 seeds.
+- Interpretation:
+  - the toy structural-intervention result generalizes from key-value recall to
+    an induction-style repeated-token task;
+  - heterogeneous head dimensions appear to turn the high-capacity head into a
+    stable causal role slot.
+- Recorded the result in `doc/phase3_toy_induction_head_dim_intervention.md`.
+- Created checkpoint deck:
+  `presentations/2026-05-22-0818-toy-induction-head-dim/toy_induction_head_dim_checkpoint.pdf`.

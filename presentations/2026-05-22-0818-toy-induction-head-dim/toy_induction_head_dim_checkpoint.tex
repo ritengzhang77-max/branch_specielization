@@ -1,0 +1,133 @@
+\documentclass[aspectratio=169]{beamer}
+\usetheme{Madrid}
+\usepackage{graphicx}
+\usepackage{booktabs}
+
+\title{Branch Specialization in Attention}
+\subtitle{Toy Induction Head-Dimension Intervention Checkpoint}
+\author{Research checkpoint}
+\date{May 22, 2026}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{Current Question}
+  \textbf{RQ5:} Does structural heterogeneity cause more stable functional
+  specialization?
+
+  \vspace{0.7em}
+  This checkpoint tests whether the key-value toy result generalizes to a
+  repeated-token induction-style task:
+  \[
+    [x_1,\ldots,x_{16},x_1,\ldots,x_{16}]
+  \]
+
+  Loss is scored on second-half next-token prediction.
+\end{frame}
+
+\begin{frame}{Experimental Arms}
+  All models use \(d_{model}=128\), two layers, five seeds, and total attention
+  head dimension \(128\).
+
+  \begin{table}
+    \centering
+    \begin{tabular}{lll}
+      \toprule
+      Config & Head dimensions & Purpose \\
+      \midrule
+      uniform4 & [32,32,32,32] & same-head-count baseline \\
+      hetero4 & [16,16,32,64] & heterogeneous intervention \\
+      uniform2 & [64,64] & fewer/wider control \\
+      64-first & [64,16,16,32] & position control \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+\end{frame}
+
+\begin{frame}{Metric}
+  Primary specialization score:
+  \[
+    S(h,t)=\max(\mathrm{loss}_{ablate(h)}-\mathrm{loss}_{base},0)
+  \]
+
+  \vspace{0.7em}
+  The script also records match and source-next attention, but the main
+  specialization metric is causal single-head ablation.
+\end{frame}
+
+\begin{frame}{All Configs Learn}
+  \begin{table}
+    \centering
+    \begin{tabular}{lrr}
+      \toprule
+      Config & Eval accuracy & Eval loss \\
+      \midrule
+      uniform4 & 0.9993 & 0.0044 \\
+      hetero4 & 0.9991 & 0.0056 \\
+      uniform2 & 0.9993 & 0.0044 \\
+      64-first & 0.9992 & 0.0053 \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+
+  The comparison is not driven by task failure.
+\end{frame}
+
+\begin{frame}{Specialization Concentration}
+  \centering
+  \includegraphics[width=0.88\linewidth]{figures/top_specialization.pdf}
+\end{frame}
+
+\begin{frame}{Causal Load}
+  \centering
+  \includegraphics[width=0.88\linewidth]{figures/ablation_delta.pdf}
+\end{frame}
+
+\begin{frame}{Cross-Seed Stability}
+  \centering
+  \includegraphics[width=0.88\linewidth]{figures/stability_metrics.pdf}
+\end{frame}
+
+\begin{frame}{Position Control}
+  \centering
+  \includegraphics[width=0.88\linewidth]{figures/top_head_slots.pdf}
+\end{frame}
+
+\begin{frame}{Interpretation}
+  Findings:
+  \begin{itemize}
+    \item The heterogeneous result generalizes from key-value recall to
+      induction-style next-token prediction.
+    \item The 64-dim head is the top causal head in both layers and all five
+      seeds for both heterogeneous layouts.
+    \item Uniform wider/fewer heads help, but do not define the same stable
+      structural slot.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Decision}
+  Continue the architectural-intervention branch.
+
+  \vspace{0.8em}
+  Next decisive experiment:
+  \begin{itemize}
+    \item add task competition: local previous-token plus global induction;
+    \item test whether smaller heads take local roles and the 64-dim head takes
+      global roles;
+    \item report structure-aware slot stability next to Hungarian alignment.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Provenance}
+  \begin{itemize}
+    \item Script: \texttt{scripts/toy\_induction\_head\_dim\_intervention.py}
+    \item Output: \texttt{results/phase3\_toy\_induction\_head\_dim\_intervention}
+    \item Report: \texttt{doc/phase3\_toy\_induction\_head\_dim\_intervention.md}
+    \item Data copied into this deck folder under \texttt{data/}
+  \end{itemize}
+\end{frame}
+
+\end{document}
