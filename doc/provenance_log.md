@@ -527,3 +527,41 @@ functional modularity?
 - Recorded the result in `doc/phase3_toy_weak_router.md`.
 - Created checkpoint deck:
   `presentations/2026-05-22-1300-weak-router/weak_router_checkpoint.pdf`.
+
+## 2026-05-22 Phase 3 Weak Token-Router Supervision Sweep
+
+- Added `scripts/analyze_weak_router_sweep.py`.
+- Swept `weak_token_router` scored-position supervision weights:
+  - 0.005;
+  - 0.01;
+  - 0.02;
+  - 0.03;
+  - 0.04;
+  - 0.045;
+  - reused the previous 0.05 checkpoint.
+- Each new condition used:
+  - seeds 1 through 5;
+  - 1200 steps;
+  - local weight 0.25;
+  - induction weight 1.0.
+- All weights solved the task, with induction accuracy at or above 0.9978.
+- Main threshold result:
+  - weight 0.005: routed role match 0.40, branch distance 0.2789;
+  - weight 0.01: routed role match 0.20, branch distance 0.2050;
+  - weight 0.02: routed role match 0.20, branch distance 0.2844;
+  - weight 0.03: routed role match 0.40, branch distance 0.3910;
+  - weight 0.04: routed role match 0.40, branch distance 0.4504;
+  - weight 0.045: routed role match 0.80, branch distance 0.7459;
+  - weight 0.05: routed role match 1.00, branch distance 0.8957.
+- Key dissociation:
+  - gate routed match reached 1.00 by weight 0.02;
+  - causal routed role match stayed low until 0.045 and did not reach 1.00 until
+    0.05.
+- Key interpretation:
+  - gate compliance is not sufficient for functional modularity;
+  - the routing objective must be strong enough to reshape branch computations,
+    not only gate probabilities;
+  - induction routing is the limiting role.
+- Recorded the result in `doc/phase3_toy_weak_router_sweep.md`.
+- Created checkpoint deck:
+  `presentations/2026-05-22-1354-weak-router-sweep/weak_router_sweep_checkpoint.pdf`.
