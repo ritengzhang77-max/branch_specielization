@@ -207,12 +207,14 @@ Current toy-pilot status as of 2026-05-22:
 - Oracle routing can produce clean branch-level functional modularity.
 - Unconstrained learned routing, tested with position-based and token-based
   gates, solved the task but did not recover the oracle role split.
+- Weak scored-position routing supervision with weight 0.05 made the token router
+  recover near-oracle branch-level functional modularity in 5/5 seeds.
 
 The next Phase 3 question is therefore:
 
 ```text
-What routing signal, regularizer, or task pressure is sufficient for learned
-functional modularity to emerge, if any?
+How little routing signal is sufficient, and can unlabeled routing pressure or
+harder task pressure produce a similar modularity change?
 ```
 
 ### Phase 4: Mechanistic Interpretation

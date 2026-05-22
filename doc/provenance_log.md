@@ -488,3 +488,42 @@ functional modularity?
 - Recorded the result in `doc/phase3_toy_learned_router.md`.
 - Created checkpoint deck:
   `presentations/2026-05-22-1249-learned-router/learned_router_checkpoint.pdf`.
+
+## 2026-05-22 Phase 3 Toy Weakly Supervised Branch Routing
+
+- Extended `scripts/toy_branch_isolation_intervention.py` with weakly
+  supervised learned routing variants:
+  - `weak_position_router`;
+  - `weak_token_router`.
+- The auxiliary routing loss is applied only at scored positions:
+  - local scored positions target branch 0;
+  - induction scored positions target branch 1.
+- Added `gate_target_nll_mean` as a routing-target diagnostic.
+- Ran the weak-router comparison with:
+  - router supervision weight 0.05;
+  - local weight 0.25;
+  - induction weight 1.0;
+  - seeds 1 through 5;
+  - 1200 steps.
+- Both weakly supervised variants solved the task:
+  - `weak_position_router`: local accuracy 0.9999, induction accuracy 0.9988;
+  - `weak_token_router`: local accuracy 0.9998, induction accuracy 0.9983.
+- Main modularity result:
+  - `weak_position_router`: same top branch rate 0.20, routed role match 0.80,
+    branch-distribution distance 0.6446;
+  - `weak_token_router`: same top branch rate 0.00, routed role match 1.00,
+    branch-distribution distance 0.8957.
+- Compared with the previous unconstrained-router checkpoint:
+  - `learned_position_router` and `learned_token_router` had routed role match
+    0.00;
+  - weak supervision changed the outcome from entangled learned routing to
+    near-oracle branch-level functional modularity, especially for the token
+    router.
+- Key interpretation:
+  - a small scored-position routing objective is sufficient for learned
+    functional modularity in this toy setup;
+  - this is not evidence for spontaneous modularity, because the auxiliary loss
+    directly names the desired role split.
+- Recorded the result in `doc/phase3_toy_weak_router.md`.
+- Created checkpoint deck:
+  `presentations/2026-05-22-1300-weak-router/weak_router_checkpoint.pdf`.

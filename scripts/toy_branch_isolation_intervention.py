@@ -13,6 +13,11 @@ Modes:
 - learned_position_router: branch weights are learned per sequence position.
 - learned_token_router: branch weights are learned from the token/position
   representation at each position.
+- weak_position_router: same as learned_position_router, with a weak auxiliary
+  loss that encourages local scored positions to use branch 0 and induction
+  scored positions to use branch 1.
+- weak_token_router: same as learned_token_router, with the same weak auxiliary
+  scored-position routing loss.
 
 The goal is to test whether explicit separation/routing can turn functional
 specialization into branch-level modularity.
@@ -38,6 +43,19 @@ from toy_competition_head_dim_intervention import (
     sequence_layout,
 )
 from toy_head_dim_intervention import TransformerBlock, resolve_device, specialization_distribution
+
+
+VALID_MODES = {
+    "branch_sum",
+    "oracle_route",
+    "learned_position_router",
+    "learned_token_router",
+    "weak_position_router",
+    "weak_token_router",
+}
+POSITION_ROUTER_MODES = {"learned_position_router", "weak_position_router"}
+TOKEN_ROUTER_MODES = {"learned_token_router", "weak_token_router"}
+WEAK_SUPERVISION_MODES = {"weak_position_router", "weak_token_router"}
 
 
 @dataclass
@@ -71,6 +89,7 @@ class ModelSummary:
     induction_gate_entropy_mean: float
     gate_distribution_distance: float
     gate_routed_role_match: bool
+    gate_target_nll_mean: float
 
 
 @dataclass
@@ -90,7 +109,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--configs",
         nargs="+",
-        default=["branch_sum", "learned_position_router", "learned_token_router", "oracle_route"],
+        default=[
+            "branch_sum",
+            "learned_position_router",
+            "learned_token_router",
+            "weak_position_router",
+            "weak_token_router",
+            "oracle_route",
+        ],
     )
     parser.add_argument("--seeds", nargs="+", type=int, default=[1, 2, 3, 4, 5])
     parser.add_argument("--steps", type=int, default=1200)
@@ -106,6 +132,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--lr", type=float, default=1e-3)
     parser.add_argument("--weight-decay", type=float, default=0.01)
     parser.add_argument("--router-temperature", type=float, default=1.0)
+    parser.add_argument("--router-supervision-weight", type=float, default=0.05)
     parser.add_argument("--local-weight", type=float, default=0.25)
     parser.add_argument("--induction-weight", type=float, default=1.0)
     parser.add_argument("--device", default="auto", choices=["auto", "cpu", "cuda"])
@@ -140,7 +167,7 @@ class TwoBranchTransformer(nn.Module):
         router_temperature: float,
     ) -> None:
         super().__init__()
-        if mode not in {"branch_sum", "oracle_route", "learned_position_router", "learned_token_router"}:
+        if mode not in VALID_MODES:
             raise ValueError(f"Unknown branch mode: {mode}")
         self.mode = mode
         self.router_temperature = router_temperature
@@ -174,11 +201,11 @@ class TwoBranchTransformer(nn.Module):
             weights[:, :, self.induction_positions.to(device)] = torch.tensor(
                 [0.0, 1.0], device=device, dtype=dtype
             ).view(1, 2, 1)
-        elif self.mode == "learned_position_router":
+        elif self.mode in POSITION_ROUTER_MODES:
             logits = self.position_router_logits[:seq_len].to(device=device, dtype=dtype)
             probs = torch.softmax(logits / self.router_temperature, dim=-1)
             weights = probs.T.unsqueeze(0).expand(batch_size, -1, -1)
-        elif self.mode == "learned_token_router":
+        elif self.mode in TOKEN_ROUTER_MODES:
             logits = self.token_router(x)
             probs = torch.softmax(logits / self.router_temperature, dim=-1)
             weights = probs.permute(0, 2, 1)
@@ -203,6 +230,18 @@ class TwoBranchTransformer(nn.Module):
         return self.unembed(self.final_ln(h))
 
 
+def routing_target_nll(
+    weights: torch.Tensor,
+    layout: dict[str, torch.Tensor | int],
+) -> torch.Tensor:
+    distribution = normalized_gate_distribution(weights)
+    local_positions = layout["local_positions"].to(weights.device)
+    induction_positions = layout["induction_positions"].to(weights.device)
+    local_nll = -distribution[:, 0, local_positions].clamp_min(1e-12).log().mean()
+    induction_nll = -distribution[:, 1, induction_positions].clamp_min(1e-12).log().mean()
+    return 0.5 * (local_nll + induction_nll)
+
+
 def train_model(
     model: TwoBranchTransformer,
     train_rng: np.random.Generator,
@@ -224,6 +263,9 @@ def train_model(
         optimizer.zero_grad(set_to_none=True)
         logits = model(input_ids)
         loss, _ = combined_loss_accuracy(logits, input_ids, layout, args.local_weight, args.induction_weight)
+        if model.mode in WEAK_SUPERVISION_MODES and args.router_supervision_weight > 0.0:
+            weights = model.route_weights(model.embed_input(input_ids))
+            loss = loss + args.router_supervision_weight * routing_target_nll(weights, layout)
         loss.backward()
         torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
         optimizer.step()
@@ -307,6 +349,7 @@ def collect_route_metrics(
             totals["induction_gate_branch1"] += float(induction_dist[1].detach().cpu()) * batch_size_actual
             totals["local_gate_entropy"] += float(local_entropy.detach().cpu()) * batch_size_actual
             totals["induction_gate_entropy"] += float(induction_entropy.detach().cpu()) * batch_size_actual
+            totals["gate_target_nll"] += float(routing_target_nll(weights, layout).detach().cpu()) * batch_size_actual
             total += batch_size_actual
 
     metrics = {key: value / total for key, value in totals.items()}
@@ -352,6 +395,7 @@ def summarize_config(config: str, model_rows: list[ModelSummary]) -> dict[str, o
         "local_gate_branch1_mean": float(np.mean([row.local_gate_branch1_mean for row in rows])),
         "induction_gate_branch0_mean": float(np.mean([row.induction_gate_branch0_mean for row in rows])),
         "induction_gate_branch1_mean": float(np.mean([row.induction_gate_branch1_mean for row in rows])),
+        "gate_target_nll_mean": float(np.mean([row.gate_target_nll_mean for row in rows])),
         "local_branch0_loss_delta_mean": float(np.mean([row.local_branch0_loss_delta for row in rows])),
         "local_branch1_loss_delta_mean": float(np.mean([row.local_branch1_loss_delta for row in rows])),
         "induction_branch0_loss_delta_mean": float(
@@ -387,6 +431,7 @@ def write_config_summary(path: Path, summary_by_config: dict[str, dict[str, obje
         "local_gate_branch1_mean",
         "induction_gate_branch0_mean",
         "induction_gate_branch1_mean",
+        "gate_target_nll_mean",
         "local_branch0_loss_delta_mean",
         "local_branch1_loss_delta_mean",
         "induction_branch0_loss_delta_mean",
@@ -528,6 +573,7 @@ def main() -> None:
                     induction_gate_entropy_mean=float(route_metrics["induction_gate_entropy"]),
                     gate_distribution_distance=float(route_metrics["gate_distribution_distance"]),
                     gate_routed_role_match=bool(route_metrics["gate_routed_role_match"]),
+                    gate_target_nll_mean=float(route_metrics["gate_target_nll"]),
                 )
             )
 

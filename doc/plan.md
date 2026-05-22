@@ -184,6 +184,10 @@ These three numbers (S, C, M) are what the project should report for each archit
   tested setup they did not discover the oracle role split. The next intervention
   should test weak routing supervision, routing regularization, or a more
   conflict-heavy task.
+- Weak scored-position routing supervision with weight 0.05 made the token router
+  recover near-oracle branch-level functional modularity in 5/5 seeds. The next
+  question is how little supervision is needed, and whether unlabeled routing
+  regularizers or harder task pressure can produce the same change.
 
 ### C. Resources concretely available (with HF / GitHub paths)
 - Pythia seeds: `EleutherAI/pythia-{14m,70m,160m,410m}-seed{1..9}`, plus `pythia-160m-weight-seed{1-3}` and `pythia-160m-data-seed{1-3}`. 154 checkpoints per model (steps 0, 1, 2, 4, 8, …, 143000). GitHub: `EleutherAI/pythia`.
