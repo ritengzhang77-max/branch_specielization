@@ -1,0 +1,41 @@
+{
+  "local": {
+    "n_models": 20,
+    "top_64_rate": 0.95,
+    "top_specialization_mean": 0.9179874513375077,
+    "top_role_score_mean": 0.14566589134501556,
+    "top_head_dim_counts": {
+      "16": 1,
+      "64": 19
+    },
+    "top_slot_counts": {
+      "L0H0:d16": 1,
+      "L1H0:d64": 5,
+      "L1H1:d64": 5,
+      "L1H2:d64": 5,
+      "L1H3:d64": 4
+    }
+  },
+  "induction": {
+    "n_models": 20,
+    "top_64_rate": 0.5,
+    "top_specialization_mean": 0.7388473056210172,
+    "top_role_score_mean": 2.527203859157453,
+    "top_head_dim_counts": {
+      "16": 10,
+      "64": 10
+    },
+    "top_slot_counts": {
+      "L0H0:d16": 3,
+      "L0H0:d64": 1,
+      "L0H1:d16": 1,
+      "L0H2:d16": 5,
+      "L0H3:d16": 1,
+      "L0H3:d64": 2,
+      "L1H0:d64": 1,
+      "L1H1:d64": 1,
+      "L1H2:d64": 3,
+      "L1H3:d64": 2
+    }
+  }
+}

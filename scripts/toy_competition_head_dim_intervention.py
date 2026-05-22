@@ -466,6 +466,14 @@ def summarize_config(
     config_models = [row for row in model_rows if row.config == config]
     local_dims = Counter(row.local_top_head_dim for row in config_models)
     induction_dims = Counter(row.induction_top_head_dim for row in config_models)
+    local_slots = Counter(
+        f"L{row.local_top_layer}H{row.local_top_head}:d{row.local_top_head_dim}"
+        for row in config_models
+    )
+    induction_slots = Counter(
+        f"L{row.induction_top_layer}H{row.induction_top_head}:d{row.induction_top_head_dim}"
+        for row in config_models
+    )
     summary = {
         "n_models": len(config_models),
         "eval_loss_mean": float(np.mean([row.eval_loss for row in config_models])),
@@ -491,6 +499,8 @@ def summarize_config(
         "same_top_head_dim_rate": float(np.mean([row.same_top_head_dim for row in config_models])),
         "local_top_head_dim_counts": {str(dim): count for dim, count in sorted(local_dims.items())},
         "induction_top_head_dim_counts": {str(dim): count for dim, count in sorted(induction_dims.items())},
+        "local_top_slot_counts": {slot: count for slot, count in sorted(local_slots.items())},
+        "induction_top_slot_counts": {slot: count for slot, count in sorted(induction_slots.items())},
     }
     summary.update(summarize_role(config, "local", pair_rows))
     summary.update(summarize_role(config, "induction", pair_rows))
@@ -526,6 +536,8 @@ def write_config_summary(path: Path, summary_by_config: dict[str, dict[str, obje
         "induction_aligned_top_head_match_rate",
         "local_top_head_dim_counts_json",
         "induction_top_head_dim_counts_json",
+        "local_top_slot_counts_json",
+        "induction_top_slot_counts_json",
     ]
     with path.open("w", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=fieldnames)
@@ -534,12 +546,16 @@ def write_config_summary(path: Path, summary_by_config: dict[str, dict[str, obje
             row = dict(values)
             local_counts = row.pop("local_top_head_dim_counts")
             induction_counts = row.pop("induction_top_head_dim_counts")
+            local_slots = row.pop("local_top_slot_counts")
+            induction_slots = row.pop("induction_top_slot_counts")
             writer.writerow(
                 {
                     "config": config,
                     **row,
                     "local_top_head_dim_counts_json": json.dumps(local_counts),
                     "induction_top_head_dim_counts_json": json.dumps(induction_counts),
+                    "local_top_slot_counts_json": json.dumps(local_slots),
+                    "induction_top_slot_counts_json": json.dumps(induction_slots),
                 }
             )
 

@@ -32,6 +32,8 @@ CONFIG_PRESETS = {
     "uniform4": [32, 32, 32, 32],
     "hetero4": [16, 16, 32, 64],
     "hetero4_64first": [64, 16, 16, 32],
+    "hetero4_64second": [16, 64, 16, 32],
+    "hetero4_64third": [16, 32, 64, 16],
     "uniform2": [64, 64],
 }
 

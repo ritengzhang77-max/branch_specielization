@@ -244,3 +244,39 @@ functional modularity?
   `doc/phase3_toy_competition_head_dim_intervention.md`.
 - Created checkpoint deck:
   `presentations/2026-05-22-0845-toy-competition-head-dim/toy_competition_head_dim_checkpoint.pdf`.
+
+## 2026-05-22 Phase 3 Toy Competition Layout Permutations
+
+- Added two named heterogeneous head-dimension presets:
+  - `hetero4_64second`: `[16, 64, 16, 32]`;
+  - `hetero4_64third`: `[16, 32, 64, 16]`.
+- Updated `scripts/toy_competition_head_dim_intervention.py` to record top
+  `(layer, head, dimension)` slot counts in config summaries.
+- Added `scripts/analyze_competition_layout_permutations.py` to combine the
+  original competition run and the new layout permutations.
+- Ran the two new permutations with:
+  - seeds: 1 through 5;
+  - steps: 1200;
+  - batch size: 128;
+  - eval examples: 512;
+  - local pairs: 8;
+  - repeat length: 16.
+- All new models learned both objectives:
+  - `hetero4_64second`: local accuracy 1.0000, induction accuracy 1.0000;
+  - `hetero4_64third`: local accuracy 1.0000, induction accuracy 0.9993.
+- Combined across all four placements of the 64-dim head:
+  - local role top head was 64-dim in 19/20 models;
+  - induction role top head was 64-dim in 10/20 models;
+  - local mean top specialization was 0.9180;
+  - induction mean top specialization was 0.7388.
+- Key interpretation:
+  - local/previous-token behavior follows the 64-dim head as a stable
+    high-capacity slot;
+  - induction behavior is layout-sensitive and often occupies a 16-dim
+    layer-0 slot;
+  - heterogeneous head dimensions support a symmetry-breaking / slot-formation
+    claim, not an automatic semantic role taxonomy claim.
+- Recorded the result in
+  `doc/phase3_toy_competition_layout_permutations.md`.
+- Created checkpoint deck:
+  `presentations/2026-05-22-0858-layout-permutation/layout_permutation_checkpoint.pdf`.
