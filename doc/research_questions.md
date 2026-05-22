@@ -214,12 +214,18 @@ Current toy-pilot status as of 2026-05-22:
   reached 1.00 only at weight 0.05.
 - Unlabeled entropy and load-balancing regularizers changed gate statistics but
   did not reliably produce role-aligned causal branch modularity.
+- Bottlenecking each branch attention head from 64 dims to 16 dims did not rescue
+  unlabeled modularity: unconstrained, balance-only, and entropy+balance
+  bottlenecked routers all had same-top-branch rate 1.00 and routed role match
+  0.00 across 5 seeds. Oracle routing still achieved routed role match 1.00,
+  so the bottlenecked architecture can support modularity when routing is
+  correct.
 
 The next Phase 3 question is therefore:
 
 ```text
-Can stronger task conflict or branch bottlenecks make unlabeled routing pressure
-align with functional roles?
+Can stronger task conflict make unlabeled routing pressure align with functional
+roles when simple branch bottlenecks do not?
 ```
 
 ### Phase 4: Mechanistic Interpretation

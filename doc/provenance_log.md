@@ -602,3 +602,38 @@ functional modularity?
 - Recorded the result in `doc/phase3_toy_unlabeled_router_regularization.md`.
 - Created checkpoint deck:
   `presentations/2026-05-22-1551-unlabeled-router/unlabeled_router_checkpoint.pdf`.
+
+## 2026-05-22 Phase 3 Bottlenecked Branch Routing
+
+- Added `scripts/analyze_bottleneck_router_experiment.py`.
+- Tested whether shrinking each branch attention head from 64 dims to 16 dims
+  makes unlabeled routing pressure align with local-vs-induction functional
+  roles.
+- Ran 5 seeds each for:
+  - unconstrained `learned_token_router`;
+  - balance-only `learned_token_router`;
+  - entropy 0.05 plus balance 1.0 `learned_token_router`;
+  - weak-label `weak_token_router` with supervision weight 0.05;
+  - `oracle_route`.
+- All conditions solved the task.
+- Main bottleneck result:
+  - unconstrained: same-top-branch rate 1.00, routed role match 0.00, branch
+    distance 0.0220;
+  - balance-only: same-top-branch rate 1.00, routed role match 0.00, branch
+    distance 0.0551;
+  - entropy 0.05 plus balance 1.0: same-top-branch rate 1.00, routed role match
+    0.00, branch distance 0.0004.
+- Positive controls:
+  - weak-label bottlenecked router: routed role match 0.80, branch distance
+    0.6768;
+  - oracle bottlenecked router: routed role match 1.00, branch distance 1.0000.
+- Key interpretation:
+  - the bottlenecked architecture can support clean modularity when routing is
+    correct;
+  - simple branch-capacity bottlenecks do not make generic unlabeled gate
+    regularizers discover causal functional modularity in this setup;
+  - the next decisive test should change task conflict, not only capacity or
+    entropy/balance weights.
+- Recorded the result in `doc/phase3_toy_bottleneck_router.md`.
+- Created checkpoint deck:
+  `presentations/2026-05-22-1609-bottleneck-router/bottleneck_router_checkpoint.pdf`.
