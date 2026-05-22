@@ -195,6 +195,26 @@ Decision criterion:
   meaningful change in specialization, modularity, or their dissociation in
   pilot experiments, reframe the architectural-intervention claim.
 
+Current toy-pilot status as of 2026-05-22:
+
+- Heterogeneous head dimensions have produced stable capacity-attractor slots for
+  functional specialization in toy key-value recall and induction-style tasks.
+- In the local-vs-induction competition task, heterogeneous capacity affects
+  which role occupies which slot, but does not by itself guarantee role-specific
+  functional modularity.
+- Separate branch towers without routing solve the task but remain causally
+  entangled across roles.
+- Oracle routing can produce clean branch-level functional modularity.
+- Unconstrained learned routing, tested with position-based and token-based
+  gates, solved the task but did not recover the oracle role split.
+
+The next Phase 3 question is therefore:
+
+```text
+What routing signal, regularizer, or task pressure is sufficient for learned
+functional modularity to emerge, if any?
+```
+
 ### Phase 4: Mechanistic Interpretation
 
 If Phase 3 shows a signal, explain it mechanistically.

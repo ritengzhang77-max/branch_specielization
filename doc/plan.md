@@ -172,6 +172,19 @@ These three numbers (S, C, M) are what the project should report for each archit
 - Apply path patching (Wang et al. 2022, arXiv:2211.00593) to identify circuits in each configuration; ask whether the *same* structural slot consistently hosts a given circuit role across seeds. Do not assume ahead of time that small heads should become local/positional heads or that large heads should become global/induction heads.
 - Compare with the "LLaMA-half" warning from arXiv:2505.16333: confirm that uniform-width changes do not produce the same effect.
 
+**Current Phase 3 toy-pilot evidence (2026-05-22):**
+- Heterogeneous head dimensions can stabilize functional specialization in toy
+  key-value and induction-style tasks.
+- In local-vs-induction competition, capacity heterogeneity behaves like a
+  capacity-slot and task-pressure mechanism, not a fixed semantic role taxonomy.
+- Adding another high-capacity head, or adding separate branch towers without
+  routing, does not automatically produce role-specific functional modularity.
+- Oracle routing can produce branch-level functional modularity.
+- Unconstrained learned position and token routers solve the task, but in the
+  tested setup they did not discover the oracle role split. The next intervention
+  should test weak routing supervision, routing regularization, or a more
+  conflict-heavy task.
+
 ### C. Resources concretely available (with HF / GitHub paths)
 - Pythia seeds: `EleutherAI/pythia-{14m,70m,160m,410m}-seed{1..9}`, plus `pythia-160m-weight-seed{1-3}` and `pythia-160m-data-seed{1-3}`. 154 checkpoints per model (steps 0, 1, 2, 4, 8, …, 143000). GitHub: `EleutherAI/pythia`.
 - MultiBERTs: `google/multiberts-seed_{0..24}-step_2000k`; 28 intermediate checkpoints for seeds 0–4 (`step_{20k..2000k}`). Cloud bucket `storage.googleapis.com/multiberts/public/intermediates/`.

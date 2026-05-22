@@ -10,6 +10,9 @@ Modes:
 - branch_sum: both branch residual updates contribute at every position.
 - oracle_route: local scored positions use branch 0, induction scored positions
   use branch 1, and unscored positions use both branches.
+- learned_position_router: branch weights are learned per sequence position.
+- learned_token_router: branch weights are learned from the token/position
+  representation at each position.
 
 The goal is to test whether explicit separation/routing can turn functional
 specialization into branch-level modularity.
@@ -20,7 +23,6 @@ from __future__ import annotations
 import argparse
 import csv
 import json
-import math
 from collections import Counter, defaultdict
 from dataclasses import asdict, dataclass
 from pathlib import Path
@@ -61,6 +63,14 @@ class ModelSummary:
     same_top_branch: bool
     routed_role_match: bool
     branch_distribution_distance: float
+    local_gate_branch0_mean: float
+    local_gate_branch1_mean: float
+    induction_gate_branch0_mean: float
+    induction_gate_branch1_mean: float
+    local_gate_entropy_mean: float
+    induction_gate_entropy_mean: float
+    gate_distribution_distance: float
+    gate_routed_role_match: bool
 
 
 @dataclass
@@ -77,7 +87,11 @@ class BranchScore:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--configs", nargs="+", default=["branch_sum", "oracle_route"])
+    parser.add_argument(
+        "--configs",
+        nargs="+",
+        default=["branch_sum", "learned_position_router", "learned_token_router", "oracle_route"],
+    )
     parser.add_argument("--seeds", nargs="+", type=int, default=[1, 2, 3, 4, 5])
     parser.add_argument("--steps", type=int, default=1200)
     parser.add_argument("--batch-size", type=int, default=128)
@@ -91,6 +105,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--branch-head-dims", nargs="+", type=int, default=[64])
     parser.add_argument("--lr", type=float, default=1e-3)
     parser.add_argument("--weight-decay", type=float, default=0.01)
+    parser.add_argument("--router-temperature", type=float, default=1.0)
     parser.add_argument("--local-weight", type=float, default=0.25)
     parser.add_argument("--induction-weight", type=float, default=1.0)
     parser.add_argument("--device", default="auto", choices=["auto", "cpu", "cuda"])
@@ -122,11 +137,13 @@ class TwoBranchTransformer(nn.Module):
         mode: str,
         local_positions: torch.Tensor,
         induction_positions: torch.Tensor,
+        router_temperature: float,
     ) -> None:
         super().__init__()
-        if mode not in {"branch_sum", "oracle_route"}:
+        if mode not in {"branch_sum", "oracle_route", "learned_position_router", "learned_token_router"}:
             raise ValueError(f"Unknown branch mode: {mode}")
         self.mode = mode
+        self.router_temperature = router_temperature
         self.branch_head_dims = list(branch_head_dims)
         self.seq_len = seq_len
         self.token_embed = nn.Embedding(vocab_size, d_model)
@@ -134,27 +151,44 @@ class TwoBranchTransformer(nn.Module):
         self.branches = nn.ModuleList(
             [BranchTower(d_model, branch_head_dims, n_layers, mlp_dim) for _ in range(2)]
         )
+        self.position_router_logits = nn.Parameter(torch.zeros(seq_len, 2))
+        self.token_router = nn.Linear(d_model, 2)
         self.final_ln = nn.LayerNorm(d_model)
         self.unembed = nn.Linear(d_model, vocab_size, bias=False)
         self.register_buffer("local_positions", local_positions.clone().long(), persistent=False)
         self.register_buffer("induction_positions", induction_positions.clone().long(), persistent=False)
 
-    def route_weights(self, seq_len: int, device: torch.device, dtype: torch.dtype) -> torch.Tensor:
-        weights = torch.ones(2, seq_len, device=device, dtype=dtype)
+    def embed_input(self, input_ids: torch.Tensor) -> torch.Tensor:
+        seq_len = input_ids.shape[1]
+        return self.token_embed(input_ids) + self.pos_embed[:seq_len]
+
+    def route_weights(self, x: torch.Tensor) -> torch.Tensor:
+        batch_size, seq_len, _ = x.shape
+        device = x.device
+        dtype = x.dtype
+        weights = torch.ones(batch_size, 2, seq_len, device=device, dtype=dtype)
         if self.mode == "oracle_route":
-            weights[:, self.local_positions.to(device)] = torch.tensor(
-                [[1.0], [0.0]], device=device, dtype=dtype
-            )
-            weights[:, self.induction_positions.to(device)] = torch.tensor(
-                [[0.0], [1.0]], device=device, dtype=dtype
-            )
+            weights[:, :, self.local_positions.to(device)] = torch.tensor(
+                [1.0, 0.0], device=device, dtype=dtype
+            ).view(1, 2, 1)
+            weights[:, :, self.induction_positions.to(device)] = torch.tensor(
+                [0.0, 1.0], device=device, dtype=dtype
+            ).view(1, 2, 1)
+        elif self.mode == "learned_position_router":
+            logits = self.position_router_logits[:seq_len].to(device=device, dtype=dtype)
+            probs = torch.softmax(logits / self.router_temperature, dim=-1)
+            weights = probs.T.unsqueeze(0).expand(batch_size, -1, -1)
+        elif self.mode == "learned_token_router":
+            logits = self.token_router(x)
+            probs = torch.softmax(logits / self.router_temperature, dim=-1)
+            weights = probs.permute(0, 2, 1)
         return weights
 
     def forward(self, input_ids: torch.Tensor, ablate_branch: int | None = None) -> torch.Tensor:
         device = input_ids.device
         seq_len = input_ids.shape[1]
         causal_mask = torch.triu(torch.ones(seq_len, seq_len, dtype=torch.bool, device=device), diagonal=1)
-        x = self.token_embed(input_ids) + self.pos_embed[:seq_len]
+        x = self.embed_input(input_ids)
         branch_deltas = []
         for branch_idx, branch in enumerate(self.branches):
             delta = branch(x, causal_mask)
@@ -162,10 +196,10 @@ class TwoBranchTransformer(nn.Module):
                 delta = torch.zeros_like(delta)
             branch_deltas.append(delta)
 
-        weights = self.route_weights(seq_len, device, x.dtype)
+        weights = self.route_weights(x)
         h = x
         for branch_idx, delta in enumerate(branch_deltas):
-            h = h + weights[branch_idx].view(1, seq_len, 1) * delta
+            h = h + weights[:, branch_idx, :].unsqueeze(-1) * delta
         return self.unembed(self.final_ln(h))
 
 
@@ -233,6 +267,56 @@ def distribution_distance(a: np.ndarray, b: np.ndarray) -> float:
     return float(0.5 * np.abs(a - b).sum())
 
 
+def normalized_gate_distribution(weights: torch.Tensor) -> torch.Tensor:
+    return weights / weights.sum(dim=1, keepdim=True).clamp_min(1e-12)
+
+
+def gate_entropy(distribution: torch.Tensor) -> torch.Tensor:
+    return -(distribution * distribution.clamp_min(1e-12).log()).sum(dim=1)
+
+
+def collect_route_metrics(
+    model: TwoBranchTransformer,
+    input_ids: torch.Tensor,
+    layout: dict[str, torch.Tensor | int],
+    batch_size: int,
+    device: torch.device,
+) -> dict[str, float]:
+    model.eval()
+    totals = defaultdict(float)
+    total = 0
+    local_positions_cpu = layout["local_positions"]
+    induction_positions_cpu = layout["induction_positions"]
+    with torch.inference_mode():
+        for ids in iter_batches(input_ids, batch_size):
+            ids = ids.to(device)
+            x = model.embed_input(ids)
+            weights = model.route_weights(x)
+            distribution = normalized_gate_distribution(weights)
+            entropy = gate_entropy(distribution)
+            local_positions = local_positions_cpu.to(device)
+            induction_positions = induction_positions_cpu.to(device)
+            local_dist = distribution[:, :, local_positions].mean(dim=(0, 2))
+            induction_dist = distribution[:, :, induction_positions].mean(dim=(0, 2))
+            local_entropy = entropy[:, local_positions].mean()
+            induction_entropy = entropy[:, induction_positions].mean()
+            batch_size_actual = ids.shape[0]
+            totals["local_gate_branch0"] += float(local_dist[0].detach().cpu()) * batch_size_actual
+            totals["local_gate_branch1"] += float(local_dist[1].detach().cpu()) * batch_size_actual
+            totals["induction_gate_branch0"] += float(induction_dist[0].detach().cpu()) * batch_size_actual
+            totals["induction_gate_branch1"] += float(induction_dist[1].detach().cpu()) * batch_size_actual
+            totals["local_gate_entropy"] += float(local_entropy.detach().cpu()) * batch_size_actual
+            totals["induction_gate_entropy"] += float(induction_entropy.detach().cpu()) * batch_size_actual
+            total += batch_size_actual
+
+    metrics = {key: value / total for key, value in totals.items()}
+    local_gate = np.asarray([metrics["local_gate_branch0"], metrics["local_gate_branch1"]])
+    induction_gate = np.asarray([metrics["induction_gate_branch0"], metrics["induction_gate_branch1"]])
+    metrics["gate_distribution_distance"] = distribution_distance(local_gate, induction_gate)
+    metrics["gate_routed_role_match"] = bool(np.argmax(local_gate) == 0 and np.argmax(induction_gate) == 1)
+    return metrics
+
+
 def write_csv(path: Path, rows: list[object]) -> None:
     if not rows:
         return
@@ -260,6 +344,14 @@ def summarize_config(config: str, model_rows: list[ModelSummary]) -> dict[str, o
         "branch_distribution_distance_mean": float(
             np.mean([row.branch_distribution_distance for row in rows])
         ),
+        "gate_routed_role_match_rate": float(np.mean([row.gate_routed_role_match for row in rows])),
+        "gate_distribution_distance_mean": float(np.mean([row.gate_distribution_distance for row in rows])),
+        "local_gate_entropy_mean": float(np.mean([row.local_gate_entropy_mean for row in rows])),
+        "induction_gate_entropy_mean": float(np.mean([row.induction_gate_entropy_mean for row in rows])),
+        "local_gate_branch0_mean": float(np.mean([row.local_gate_branch0_mean for row in rows])),
+        "local_gate_branch1_mean": float(np.mean([row.local_gate_branch1_mean for row in rows])),
+        "induction_gate_branch0_mean": float(np.mean([row.induction_gate_branch0_mean for row in rows])),
+        "induction_gate_branch1_mean": float(np.mean([row.induction_gate_branch1_mean for row in rows])),
         "local_branch0_loss_delta_mean": float(np.mean([row.local_branch0_loss_delta for row in rows])),
         "local_branch1_loss_delta_mean": float(np.mean([row.local_branch1_loss_delta for row in rows])),
         "induction_branch0_loss_delta_mean": float(
@@ -287,6 +379,14 @@ def write_config_summary(path: Path, summary_by_config: dict[str, dict[str, obje
         "same_top_branch_rate",
         "routed_role_match_rate",
         "branch_distribution_distance_mean",
+        "gate_routed_role_match_rate",
+        "gate_distribution_distance_mean",
+        "local_gate_entropy_mean",
+        "induction_gate_entropy_mean",
+        "local_gate_branch0_mean",
+        "local_gate_branch1_mean",
+        "induction_gate_branch0_mean",
+        "induction_gate_branch1_mean",
         "local_branch0_loss_delta_mean",
         "local_branch1_loss_delta_mean",
         "induction_branch0_loss_delta_mean",
@@ -344,6 +444,7 @@ def main() -> None:
                 mode=config,
                 local_positions=layout["local_positions"],
                 induction_positions=layout["induction_positions"],
+                router_temperature=args.router_temperature,
             ).to(device)
             train_model(model, np.random.default_rng(seed), args, layout, device)
             baseline = evaluate(
@@ -355,6 +456,7 @@ def main() -> None:
                 args.batch_size,
                 device,
             )
+            route_metrics = collect_route_metrics(model, eval_ids, layout, args.batch_size, device)
             ablations = [
                 evaluate(
                     model,
@@ -418,6 +520,14 @@ def main() -> None:
                     same_top_branch=local_top == induction_top,
                     routed_role_match=local_top == 0 and induction_top == 1,
                     branch_distribution_distance=distribution_distance(local_dist, induction_dist),
+                    local_gate_branch0_mean=float(route_metrics["local_gate_branch0"]),
+                    local_gate_branch1_mean=float(route_metrics["local_gate_branch1"]),
+                    induction_gate_branch0_mean=float(route_metrics["induction_gate_branch0"]),
+                    induction_gate_branch1_mean=float(route_metrics["induction_gate_branch1"]),
+                    local_gate_entropy_mean=float(route_metrics["local_gate_entropy"]),
+                    induction_gate_entropy_mean=float(route_metrics["induction_gate_entropy"]),
+                    gate_distribution_distance=float(route_metrics["gate_distribution_distance"]),
+                    gate_routed_role_match=bool(route_metrics["gate_routed_role_match"]),
                 )
             )
 

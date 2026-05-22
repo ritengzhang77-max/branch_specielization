@@ -1,0 +1,173 @@
+\documentclass[aspectratio=169]{beamer}
+\usetheme{Madrid}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{array}
+
+\title{Branch Specialization Checkpoint}
+\subtitle{Learned Branch Routing}
+\author{Branch Specialization Project}
+\date{2026-05-22}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+  \vspace{-0.5em}
+  \begin{center}
+    Checkpoint reason: unconstrained learned routers did not recover oracle modularity.
+  \end{center}
+\end{frame}
+
+\begin{frame}{Question}
+  Previous branch-isolation result:
+  \begin{itemize}
+    \item separate branch towers alone stayed functionally entangled;
+    \item oracle routing made local depend on branch 0 and induction depend on branch 1.
+  \end{itemize}
+
+  \vspace{0.8em}
+  This checkpoint asks:
+
+  \begin{quote}
+    Can a learned router discover role-specific branch modularity without
+    hard-coded local-to-branch-0 and induction-to-branch-1 assignment?
+  \end{quote}
+\end{frame}
+
+\begin{frame}{Setup}
+  Same local-vs-induction competition task:
+  \begin{itemize}
+    \item local copy: \texttt{[x, SEP, x]};
+    \item induction continuation: \texttt{[y1,...,y16,y1,...,y16]};
+    \item local weight 0.25, induction weight 1.0;
+    \item five seeds per config, 1200 training steps.
+  \end{itemize}
+
+  \vspace{0.6em}
+  Four variants:
+  \begin{itemize}
+    \item \texttt{branch\_sum}: two branches active everywhere.
+    \item \texttt{learned\_position\_router}: branch gate learned per position.
+    \item \texttt{learned\_token\_router}: branch gate learned from token/position state.
+    \item \texttt{oracle\_route}: local uses branch 0; induction uses branch 1.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Main Result}
+  \begin{center}
+  \scriptsize
+  \begin{tabular}{lrrrrr}
+    \toprule
+    Config & Local acc. & Ind. acc. & Same top & Routed match & Branch distance \\
+    \midrule
+    \texttt{branch\_sum} & 1.0000 & 0.9997 & 0.80 & 0.20 & 0.0951 \\
+    \texttt{learned\_position} & 0.9999 & 0.9987 & 1.00 & 0.00 & 0.0665 \\
+    \texttt{learned\_token} & 1.0000 & 0.9989 & 1.00 & 0.00 & 0.0006 \\
+    \texttt{oracle\_route} & 1.0000 & 0.9988 & 0.00 & 1.00 & 1.0000 \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+
+  \vspace{0.7em}
+  Same top branch means local and induction are causally most dependent on the
+  same branch. Routed match means local top branch is 0 and induction top branch is 1.
+\end{frame}
+
+\begin{frame}{Gate Metrics}
+  \begin{center}
+  \scriptsize
+  \begin{tabular}{lrrrr}
+    \toprule
+    Config & Gate routed match & Gate distance & Local entropy & Ind. entropy \\
+    \midrule
+    \texttt{branch\_sum} & 0.00 & 0.0000 & 0.6931 & 0.6931 \\
+    \texttt{learned\_position} & 0.40 & 0.0200 & 0.6924 & 0.6914 \\
+    \texttt{learned\_token} & 0.00 & 0.1045 & 0.1593 & 0.3340 \\
+    \texttt{oracle\_route} & 1.00 & 1.0000 & 0.0000 & 0.0000 \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+
+  \vspace{0.7em}
+  The token router learned lower-entropy gates, but low entropy did not imply
+  role-specific causal modularity.
+\end{frame}
+
+\begin{frame}{Branch Ablation}
+  \begin{center}
+  \scriptsize
+  \begin{tabular}{lrrrr}
+    \toprule
+    Config & Local B0 & Local B1 & Induction B0 & Induction B1 \\
+    \midrule
+    \texttt{branch\_sum} & 0.2017 & 0.1316 & 0.8995 & 0.7907 \\
+    \texttt{learned\_position} & 0.2437 & 0.2964 & 0.7832 & 1.0852 \\
+    \texttt{learned\_token} & 2.2221 & 2.7767 & 2.3307 & 3.2506 \\
+    \texttt{oracle\_route} & 5.8198 & 0.0000 & 0.0000 & 6.1639 \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+
+  \vspace{0.7em}
+  Only oracle routing gives the clean local-on-B0 and induction-on-B1 ablation
+  pattern. Learned routers keep the two roles causally co-located or entangled.
+\end{frame}
+
+\begin{frame}{Evidence Plot}
+  \begin{center}
+  \includegraphics[width=0.88\linewidth]{figures/branch_isolation_summary.png}
+  \end{center}
+
+  \vspace{-0.4em}
+  \small
+  The learned-router bars sit near the entangled branch-sum regime on causal
+  modularity, while oracle routing remains the positive upper bound.
+\end{frame}
+
+\begin{frame}{Interpretation}
+  \textbf{Supported in this toy setup:}
+  \begin{itemize}
+    \item Learned routers can solve the task.
+    \item Gate specialization and causal modularity can dissociate.
+    \item Explicit routing can produce branch-level functional modularity.
+  \end{itemize}
+
+  \vspace{0.6em}
+  \textbf{Not supported by this run:}
+  \begin{quote}
+    Unconstrained learned routing naturally discovers the role-specific oracle
+    split between local and induction.
+  \end{quote}
+\end{frame}
+
+\begin{frame}{Decision}
+  Continue Phase 3, but sharpen the question:
+
+  \begin{quote}
+    What routing signal, regularizer, or task pressure is sufficient for learned
+    functional modularity to emerge, if any?
+  \end{quote}
+
+  \vspace{0.8em}
+  Next decisive tests:
+  \begin{itemize}
+    \item weak router supervision only on scored positions;
+    \item entropy or load-balancing pressure;
+    \item a more conflict-heavy task where shared-branch solutions are less attractive.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Sources and Provenance}
+  \scriptsize
+  \begin{itemize}
+    \item Report: \texttt{doc/phase3\_toy\_learned\_router.md}
+    \item Model script: \texttt{scripts/toy\_branch\_isolation\_intervention.py}
+    \item Analysis script: \texttt{scripts/analyze\_branch\_isolation.py}
+    \item Run output: \texttt{results/phase3\_toy\_learned\_router\_lw025/}
+    \item Analysis output: \texttt{results/phase3\_toy\_learned\_router\_analysis/}
+    \item Deck data snapshot: \texttt{presentations/2026-05-22-1249-learned-router/data/}
+  \end{itemize}
+\end{frame}
+
+\end{document}

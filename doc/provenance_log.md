@@ -444,3 +444,47 @@ functional modularity?
   modularity" and "different specialization or modularity patterns."
 - Clarified that specialization without modularity, modularity without
   specialization, both together, or neither are all valid empirical outcomes.
+
+## 2026-05-22 Phase 3 Toy Learned Branch Routing
+
+- Extended `scripts/toy_branch_isolation_intervention.py` with learned routing
+  variants:
+  - `learned_position_router`: a softmax branch gate learned per sequence
+    position;
+  - `learned_token_router`: a softmax branch gate learned from the token and
+    position representation at each position.
+- Added gate diagnostics alongside causal branch-ablation diagnostics:
+  - local and induction mean gate weights by branch;
+  - local and induction gate entropy;
+  - gate distribution distance between local and induction positions;
+  - gate routed-role match rate.
+- Ran the four-way comparison:
+  - `branch_sum`;
+  - `learned_position_router`;
+  - `learned_token_router`;
+  - `oracle_route`.
+- All variants solved the local-vs-induction toy task:
+  - `branch_sum`: local accuracy 1.0000, induction accuracy 0.9997;
+  - `learned_position_router`: local accuracy 0.9999, induction accuracy
+    0.9987;
+  - `learned_token_router`: local accuracy 1.0000, induction accuracy 0.9989;
+  - `oracle_route`: local accuracy 1.0000, induction accuracy 0.9988.
+- Main modularity result:
+  - `learned_position_router`: same top branch rate 1.00, routed role match
+    0.00, branch-distribution distance 0.0665;
+  - `learned_token_router`: same top branch rate 1.00, routed role match 0.00,
+    branch-distribution distance 0.0006;
+  - `oracle_route`: same top branch rate 0.00, routed role match 1.00,
+    branch-distribution distance 1.0000.
+- Gate behavior separated from causal modularity:
+  - the position router kept gates near-uniform and high-entropy;
+  - the token router often learned lower-entropy routing, but routed both roles
+    through the same top branch in every seed.
+- Key interpretation:
+  - unconstrained learned routers can solve the toy task;
+  - in this setup, they did not discover role-specific functional modularity;
+  - explicit oracle routing remains a positive upper bound showing that
+    branch-level functional modularity is possible.
+- Recorded the result in `doc/phase3_toy_learned_router.md`.
+- Created checkpoint deck:
+  `presentations/2026-05-22-1249-learned-router/learned_router_checkpoint.pdf`.
