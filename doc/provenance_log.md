@@ -316,3 +316,41 @@ functional modularity?
 - Recorded the result in `doc/phase3_toy_competition_weight_sweep.md`.
 - Created checkpoint deck:
   `presentations/2026-05-22-0921-weight-sweep/weight_sweep_checkpoint.pdf`.
+
+## 2026-05-22 Phase 3 Toy Competition All-Layout Weight Sweep
+
+- Added `scripts/analyze_competition_all_layout_weight_sweep.py`.
+- Repeated the local-weight sweep across all four placements of the 64-dim head:
+  - `hetero4_64first`: `[64, 16, 16, 32]`;
+  - `hetero4_64second`: `[16, 64, 16, 32]`;
+  - `hetero4_64third`: `[16, 32, 64, 16]`;
+  - `hetero4`: `[16, 16, 32, 64]`.
+- The full analysis grid combines 100 trained models:
+  - 4 layouts;
+  - 5 local weights: 0.00, 0.01, 0.10, 0.25, 1.00;
+  - 5 seeds per layout/weight.
+- Aggregate induction top-64 rates:
+  - local weight 0.00: 19/20 models;
+  - local weight 0.01: 19/20 models;
+  - local weight 0.10: 12/20 models;
+  - local weight 0.25: 5/20 models;
+  - local weight 1.00: 10/20 models.
+- Aggregate local top-64 rates:
+  - local weight 0.00: 5/20 models;
+  - local weight 0.01: 18/20 models;
+  - local weight 0.10: 17/20 models;
+  - local weight 0.25: 12/20 models;
+  - local weight 1.00: 19/20 models.
+- Key interpretation:
+  - induction strongly occupies the 64-dim head when local pressure is absent or
+    tiny;
+  - moderate local pressure often displaces induction to secondary 16-dim or
+    32-dim heads;
+  - the pressure effect is not strictly monotonic, since equal weighting
+    produces layout-specific mixed solutions;
+  - the best mechanism is capacity-attractor slots plus task-pressure,
+    layout-sensitive, and optimization-basin-sensitive role allocation.
+- Recorded the result in
+  `doc/phase3_toy_competition_all_layout_weight_sweep.md`.
+- Created checkpoint deck:
+  `presentations/2026-05-22-1135-all-layout-weight-sweep/all_layout_weight_sweep_checkpoint.pdf`.
