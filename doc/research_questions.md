@@ -8,6 +8,17 @@ The cleanest framing is:
 > **stable functional specialization** or **functional modularity** across random
 > seeds?
 
+This is an empirical question, not a design desideratum. The project should not
+assume that functions ought to be separated, or that separation is always better.
+The goal is to measure which outcomes actually occur:
+
+- no reliable specialization;
+- specialization without modularity;
+- modularity without role specialization;
+- specialization and modularity together.
+
+Positive, negative, and mixed outcomes are all potentially informative.
+
 Use the terms as follows:
 
 - **Structural heterogeneity**: architectural differences among components before
@@ -56,8 +67,9 @@ This question separates strong universality from weak universality.
 
 ### RQ3: Does Specialization Coincide With Modularity?
 
-When a head is specialized for a function, is it also functionally separable from
-other heads?
+When a head or branch is specialized for a function, is it also functionally
+separable from other heads or branches? Or do multiple functions cohabit the same
+component despite specialization?
 
 Operational tests:
 
@@ -67,13 +79,15 @@ Operational tests:
 - conditional mutual information between head outputs, if estimation is reliable;
 - causal path-patching separability.
 
-This is the conceptual hazard in the project: specialization without modularity is
-possible and likely in transformer residual-stream architectures.
+This is a core measurement axis, not a pass/fail criterion. Specialization
+without modularity is possible and scientifically important, especially in
+transformer residual-stream architectures.
 
-### RQ4: Do Explicit Branch Architectures Produce Cleaner Specialization Than Vanilla MHA?
+### RQ4: Do Explicit Branch Architectures Change Specialization or Modularity Relative to Vanilla MHA?
 
 Do MoE experts, routed attention experts, or SwitchHead-style attention experts
-show more stable specialization than ordinary attention heads?
+show different specialization or modularity patterns than ordinary attention
+heads?
 
 Operational tests:
 
@@ -83,13 +97,15 @@ Operational tests:
 - expert ablation effects;
 - cross-seed or cross-checkpoint stability where seeds are unavailable.
 
-This tests whether "branch" is a more natural unit for experts than for vanilla
-attention heads.
+This tests whether "branch" is a more natural unit for some functions than
+ordinary attention heads, and whether branch structure changes specialization,
+modularity, both, or neither.
 
-### RQ5: Does Structural Heterogeneity Cause More Stable Functional Specialization?
+### RQ5: Does Structural Heterogeneity Change Functional Specialization or Modularity?
 
 Does an intervention such as heterogeneous per-head dimension make functional
-roles more consistent across seeds?
+roles more consistent across seeds? Separately, does it affect functional
+modularity, or only specialization?
 
 Candidate intervention:
 
@@ -102,7 +118,7 @@ Primary outcomes:
 
 - lower cross-seed variance of `S(h, t)`;
 - larger Hungarian-matched similarity gap;
-- higher clusterability/modularity;
+- change in clusterability/modularity, without assuming the direction in advance;
 - stronger reuse of head-dimension slots for the same function.
 
 Required controls:
@@ -162,20 +178,22 @@ Deliverables:
 
 ### Phase 3: Architectural Intervention
 
-Train uniform and heterogeneous-head-dimension models across multiple seeds.
+Train uniform, heterogeneous-head-dimension, and explicitly routed/separated
+toy or small-scale models across multiple seeds.
 
 Deliverables:
 
 - matched-loss training curves;
 - specialization/stability comparison;
-- modularity comparison;
+- modularity comparison, including the possibility of specialization without
+  modularity;
 - control for uniform wider/fewer heads.
 
 Decision criterion:
 
-- If heterogeneous head dimensions do not reduce cross-seed variance in pilot
-  experiments by a practically meaningful amount, abandon or reframe the
-  architectural-intervention claim.
+- If heterogeneous head dimensions or routing do not produce a practically
+  meaningful change in specialization, modularity, or their dissociation in
+  pilot experiments, reframe the architectural-intervention claim.
 
 ### Phase 4: Mechanistic Interpretation
 
@@ -184,7 +202,7 @@ If Phase 3 shows a signal, explain it mechanistically.
 Deliverables:
 
 - path-patching circuits for the key tasks;
-- evidence about whether small heads consistently host local/positional roles and
-  large heads host global/induction/name-moving roles;
+- evidence about whether any structural slot consistently hosts any role, without
+  assuming that small heads should host local roles or large heads should host
+  global/induction roles;
 - comparison of specialization and modularity axes.
-

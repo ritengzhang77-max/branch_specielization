@@ -2,12 +2,18 @@
 
 ## What This Project Is
 
-This document scopes a research project that extends the **Branch Specialization** framework — originally developed by Olah, Voss, and collaborators on convolutional architectures like Inception (Distill 2020/2021) — to **transformer attention**. The core conceptual move is to treat each attention head (or each MoE expert, or each parallel branch in hybrid architectures like Hymba) as a "branch" in the Inception sense, and to ask the same questions the Branch Specialization literature has asked about CNNs: do branches functionally specialize, is that specialization consistent across random seeds, and can architectural design choices (specifically: heterogeneous per-head dimensions) make specialization more reliable and more modular?
+This document scopes a research project that extends the **Branch Specialization** framework — originally developed by Olah, Voss, and collaborators on convolutional architectures like Inception (Distill 2020/2021) — to **transformer attention**. The core conceptual move is to treat each attention head (or each MoE expert, or each parallel branch in hybrid architectures like Hymba) as a "branch" in the Inception sense, and to ask the same questions the Branch Specialization literature has asked about CNNs: do branches functionally specialize, is that specialization consistent across random seeds, and how do architectural design choices (for example heterogeneous per-head dimensions, explicit branches, or routing) affect specialization and modularity?
+
+The project is deliberately neutral about whether functions *should* separate
+into different branches. The research question is whether they do, when they do,
+and under which structural conditions. "Functions separate cleanly" and
+"functions cohabit the same branch despite specialization" are both useful
+findings.
 
 The project builds directly on prior work by the author on cross-seed branch attribution variability in Inception variants (Zhang & Alvarez, advised by Prof. Sergio Alvarez at Boston College — "Analyzing Variations in Branch Attribution in Non-monolithic Models"). It is organized into two stages:
 
 - **Stage 1 — Post-hoc analysis.** Using publicly available multi-seed checkpoint suites (Pythia, MultiBERTs) and existing branched attention architectures (OLMoE, Hymba, SwitchHead), quantify how consistent attention-head functional specialization is across random initializations. Establish baseline measurements that the Branch Specialization community has produced for CNNs but that essentially do not yet exist for transformers.
-- **Stage 2 — Architectural intervention.** Test whether *heterogeneous per-head dimensions* within a single attention layer (e.g., head_dim drawn from {32, 64, 128, 256} rather than uniformly 64) act as an architectural inductive bias that makes head specialization more consistent across seeds and more modular in a graph-theoretic sense.
+- **Stage 2 — Architectural intervention.** Test whether interventions such as *heterogeneous per-head dimensions*, explicit branch structure, or routing change the stability of functional specialization and/or the degree of functional modularity. This stage should measure modularity as an empirical outcome, not assume that separated functions are the desired or expected result.
 
 ## What This Document Is
 
@@ -17,7 +23,7 @@ This is a **research roadmap and literature review**, not a paper. Its purpose i
 2. Bridge two communities that have largely talked past each other — **Branch Specialization / Modularity** (Olah, Voss, Filan, Csordás, Hod, Lange) and **Mechanistic Interpretability** (Anthropic Transformer Circuits, Wang/Nanda IOI, Olsson induction heads) — by providing a translation table and a formal distinction between *specialization* and *modularity*.
 3. Rank existing branched attention architectures by practicality as Stage-1 analysis targets, with concrete HuggingFace/GitHub paths.
 4. Specify methodology for cross-seed specialization measurement that avoids known pitfalls (permutation symmetry, CKA misleading results) by using attention-score-matrix comparison plus Hungarian-matched alignment.
-5. Lay out a 20-week staged plan with explicit milestones, pre-registered predictions, and abandonment thresholds.
+5. Lay out a 20-week staged plan with explicit milestones, pre-registered predictions, and decision thresholds.
 6. List caveats — including a Differential Transformer follow-up result (arXiv:2505.16333) that constitutes a serious null prior for the architectural intervention and must be engaged with.
 
 ## How To Read This Document
@@ -29,7 +35,7 @@ Read the **TL;DR** for the three highest-level takeaways (the project is novel a
 ## TL;DR
 - **The core idea is novel and well-positioned**: extending Olah/Voss et al.'s Branch Specialization framework from Inception branches to transformer attention heads is timely — only one paper to date (Bali, Stanley, Suresh, Bzdok, "Quantifying LLM Attention-Head Stability: Implications for Circuit Universality," arXiv:2602.16740, Feb 2026) directly addresses cross-seed consistency of attention-head function, and it leaves the *architectural-intervention* question (does heterogeneity improve consistency?) entirely open.
 - **Stage 1 (post-hoc) is immediately tractable**: Pythia (9 official seeds at 14M–410M, plus decoupled `weight-seed{1-3}` / `data-seed{1-3}` variants for 160M) + MultiBERTs (25 BERT-Base Uncased seeds with 28 intermediate checkpoints for the first 5 models, 140 total) give you a cheap, reproducible substrate; Hymba-1.5B-Base (parallel attention+SSM heads) and OLMoE-1B-7B (16 decoder layers × 64 routed experts, top-k=8 per token, ~1.3B active of 7B total, pretrained on 5T tokens) are the two most natural "branched" architectures to layer on top.
-- **Stage 2 (heterogeneous head_dim) appears genuinely new**: no paper found trains transformers with mixed per-head dimensions ({32,64,128,256}) within a single attention layer — DeepSeek MLA, Differential Transformer, Bhojanapalli's low-rank-bottleneck fix, and "Allocation of Parameters in Transformers" (arXiv:2510.03784) all motivate the direction but stop short of explicit intra-layer head-dim heterogeneity, and none tests cross-seed consistency as the outcome variable.
+- **Stage 2 (architectural intervention) appears genuinely new**: no paper found trains transformers with mixed per-head dimensions ({32,64,128,256}) within a single attention layer and tests whether this changes cross-seed specialization or modularity. DeepSeek MLA, Differential Transformer, Bhojanapalli's low-rank-bottleneck fix, and "Allocation of Parameters in Transformers" (arXiv:2510.03784) all motivate the direction but stop short of explicit intra-layer head-dim heterogeneity, and none treats cross-seed function-to-branch mapping as the outcome variable.
 
 ## Key Findings
 
@@ -71,7 +77,7 @@ Read the **TL;DR** for the three highest-level takeaways (the project is novel a
 After the literature review the cleanest formal framing (the user's own synthesis is needed here — no single paper provides this) is:
 - **Specialization**: a property of the function-to-component mapping. Component *c* is specialized for task/feature *f* iff *f* is disproportionately encoded by *c* (high mutual information, high attribution, or high lesion effect on *f* relative to other components).
 - **Modularity**: a property of the *interface* between components. Components *c₁* and *c₂* are modular iff their internal computations are weakly coupled — formally, low conditional mutual information of c₁'s internal state given the rest of the network's state conditional on its inputs, or equivalently, low cross-cluster edge weight in a weighted-graph clusterability sense.
-- **They can dissociate**: (a) specialization *without* modularity = polysemantic heads that each encode a unique feature mix but share weights/information heavily (superposition territory — Elhage et al. 2022; Henighan et al. 2023). (b) modularity *without* specialization = redundant branches doing the same computation (the "duplicate head" phenomenon — Michel et al. 2019).
+- **They can dissociate**: (a) specialization *without* modularity = polysemantic heads that each encode a unique feature mix but share weights/information heavily (superposition territory — Elhage et al. 2022; Henighan et al. 2023). (b) modularity *without* specialization = redundant branches doing the same computation (the "duplicate head" phenomenon — Michel et al. 2019). The project should measure these possibilities rather than treating any one of them as the intended outcome.
 - **Mapping to mech-interp**: monosemanticity ≈ specialization at the neuron level + the absence of superposition; the mech-interp community's "universality" hypothesis ≈ cross-seed reproducibility of specialization. The Branch Specialization community's *modularity* concept = the mech-interp community's *circuit separability*.
 - **Recommended formal metrics**:
   - For specialization: Filan-style *importance entropy* (how concentrated is feature *f* in a single head), Csordás-style weight-mask IoU between functional masks, lesion-recovery curves.
@@ -118,11 +124,11 @@ Synthesizing Bali et al. 2026, Csordás et al. 2021, Ainsworth et al. 2023 (Git 
 ### 9. Cleanly open research questions in (Branch Specialization × attention × cross-seed × heterogeneous architecture)
 1. **Do Pythia's 9 seeds at 410M produce the *same* induction-head circuit (Olsson et al. 2022) at the same head indices?** Not in the literature.
 2. **In Hymba, across seeds, is the attention-vs-Mamba head assignment for "recall" tasks stable?** NVIDIA's paper analyzes input-adaptive importance but not cross-seed.
-3. **Does heterogeneous head_dim {32,64,128,256} increase Filan-clusterability of the attention graph relative to uniform head_dim?**
+3. **Does heterogeneous head_dim {32,64,128,256} change Filan-clusterability of the attention graph relative to uniform head_dim?**
 4. **Does heterogeneous head_dim *reduce* mid-layer instability** (Bali et al.'s "stability dip")?
 5. **Is the consistency-improvement (if any) driven by the *small* heads or the *large* heads?** I.e., does forcing a 32-dim head create an information bottleneck that channels a specific feature class into it?
 6. **For MultiBERTs, do the 25 seeds' BERT-base heads partition into the same clusters under spectral clustering?** Direct test of cross-seed modularity (not yet done in literature despite the data being public since 2021).
-7. **Does Csordás-style weight-mask IoU between paired tasks vary across seeds with vs without architectural heterogeneity?** This is the cleanest formal test of "more consistent modularity."
+7. **Does Csordás-style weight-mask IoU between paired tasks vary across seeds with vs without architectural heterogeneity or routing?** This is a clean formal test of whether modularity changes, not a claim that modularity must increase.
 
 ## Details
 
@@ -133,7 +139,7 @@ For an attention layer with H heads, let f_h(x) be the output contribution of he
 - **Cross-seed consistency** for the (h, t) pair across seeds {1, …, S}: C(h, t) = mean correlation of S(h, t) across seed pairs, or equivalently — after Hungarian alignment of head indices — the residual variance in S after optimal permutation matching.
 - **Branch-level modularity**: cross-head conditional mutual information I(f_h; f_h' | residual stream input) — if heads are modular, this should be small for h ≠ h'.
 
-These three numbers (S, C, M) are what the project should report for each architecture × seed-set pair in Stage 1, and as a function of head_dim heterogeneity in Stage 2.
+These three numbers (S, C, M) are what the project should report for each architecture × seed-set pair in Stage 1, and as a function of head_dim heterogeneity, explicit branch structure, or routing in Stage 2. The goal is to learn whether S, C, and M move together or dissociate.
 
 ### B. A staged roadmap with milestones
 
@@ -152,14 +158,18 @@ These three numbers (S, C, M) are what the project should report for each archit
 - Hymba-1.5B-Base: compute attention-vs-SSM head importance per task; identify whether the assignment is task-driven (NVIDIA's claim) or input-driven (also NVIDIA's claim) or stable across re-pretraining of small versions you train yourself (the open question).
 - SwitchHead: easiest re-training target (Csordás code public; 262M model trains in 44% compute / 27% memory vs the parameter-matched baseline on C4 per arXiv:2312.07987); re-train ≥5 seeds at this scale. Compute cross-seed routing entropy and head-expert specialization. Milestone: a 4-panel figure (MHA Pythia / MultiBERTs / OLMoE / SwitchHead) of cross-seed specialization variance.
 
-**Stage 2a (week 10–16): Heterogeneous head_dim intervention**
+**Stage 2a (week 10–16): Architectural interventions**
 - Modify the SwitchHead training code (smallest open codebase with MoE attention) — and a vanilla GPT-NeoX trainer at 70M–160M scale — to support per-head dimensions specified as a config tuple, e.g., `head_dims=[32, 32, 64, 64, 128, 128, 256, 256]` summing to the same total Q/K/V dim as the uniform baseline.
-- Train each configuration (uniform vs heterogeneous; ≥5 seeds each) to matched validation loss on a Pile/C4 subset.
+- Train each configuration (uniform vs heterogeneous; and, where tractable, explicit branch/routing variants; ≥5 seeds each) to matched validation loss on a Pile/C4 subset.
 - Apply Stage 1a metrics (cross-seed similarity, Hungarian-matched gap, mask-IoU) to both configurations.
-- Pre-register the prediction: heterogeneous head_dim → lower cross-seed variance in S(h, t), higher clusterability, higher Csordás P_specialize.
+- Pre-register competing outcomes rather than a single desired direction:
+  - heterogeneity changes specialization stability but not modularity;
+  - heterogeneity changes modularity as well as specialization;
+  - explicit routing changes modularity while capacity heterogeneity does not;
+  - none of the interventions produce a reliable effect at matched loss.
 
 **Stage 2b (week 16–20): Mechanistic interpretation**
-- Apply path patching (Wang et al. 2022, arXiv:2211.00593) to identify circuits in each configuration; ask: in the heterogeneous configuration, does the *same* head_dim slot consistently host a given circuit role across seeds? Specifically: does the smallest (32-dim) head consistently become a "positional / BOS-sink" head, and the largest (256-dim) head a "name-mover / induction" head?
+- Apply path patching (Wang et al. 2022, arXiv:2211.00593) to identify circuits in each configuration; ask whether the *same* structural slot consistently hosts a given circuit role across seeds. Do not assume ahead of time that small heads should become local/positional heads or that large heads should become global/induction heads.
 - Compare with the "LLaMA-half" warning from arXiv:2505.16333: confirm that uniform-width changes do not produce the same effect.
 
 ### C. Resources concretely available (with HF / GitHub paths)
@@ -173,7 +183,7 @@ These three numbers (S, C, M) are what the project should report for each archit
 - Voita head-pruning code: `github.com/lena-voita/the-story-of-heads`.
 - TransformerLens / activation patching: `TransformerLensOrg/TransformerLens` (Neel Nanda), plus `learnmechinterp.com` examples for IOI.
 
-### D. Why "specialization without modularity" is the central conceptual hazard
+### D. Why "specialization without modularity" is the central conceptual distinction
 Voss et al. 2021's Distill article documents specialization in InceptionV1 *without* a formal modularity test; the existence of "specialization" was inferred from feature visualizations. In transformers, Voita 2019 documented head specialization but Michel 2019 simultaneously showed massive head redundancy — both could be true because *specialized heads can still leak information through the residual stream*. This is exactly Csordás's P_specialize-without-P_reuse phenomenon at the head level. The user's project should explicitly compute both: a head can score high on specialization (S) and low on modularity (M), and reporting only S misses the second axis. The Branch Specialization community has historically reported only the analog of S; the user's contribution is to add M and to test whether architectural heterogeneity moves S, M, or both.
 
 ### E. The mech-interp / branch-specialization translation table
@@ -198,13 +208,13 @@ Voss et al. 2021's Distill article documents specialization in InceptionV1 *with
 5. Skip Hymba and Mixture-of-Depths for Stage 1 — they have single seeds and re-pretraining is expensive; defer to Stage 2 if budget allows.
 
 **Then do (week 10–20)**:
-6. Architectural intervention: heterogeneous head_dim {32, 64, 128, 256} (and uniform 64 baseline) trained ≥5 seeds each at 70M–160M scale on a Pile/C4 subset. Compare Stage 1 metrics.
-7. Pre-register the predictions on OpenReview / OSF.
+6. Architectural intervention: heterogeneous head_dim {32, 64, 128, 256}, uniform 64 baseline, and explicit branch/routing variants where tractable, trained ≥5 seeds each at 70M–160M scale on a Pile/C4 subset. Compare Stage 1 metrics.
+7. Pre-register the competing hypotheses and decision criteria on OpenReview / OSF.
 8. Engage with the LLaMA-half counter-result from arXiv:2505.16333: include a "uniform-but-wider" control arm to confirm the effect (if observed) is from *heterogeneity*, not from average width.
 
 **Benchmarks/thresholds that would change the recommendation**:
 - If Pythia 9-seed reproduction shows cross-seed *head* similarity already > 0.9 after Hungarian matching for most heads, the project's premise is weakened — pivot to studying the unstable mid-layer heads specifically.
-- If the heterogeneous-head_dim intervention does not show a >15% reduction in cross-seed variance of S(h, t) at matched validation loss in pilot 70M experiments, abandon the architectural intervention and reframe the paper around the post-hoc finding alone.
+- If the heterogeneous-head_dim intervention does not show a practically meaningful change in cross-seed variance of S(h, t), modularity metrics, or their dissociation at matched validation loss in pilot 70M experiments, reframe the intervention claim rather than forcing a positive modularity story.
 - If Stage 1 finds that MoE-FFN expert specialization (OLMoE) is much more cross-seed consistent than MHA head specialization, that itself is a publishable finding and reorients the paper toward expert > head as the natural "branch."
 
 **Venue targets**: ICLR / NeurIPS main track if Stage 2 produces a positive intervention result; ICML BlackboxNLP / ICLR Re-Align workshop / NeurIPS XAI workshop for Stage-1-only outcomes; transformer-circuits.pub / Distill-style report for a qualitative bridge between the two communities (which is itself valuable given how few papers exist).

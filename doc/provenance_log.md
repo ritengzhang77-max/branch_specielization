@@ -427,3 +427,20 @@ functional modularity?
 - Recorded the result in `doc/phase3_toy_branch_isolation.md`.
 - Created checkpoint deck:
   `presentations/2026-05-22-1230-branch-isolation/branch_isolation_checkpoint.pdf`.
+
+## 2026-05-22 Framing Clarification
+
+- Updated `doc/plan.md` and `doc/research_questions.md` to make the research
+  framing explicitly neutral about whether functions should separate into
+  different branches.
+- Clarified that the project asks whether structural heterogeneity, branch
+  design, or routing changes:
+  - functional specialization;
+  - cross-seed stability;
+  - functional modularity;
+  - the dissociation between specialization and modularity.
+- Replaced directional language such as "higher modularity" or "cleaner
+  specialization" with measurement-first language such as "change in
+  modularity" and "different specialization or modularity patterns."
+- Clarified that specialization without modularity, modularity without
+  specialization, both together, or neither are all valid empirical outcomes.
