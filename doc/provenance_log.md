@@ -565,3 +565,40 @@ functional modularity?
 - Recorded the result in `doc/phase3_toy_weak_router_sweep.md`.
 - Created checkpoint deck:
   `presentations/2026-05-22-1354-weak-router-sweep/weak_router_sweep_checkpoint.pdf`.
+
+## 2026-05-22 Phase 3 Unlabeled Router Regularization
+
+- Extended `scripts/toy_branch_isolation_intervention.py` with unlabeled router
+  regularization:
+  - entropy minimization for sharper gates;
+  - global branch-usage load balancing.
+- Added global gate diagnostics:
+  - global gate entropy;
+  - global branch 0/1 usage;
+  - global gate balance error.
+- Added `scripts/analyze_unlabeled_router_regularization.py`.
+- Tested `learned_token_router` without role-label routing loss under:
+  - entropy weight 0.05;
+  - balance weight 1.0;
+  - entropy 0.05 plus balance 1.0;
+  - entropy 0.10 plus balance 1.0.
+- All unlabeled conditions solved the task, but none produced reliable
+  role-aligned causal branch modularity:
+  - entropy-only: routed role match 0.00, branch distance 0.0002;
+  - balance-only: routed role match 0.00, branch distance 0.0033;
+  - entropy 0.05 plus balance 1.0: routed role match 0.40, branch distance
+    0.3082;
+  - entropy 0.10 plus balance 1.0: routed role match 0.20, branch distance
+    0.1484.
+- Key negative controls:
+  - entropy-only made gates sharp but collapsed both roles onto the same branch;
+  - balance-only made global branch usage nearly 50/50 but still kept local and
+    induction causally co-located.
+- Key interpretation:
+  - sharp routing and balanced routing are not the same as functional modularity;
+  - generic unlabeled gate regularizers were not enough in this toy setting;
+  - the next test should change task pressure or branch bottlenecks rather than
+    only sweep more generic regularizer weights.
+- Recorded the result in `doc/phase3_toy_unlabeled_router_regularization.md`.
+- Created checkpoint deck:
+  `presentations/2026-05-22-1551-unlabeled-router/unlabeled_router_checkpoint.pdf`.

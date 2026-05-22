@@ -87,6 +87,10 @@ class ModelSummary:
     induction_gate_branch1_mean: float
     local_gate_entropy_mean: float
     induction_gate_entropy_mean: float
+    global_gate_entropy_mean: float
+    global_gate_branch0_mean: float
+    global_gate_branch1_mean: float
+    global_gate_balance_error_mean: float
     gate_distribution_distance: float
     gate_routed_role_match: bool
     gate_target_nll_mean: float
@@ -133,6 +137,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--weight-decay", type=float, default=0.01)
     parser.add_argument("--router-temperature", type=float, default=1.0)
     parser.add_argument("--router-supervision-weight", type=float, default=0.05)
+    parser.add_argument("--router-entropy-weight", type=float, default=0.0)
+    parser.add_argument("--router-balance-weight", type=float, default=0.0)
     parser.add_argument("--local-weight", type=float, default=0.25)
     parser.add_argument("--induction-weight", type=float, default=1.0)
     parser.add_argument("--device", default="auto", choices=["auto", "cpu", "cuda"])
@@ -242,6 +248,22 @@ def routing_target_nll(
     return 0.5 * (local_nll + induction_nll)
 
 
+def routing_regularization_loss(
+    weights: torch.Tensor,
+    entropy_weight: float,
+    balance_weight: float,
+) -> torch.Tensor:
+    distribution = normalized_gate_distribution(weights)
+    loss = weights.new_tensor(0.0)
+    if entropy_weight > 0.0:
+        loss = loss + entropy_weight * gate_entropy(distribution).mean()
+    if balance_weight > 0.0:
+        branch_usage = distribution.mean(dim=(0, 2))
+        target = torch.full_like(branch_usage, 1.0 / branch_usage.numel())
+        loss = loss + balance_weight * torch.square(branch_usage - target).sum()
+    return loss
+
+
 def train_model(
     model: TwoBranchTransformer,
     train_rng: np.random.Generator,
@@ -263,9 +285,19 @@ def train_model(
         optimizer.zero_grad(set_to_none=True)
         logits = model(input_ids)
         loss, _ = combined_loss_accuracy(logits, input_ids, layout, args.local_weight, args.induction_weight)
-        if model.mode in WEAK_SUPERVISION_MODES and args.router_supervision_weight > 0.0:
+        if (
+            model.mode in WEAK_SUPERVISION_MODES
+            and args.router_supervision_weight > 0.0
+        ) or args.router_entropy_weight > 0.0 or args.router_balance_weight > 0.0:
             weights = model.route_weights(model.embed_input(input_ids))
+        if model.mode in WEAK_SUPERVISION_MODES and args.router_supervision_weight > 0.0:
             loss = loss + args.router_supervision_weight * routing_target_nll(weights, layout)
+        if args.router_entropy_weight > 0.0 or args.router_balance_weight > 0.0:
+            loss = loss + routing_regularization_loss(
+                weights,
+                args.router_entropy_weight,
+                args.router_balance_weight,
+            )
         loss.backward()
         torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
         optimizer.step()
@@ -340,8 +372,11 @@ def collect_route_metrics(
             induction_positions = induction_positions_cpu.to(device)
             local_dist = distribution[:, :, local_positions].mean(dim=(0, 2))
             induction_dist = distribution[:, :, induction_positions].mean(dim=(0, 2))
+            global_dist = distribution.mean(dim=(0, 2))
+            global_balance_error = torch.abs(global_dist - 0.5).sum()
             local_entropy = entropy[:, local_positions].mean()
             induction_entropy = entropy[:, induction_positions].mean()
+            global_entropy = entropy.mean()
             batch_size_actual = ids.shape[0]
             totals["local_gate_branch0"] += float(local_dist[0].detach().cpu()) * batch_size_actual
             totals["local_gate_branch1"] += float(local_dist[1].detach().cpu()) * batch_size_actual
@@ -349,6 +384,12 @@ def collect_route_metrics(
             totals["induction_gate_branch1"] += float(induction_dist[1].detach().cpu()) * batch_size_actual
             totals["local_gate_entropy"] += float(local_entropy.detach().cpu()) * batch_size_actual
             totals["induction_gate_entropy"] += float(induction_entropy.detach().cpu()) * batch_size_actual
+            totals["global_gate_entropy"] += float(global_entropy.detach().cpu()) * batch_size_actual
+            totals["global_gate_branch0"] += float(global_dist[0].detach().cpu()) * batch_size_actual
+            totals["global_gate_branch1"] += float(global_dist[1].detach().cpu()) * batch_size_actual
+            totals["global_gate_balance_error"] += (
+                float(global_balance_error.detach().cpu()) * batch_size_actual
+            )
             totals["gate_target_nll"] += float(routing_target_nll(weights, layout).detach().cpu()) * batch_size_actual
             total += batch_size_actual
 
@@ -391,6 +432,12 @@ def summarize_config(config: str, model_rows: list[ModelSummary]) -> dict[str, o
         "gate_distribution_distance_mean": float(np.mean([row.gate_distribution_distance for row in rows])),
         "local_gate_entropy_mean": float(np.mean([row.local_gate_entropy_mean for row in rows])),
         "induction_gate_entropy_mean": float(np.mean([row.induction_gate_entropy_mean for row in rows])),
+        "global_gate_entropy_mean": float(np.mean([row.global_gate_entropy_mean for row in rows])),
+        "global_gate_branch0_mean": float(np.mean([row.global_gate_branch0_mean for row in rows])),
+        "global_gate_branch1_mean": float(np.mean([row.global_gate_branch1_mean for row in rows])),
+        "global_gate_balance_error_mean": float(
+            np.mean([row.global_gate_balance_error_mean for row in rows])
+        ),
         "local_gate_branch0_mean": float(np.mean([row.local_gate_branch0_mean for row in rows])),
         "local_gate_branch1_mean": float(np.mean([row.local_gate_branch1_mean for row in rows])),
         "induction_gate_branch0_mean": float(np.mean([row.induction_gate_branch0_mean for row in rows])),
@@ -427,6 +474,10 @@ def write_config_summary(path: Path, summary_by_config: dict[str, dict[str, obje
         "gate_distribution_distance_mean",
         "local_gate_entropy_mean",
         "induction_gate_entropy_mean",
+        "global_gate_entropy_mean",
+        "global_gate_branch0_mean",
+        "global_gate_branch1_mean",
+        "global_gate_balance_error_mean",
         "local_gate_branch0_mean",
         "local_gate_branch1_mean",
         "induction_gate_branch0_mean",
@@ -571,6 +622,10 @@ def main() -> None:
                     induction_gate_branch1_mean=float(route_metrics["induction_gate_branch1"]),
                     local_gate_entropy_mean=float(route_metrics["local_gate_entropy"]),
                     induction_gate_entropy_mean=float(route_metrics["induction_gate_entropy"]),
+                    global_gate_entropy_mean=float(route_metrics["global_gate_entropy"]),
+                    global_gate_branch0_mean=float(route_metrics["global_gate_branch0"]),
+                    global_gate_branch1_mean=float(route_metrics["global_gate_branch1"]),
+                    global_gate_balance_error_mean=float(route_metrics["global_gate_balance_error"]),
                     gate_distribution_distance=float(route_metrics["gate_distribution_distance"]),
                     gate_routed_role_match=bool(route_metrics["gate_routed_role_match"]),
                     gate_target_nll_mean=float(route_metrics["gate_target_nll"]),

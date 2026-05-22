@@ -212,12 +212,14 @@ Current toy-pilot status as of 2026-05-22:
 - A weak-token-router supervision sweep found a gate-vs-causality threshold:
   gate routed match reached 1.00 by weight 0.02, but causal routed role match
   reached 1.00 only at weight 0.05.
+- Unlabeled entropy and load-balancing regularizers changed gate statistics but
+  did not reliably produce role-aligned causal branch modularity.
 
 The next Phase 3 question is therefore:
 
 ```text
-Can unlabeled routing pressure, such as entropy or load-balancing regularization,
-produce any of the same causal modularity change without role labels?
+Can stronger task conflict or branch bottlenecks make unlabeled routing pressure
+align with functional roles?
 ```
 
 ### Phase 4: Mechanistic Interpretation

@@ -193,6 +193,11 @@ These three numbers (S, C, M) are what the project should report for each archit
   1.00 by weight 0.02, but 5/5 causal routed role match appeared only at weight
   0.05. This makes causal ablation necessary for the modularity claim and
   motivates unlabeled routing-pressure tests next.
+- Unlabeled entropy and load-balancing regularizers changed router statistics
+  but did not reliably create role-aligned causal modularity. Entropy-only
+  produced sharp single-branch collapse, balance-only produced globally balanced
+  but functionally co-located routing, and entropy+balance was mixed. The next
+  intervention should increase role conflict or impose branch bottlenecks.
 
 ### C. Resources concretely available (with HF / GitHub paths)
 - Pythia seeds: `EleutherAI/pythia-{14m,70m,160m,410m}-seed{1..9}`, plus `pythia-160m-weight-seed{1-3}` and `pythia-160m-data-seed{1-3}`. 154 checkpoints per model (steps 0, 1, 2, 4, 8, …, 143000). GitHub: `EleutherAI/pythia`.
