@@ -1,0 +1,265 @@
+{
+  "args": {
+    "configs": [
+      "uniform4",
+      "hetero4",
+      "uniform2",
+      "hetero4_64first"
+    ],
+    "seeds": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "steps": 1200,
+    "batch_size": 128,
+    "eval_examples": 512,
+    "local_pairs": 8,
+    "repeat_length": 16,
+    "vocab_size": 160,
+    "d_model": 128,
+    "n_layers": 2,
+    "mlp_dim": 256,
+    "lr": 0.001,
+    "weight_decay": 0.01,
+    "local_weight": 1.0,
+    "induction_weight": 1.0,
+    "random_controls": 8,
+    "random_permutations": 100,
+    "device": "auto",
+    "output_dir": "results/phase3_toy_competition_head_dim_intervention"
+  },
+  "layout": {
+    "seq_len": 57,
+    "local_positions": [
+      1,
+      4,
+      7,
+      10,
+      13,
+      16,
+      19,
+      22
+    ],
+    "local_prev_positions": [
+      0,
+      3,
+      6,
+      9,
+      12,
+      15,
+      18,
+      21
+    ],
+    "induction_positions": [
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55
+    ],
+    "induction_match_positions": [
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39
+    ],
+    "induction_source_next_positions": [
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40
+    ]
+  },
+  "head_dims_by_config": {
+    "uniform4": [
+      32,
+      32,
+      32,
+      32
+    ],
+    "hetero4": [
+      16,
+      16,
+      32,
+      64
+    ],
+    "uniform2": [
+      64,
+      64
+    ],
+    "hetero4_64first": [
+      64,
+      16,
+      16,
+      32
+    ]
+  },
+  "summary_by_config": {
+    "uniform4": {
+      "n_models": 5,
+      "eval_loss_mean": 0.0006925311579834669,
+      "local_loss_mean": 0.00018273000387125649,
+      "induction_loss_mean": 0.0012023323273751886,
+      "local_accuracy_mean": 1.0,
+      "induction_accuracy_mean": 0.9998698055744171,
+      "local_top_specialization_mean": 0.49241525200307007,
+      "induction_top_specialization_mean": 0.5998899966063734,
+      "local_top_loss_delta_mean": 0.03115654895300395,
+      "induction_top_loss_delta_mean": 1.4998472935461904,
+      "local_random_same_layer_loss_delta_mean": 0.01132183395930042,
+      "induction_random_same_layer_loss_delta_mean": 0.5185981464404904,
+      "same_top_slot_rate": 0.0,
+      "same_top_head_dim_rate": 1.0,
+      "local_top_head_dim_counts": {
+        "32": 5
+      },
+      "induction_top_head_dim_counts": {
+        "32": 5
+      },
+      "local_raw_role_similarity_mean": 0.563512135738463,
+      "local_aligned_role_similarity_mean": 0.5454493381072266,
+      "local_random_role_similarity_mean": 0.5682535414050965,
+      "local_raw_top_head_match_rate": 0.25,
+      "local_aligned_top_head_match_rate": 0.25,
+      "induction_raw_role_similarity_mean": 0.6677989568114012,
+      "induction_aligned_role_similarity_mean": 0.7585161464584073,
+      "induction_random_role_similarity_mean": 0.6711838366998102,
+      "induction_raw_top_head_match_rate": 0.25,
+      "induction_aligned_top_head_match_rate": 0.5
+    },
+    "hetero4": {
+      "n_models": 5,
+      "eval_loss_mean": 0.001955220078525599,
+      "local_loss_mean": 0.0001793660172552336,
+      "induction_loss_mean": 0.003731074125971645,
+      "local_accuracy_mean": 1.0,
+      "induction_accuracy_mean": 0.999218761920929,
+      "local_top_specialization_mean": 0.885684531332432,
+      "induction_top_specialization_mean": 0.8188345557092601,
+      "local_top_loss_delta_mean": 0.15643378906461294,
+      "induction_top_loss_delta_mean": 2.6602557398960927,
+      "local_random_same_layer_loss_delta_mean": 0.004005878753741854,
+      "induction_random_same_layer_loss_delta_mean": 0.22829405809170566,
+      "same_top_slot_rate": 0.6,
+      "same_top_head_dim_rate": 1.0,
+      "local_top_head_dim_counts": {
+        "16": 1,
+        "64": 4
+      },
+      "induction_top_head_dim_counts": {
+        "16": 1,
+        "64": 4
+      },
+      "local_raw_role_similarity_mean": 0.6229164961976441,
+      "local_aligned_role_similarity_mean": 0.44415309610883436,
+      "local_random_role_similarity_mean": 0.34354561589103993,
+      "local_raw_top_head_match_rate": 0.6,
+      "local_aligned_top_head_match_rate": 0.4,
+      "induction_raw_role_similarity_mean": 0.6732454965859768,
+      "induction_aligned_role_similarity_mean": 0.4873250426705746,
+      "induction_random_role_similarity_mean": 0.3858364227239467,
+      "induction_raw_top_head_match_rate": 0.6,
+      "induction_aligned_top_head_match_rate": 0.35
+    },
+    "uniform2": {
+      "n_models": 5,
+      "eval_loss_mean": 0.005303014101809822,
+      "local_loss_mean": 0.001016285536752548,
+      "induction_loss_mean": 0.00958974266250152,
+      "local_accuracy_mean": 0.999951171875,
+      "induction_accuracy_mean": 0.9975781351327896,
+      "local_top_specialization_mean": 0.6460678971249657,
+      "induction_top_specialization_mean": 0.7039301095977424,
+      "local_top_loss_delta_mean": 0.14131393927527824,
+      "induction_top_loss_delta_mean": 3.285815052149701,
+      "local_random_same_layer_loss_delta_mean": 0.07725815299345414,
+      "induction_random_same_layer_loss_delta_mean": 0.970585371015477,
+      "same_top_slot_rate": 0.4,
+      "same_top_head_dim_rate": 1.0,
+      "local_top_head_dim_counts": {
+        "64": 5
+      },
+      "induction_top_head_dim_counts": {
+        "64": 5
+      },
+      "local_raw_role_similarity_mean": 0.7569662289961031,
+      "local_aligned_role_similarity_mean": 0.7003798638795319,
+      "local_random_role_similarity_mean": 0.7386673975867424,
+      "local_raw_top_head_match_rate": 0.6,
+      "local_aligned_top_head_match_rate": 0.45,
+      "induction_raw_role_similarity_mean": 0.7371704135502544,
+      "induction_aligned_role_similarity_mean": 0.8049686255496313,
+      "induction_random_role_similarity_mean": 0.7553051801288826,
+      "induction_raw_top_head_match_rate": 0.5,
+      "induction_aligned_top_head_match_rate": 0.65
+    },
+    "hetero4_64first": {
+      "n_models": 5,
+      "eval_loss_mean": 0.003491949161980301,
+      "local_loss_mean": 0.0009191621385980398,
+      "induction_loss_mean": 0.006064736197004095,
+      "local_accuracy_mean": 0.99990234375,
+      "induction_accuracy_mean": 0.9986458420753479,
+      "local_top_specialization_mean": 0.9186548954593945,
+      "induction_top_specialization_mean": 0.7219993286652784,
+      "local_top_loss_delta_mean": 0.13818842113832944,
+      "induction_top_loss_delta_mean": 2.759239414980402,
+      "local_random_same_layer_loss_delta_mean": 0.0041779246690566655,
+      "induction_random_same_layer_loss_delta_mean": 0.44646351521951144,
+      "same_top_slot_rate": 0.2,
+      "same_top_head_dim_rate": 0.4,
+      "local_top_head_dim_counts": {
+        "64": 5
+      },
+      "induction_top_head_dim_counts": {
+        "16": 3,
+        "64": 2
+      },
+      "local_raw_role_similarity_mean": 0.6515952803780781,
+      "local_aligned_role_similarity_mean": 0.3809396151417127,
+      "local_random_role_similarity_mean": 0.34310396610780997,
+      "local_raw_top_head_match_rate": 0.55,
+      "local_aligned_top_head_match_rate": 0.3,
+      "induction_raw_role_similarity_mean": 0.6424749509443041,
+      "induction_aligned_role_similarity_mean": 0.3943546596428081,
+      "induction_random_role_similarity_mean": 0.38380280945976153,
+      "induction_raw_top_head_match_rate": 0.55,
+      "induction_aligned_top_head_match_rate": 0.3
+    }
+  }
+}

@@ -205,3 +205,42 @@ functional modularity?
 - Recorded the result in `doc/phase3_toy_induction_head_dim_intervention.md`.
 - Created checkpoint deck:
   `presentations/2026-05-22-0818-toy-induction-head-dim/toy_induction_head_dim_checkpoint.pdf`.
+
+## 2026-05-22 Phase 3 Toy Local-vs-Induction Competition
+
+- Added `scripts/toy_competition_head_dim_intervention.py`.
+- The script trains tiny decoder-only transformers on sequences with two scored
+  regions:
+  - local copy: `[x, SEP, x]`, scored at `SEP`;
+  - global induction: `[y_1, ..., y_16, y_1, ..., y_16]`, scored on second-half
+    continuation positions.
+- Compared:
+  - `uniform4`: `[32, 32, 32, 32]`;
+  - `hetero4`: `[16, 16, 32, 64]`;
+  - `uniform2`: `[64, 64]`;
+  - `hetero4_64first`: `[64, 16, 16, 32]`.
+- All configs learned both objectives:
+  - `uniform4` local accuracy 1.0000, induction accuracy 0.9999;
+  - `hetero4` local accuracy 1.0000, induction accuracy 0.9992;
+  - `uniform2` local accuracy 1.0000, induction accuracy 0.9976;
+  - `hetero4_64first` local accuracy 0.9999, induction accuracy 0.9986.
+- Heterogeneity increased causal specialization concentration:
+  - local top specialization: `uniform4` 0.4924, `hetero4` 0.8857,
+    `hetero4_64first` 0.9187;
+  - induction top specialization: `uniform4` 0.5999, `hetero4` 0.8188,
+    `hetero4_64first` 0.7220.
+- The clean small-local / large-global role partition did not appear:
+  - `hetero4` local top dims `{"16": 1, "64": 4}`;
+  - `hetero4` induction top dims `{"16": 1, "64": 4}`;
+  - `hetero4_64first` local top dims `{"64": 5}`;
+  - `hetero4_64first` induction top dims `{"16": 3, "64": 2}`.
+- Interpretation:
+  - heterogeneous head dimensions remain useful as permutation-symmetry-breaking
+    stabilizers;
+  - task competition and head layout affect which function occupies which slot;
+  - the project should avoid claiming that head dimension alone automatically
+    allocates semantic role classes.
+- Recorded the result in
+  `doc/phase3_toy_competition_head_dim_intervention.md`.
+- Created checkpoint deck:
+  `presentations/2026-05-22-0845-toy-competition-head-dim/toy_competition_head_dim_checkpoint.pdf`.
