@@ -281,3 +281,37 @@ Updated interpretation: the stricter natural-repeat task is not truly
 alignment-neutral. It is neutral under generic Phase 0 matching, but positive
 under role-specific task-repeat matching. This makes alignment basis a key
 methodological variable.
+
+## Progress: Inserted-Span Task-Specific Alignment
+
+Added `--alignment-source task_span` to
+`scripts/pythia_naturalistic_span_candidate_pool_alignment.py`. This applies the
+same alignment-basis test to the inserted WikiText repeated-span task.
+
+Pythia-160M all-seed final checkpoint:
+
+- result directory:
+  `results/phase1_pythia160m_naturalistic_span_task_alignment_seed9_all_layers/`;
+- own top excess: `0.6458`;
+- same-index transfer: `-0.0170`;
+- task-span aligned transfer: `0.5475`;
+- aligned-minus-same: `0.5645`;
+- pair CI: `[0.4501, 0.6855]`;
+- target CI: `[0.3653, 0.8068]`;
+- target positives: 9/9;
+- aligned better count: 68/72.
+
+Matched `step0` task-span alignment control:
+
+- result directory:
+  `results/phase1_pythia160m_naturalistic_span_task_alignment_seed9_all_layers_step0/`;
+- own top excess: `0.0002`;
+- same-index transfer: `-0.0003`;
+- task-span aligned transfer: `0.0001`;
+- aligned-minus-same: `0.0003`;
+- target CI: `[-0.0008, 0.0015]`.
+
+Updated interpretation: the inserted-span naturalistic effect was not merely
+weak. It was weak under generic Phase 0 matching. Role-specific task-span
+matching gives a strong held-out transfer effect with a null initialization
+control.

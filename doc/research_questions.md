@@ -276,7 +276,12 @@ Initial real-transformer follow-up:
   `[-0.0237, 0.0630]`, and target seed 6 remained a stable negative outlier.
   This means the synthetic result is not purely an arbitrary-token artifact, but
   the naturalistic validation is small and should be treated as supporting
-  evidence, not the primary effect.
+  evidence, not the primary effect. A follow-up alignment-basis ablation changed
+  this interpretation: task-span alignment on the repeated-span probe split
+  raised 160M aligned-minus-same from `0.0835` to `0.5645`, with target CI
+  `[0.3653, 0.8068]`, 9/9 target positives, and a null `step0` control. Thus
+  the naturalistic role is much stronger when the matching representation is
+  role-specific.
 - A stricter natural-repeat follow-up scanned unmodified WikiText windows for
   exact repeated 4-token n-grams. Pythia-160M all-layer candidate pools across 9
   seeds showed trained own-head causal importance (`own_top_excess=0.1588`,

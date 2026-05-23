@@ -126,6 +126,43 @@ Pythia-410M naturalistic repeated-span transfer is weak and heterogeneous under
 this probe, despite strong synthetic local-copy transfer.
 ```
 
+## Alignment-Basis Ablation
+
+The initial naturalistic runs used the same generic Phase 0 raw-score alignment
+corpus as the synthetic experiments. After the naturally occurring repeat-ngram
+follow-up showed that weak natural roles can be missed by generic alignment, I
+added a task-specific alignment option:
+
+```text
+--alignment-source task_span
+```
+
+This aligns heads using attention vectors on the repeated-span probe positions.
+It still evaluates causality on held-out evaluation spans.
+
+Pythia-160M all-layer result:
+
+| 160M condition | Alignment source | Own top excess | Same-index transfer | Aligned transfer | Aligned - same | Target CI for aligned - same |
+|---|---|---:|---:|---:|---:|---:|
+| `step0` | task span | 0.0002 | -0.0003 | 0.0001 | 0.0003 | [-0.0008, 0.0015] |
+| `step143000` | Phase 0 generic | 0.6458 | -0.0170 | 0.0665 | 0.0835 | [0.0334, 0.1343] |
+| `step143000` | task span | 0.6458 | -0.0170 | 0.5475 | 0.5645 | [0.3653, 0.8068] |
+
+Task-span alignment is much stronger than generic alignment:
+
+- aligned-minus-same rises from `0.0835` to `0.5645`;
+- target positives rise from 8/9 to 9/9;
+- aligned-better count rises to 68/72;
+- the matched `step0` task-span control is null.
+
+Interpretation:
+
+```text
+For natural repeated spans, the alignment representation matters. Generic
+attention-score matching detects a weak transfer effect; role-specific matching
+recovers a much larger cross-seed functional transfer effect.
+```
+
 ## Comparison To Synthetic Local-Copy
 
 The naturalistic result is positive but much smaller than the synthetic
@@ -164,6 +201,8 @@ The 160M all-seed result is currently the strongest naturalistic evidence:
   estimate as the 64-example run;
 - a matched `step0` control gives near-zero own-head and aligned-transfer
   effects;
+- task-span alignment gives a much larger held-out transfer effect
+  (`aligned-minus-same=0.5645`) with a null `step0` task-alignment control;
 - examples were manually inspected through `example_rows.csv` after boundary
   filtering.
 
@@ -208,6 +247,10 @@ Main limitations:
   `results/phase1_pythia160m_naturalistic_span_candidate_pool_seed9_all_layers_n128/`.
 - Pythia-160M 128-example `step0` control:
   `results/phase1_pythia160m_naturalistic_span_candidate_pool_seed9_all_layers_step0_n128/`.
+- Pythia-160M task-span alignment result:
+  `results/phase1_pythia160m_naturalistic_span_task_alignment_seed9_all_layers/`.
+- Pythia-160M task-span alignment `step0` control:
+  `results/phase1_pythia160m_naturalistic_span_task_alignment_seed9_all_layers_step0/`.
 - Pythia-410M all-seed result:
   `results/phase1_pythia410m_naturalistic_span_candidate_pool_seed9_all_layers/`.
 - Pythia-410M 128-example replication:

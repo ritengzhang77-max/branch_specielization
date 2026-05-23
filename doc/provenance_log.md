@@ -1292,3 +1292,30 @@ functional modularity?
   role transfer only when the alignment basis is role-specific. Generic
   attention-score matching can miss a real but weak functional role.
 - Full memo: `doc/phase1_natural_repeat_ngram_candidate_pool.md`.
+
+## 2026-05-23 - Inserted natural-span task-specific alignment
+
+- Added `--alignment-source task_span` to
+  `scripts/pythia_naturalistic_span_candidate_pool_alignment.py`.
+- This aligns heads using repeated-span attention vectors from the probe split
+  instead of generic Phase 0 texts; causal readout remains on held-out evaluation
+  spans.
+- Pythia-160M all-seed final checkpoint:
+  `results/phase1_pythia160m_naturalistic_span_task_alignment_seed9_all_layers/`.
+  - own top excess: `0.6458`;
+  - same-index transfer: `-0.0170`;
+  - task-span aligned transfer: `0.5475`;
+  - aligned-minus-same: `0.5645`;
+  - pair CI: `[0.4501, 0.6855]`, pair sign `p=4.6e-16`;
+  - target CI: `[0.3653, 0.8068]`, target sign `p=0.0039`;
+  - target positives: 9/9;
+  - aligned better count: 68/72.
+- Matched Pythia-160M `step0` task-span alignment control:
+  `results/phase1_pythia160m_naturalistic_span_task_alignment_seed9_all_layers_step0/`.
+  - own top excess: `0.0002`;
+  - aligned-minus-same: `0.0003`;
+  - target CI: `[-0.0008, 0.0015]`.
+- Interpretation: the inserted WikiText repeated-span task has a much stronger
+  cross-seed transfer signal when alignment is computed on role-specific
+  repeated-span attention vectors. Generic Phase 0 alignment underestimates this
+  weak natural role.

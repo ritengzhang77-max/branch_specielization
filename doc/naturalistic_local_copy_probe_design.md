@@ -161,6 +161,11 @@ Summary:
 - A matched Pythia-160M `step0` control was null: own top excess `-0.0005`;
   aligned-minus-same `0.0007`; target-level bootstrap CI
   `[-0.0004, 0.0016]`.
+- A task-specific alignment follow-up on Pythia-160M changed the effect size:
+  using repeated-span probe attention vectors for matching raised
+  aligned-minus-same to `0.5645` with target-level bootstrap CI
+  `[0.3653, 0.8068]` and 9/9 target positives. The matched `step0`
+  task-alignment control was null (`aligned-minus-same=0.0003`).
 - Pythia-410M, all 9 seeds, all-layer candidate pool: own top excess `0.2416`;
   aligned-minus-same `0.0455`; target-level bootstrap CI
   `[-0.0190, 0.0894]`; aligned-minus-same positive for 8/9 target seeds.
@@ -169,9 +174,8 @@ Summary:
   CI `[-0.0237, 0.0630]`; target seed 6 remained a large negative outlier.
 
 Interpretation: the naturalistic result is positive for 160M and weak /
-heterogeneous for 410M, and both are much smaller than the synthetic
-`[x, SEP, x]` result. This supports the external-validity direction while
-keeping the current paper claim modest: natural text preserves a weak
-aligned-transfer signal in 160M, not the large synthetic effect size.
+heterogeneous for 410M under generic Phase 0 alignment. For 160M, task-specific
+alignment recovers a much stronger held-out transfer effect. This makes
+alignment basis part of the core methodology rather than a secondary detail.
 
 Full memo: `doc/phase1_naturalistic_span_candidate_pool.md`.
