@@ -741,3 +741,35 @@ The memo separates:
 It also sketches a paper structure: definitions, metrics, synthetic upper bound,
 naturalistic inserted spans, unmodified natural repeats, heterogeneity analysis,
 and then explicit branch/heterogeneous architectures as the next stage.
+
+## Progress: Phase 3 Structural-to-Functional Synthesis
+
+Wrote `doc/phase3_structural_to_functional_synthesis.md`.
+
+Current answer to the main framing:
+
+```text
+Structural heterogeneity can create stable functional specialization slots.
+Structural modularity/routing can support functional modularity, but in the toy
+evidence so far it does not reliably create it by itself.
+```
+
+The strongest positive mechanism is role-informative routing pressure:
+
+- oracle routing produces clean functional modularity;
+- weak scored-position router supervision produces near-oracle modularity;
+- annealed and trajectory runs show that gates become role-aligned before branch
+  computations become causally modular.
+
+The strongest negative boundary:
+
+- separate branches, unconstrained learned routers, entropy/balance
+  regularization, bottlenecked branches, and conflict-heavy lookup all failed to
+  reliably produce spontaneous role-aligned causal modularity.
+
+Next experiment:
+
+```text
+Run a denser weak-token-router trajectory between steps 400 and 800 to locate
+the causal consolidation window after gate alignment.
+```

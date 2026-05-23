@@ -1626,3 +1626,27 @@ functional modularity?
   - role-specific alignment as the held-out role-stability measurement.
 - It also records the main caveat: these results establish functional
   specialization and cross-seed role stability, not functional modularity.
+
+## 2026-05-23 - Phase 3 structural-to-functional synthesis
+
+- Wrote `doc/phase3_structural_to_functional_synthesis.md`.
+- Consolidated the current answer to the user's reframed research question:
+
+```text
+Structural heterogeneity can stabilize functional specialization slots.
+Structural branch/routing design can support functional modularity, but the
+current toy evidence shows reliable functional modularity only when
+role-informative routing pressure is supplied long enough for causal branch
+computations to consolidate.
+```
+
+- Important negative boundary:
+  separate branches, unconstrained learned routing, entropy/load-balancing
+  regularizers, branch bottlenecks, and conflict-heavy lookup did not reliably
+  produce spontaneous role-aligned causal modularity.
+- Important positive boundary:
+  oracle routing and weak scored-position routing labels did produce
+  branch-level functional modularity.
+- Next narrow experiment selected: rerun the weak-token-router `end800`
+  trajectory with denser evaluation between steps 400 and 800 to locate the
+  causal consolidation window after gate alignment.

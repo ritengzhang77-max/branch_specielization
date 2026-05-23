@@ -248,6 +248,23 @@ attention settings or in small real transformer tasks with role probes and
 causal patching?
 ```
 
+Phase 3 synthesis as of 2026-05-23:
+
+- The answer to "does structure become function?" is conditional. Structural
+  heterogeneity has produced stable functional specialization slots in the toy
+  head-dimension interventions, but structural modularity alone has not
+  reliably produced functional modularity.
+- Separate branches, unconstrained learned routers, entropy/balance
+  regularizers, branch bottlenecks, and direct role conflict all solved the toy
+  tasks without reliably separating local and induction functions.
+- Oracle routing and weak role-informative router supervision did produce
+  branch-level functional modularity. The trajectory runs show a lag: the gate
+  becomes role-aligned before causal branch separation appears.
+- The next narrow toy check is a denser trajectory between steps 400 and 800 to
+  locate the causal consolidation window. The next broader research step is to
+  test whether this gate/probe-before-causality lag appears in a less
+  hand-designed routed attention setting.
+
 Initial real-transformer follow-up:
 
 - A Pythia-14M checkpoint trajectory over seeds 1-3 found an analogous
