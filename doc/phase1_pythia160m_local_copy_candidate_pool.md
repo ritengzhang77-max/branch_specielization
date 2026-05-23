@@ -1,0 +1,121 @@
+# Phase 1: Pythia-160M Local-Copy Candidate-Pool Alignment
+
+Date: 2026-05-22
+
+## Question
+
+The layer-selection follow-up showed that causal local-copy heads exist in all
+9 Pythia-160M seeds, but their best layer varies:
+
+- layer 3: seeds 1, 2, 3, 7, 9;
+- layer 2: seed 4;
+- layer 4: seeds 5, 6, 8.
+
+This experiment asks whether cross-seed functional transfer improves if we stop
+forcing the role to stay in the same layer and instead align a cross-layer
+candidate pool.
+
+```text
+Does cross-layer role alignment recover local-copy functional transfer better
+than fixed layer-3 or fixed layers 2+4 alignment?
+```
+
+## Method
+
+Candidate pool:
+
+- model family: official Pythia-160M seeds 1-9;
+- checkpoint: `step143000`;
+- candidate layers: 2, 3, 4;
+- candidates per seed: top 2 heads by local-copy probe score across all
+  candidate layers;
+- alignment representation: raw attention scores on the shared Phase 0 probe
+  corpus;
+- alignment method: Hungarian matching over the full 36-head candidate pool
+  (`3 layers x 12 heads`), allowing source heads to map across layers;
+- transfer baseline: same raw `(layer, head)` index.
+
+Selected target heads:
+
+| Seed | Selected heads |
+|---:|---|
+| 1 | L3H2, L3H10 |
+| 2 | L3H4, L2H9 |
+| 3 | L3H5, L3H0 |
+| 4 | L2H10, L4H0 |
+| 5 | L2H1, L4H6 |
+| 6 | L4H4, L4H9 |
+| 7 | L3H5, L2H4 |
+| 8 | L4H6, L4H11 |
+| 9 | L3H5, L2H0 |
+
+## Result
+
+All-target result over 72 ordered source-target pairs:
+
+| Metric | Value |
+|---|---:|
+| own top excess over random | 2.2896 |
+| same-index source transfer | 0.4876 |
+| cross-layer aligned source transfer | 2.2714 |
+| aligned - same | 1.7838 |
+| aligned better count | 66/72 |
+
+Per-target summary:
+
+| Target seed | Own top excess | Same-index transfer | Aligned transfer | Aligned - same |
+|---:|---:|---:|---:|---:|
+| 1 | 1.4674 | 0.4682 | 1.7710 | 1.3028 |
+| 2 | 3.8741 | 0.0916 | 3.7845 | 3.6930 |
+| 3 | 2.5936 | 0.9861 | 2.6648 | 1.6787 |
+| 4 | 1.7296 | 0.3700 | 1.1686 | 0.7986 |
+| 5 | 2.1376 | 0.1807 | 1.2107 | 1.0300 |
+| 6 | 2.1767 | 0.2177 | 2.1483 | 1.9306 |
+| 7 | 2.3115 | 0.9451 | 3.2375 | 2.2924 |
+| 8 | 1.8853 | 0.4557 | 1.9961 | 1.5404 |
+| 9 | 2.4302 | 0.6733 | 2.4609 | 1.7877 |
+
+The target-level aligned-minus-same effect is positive for `9/9` target seeds
+(two-sided sign test `p=0.0039`). The pair-level aligned-better count is `66/72`
+(two-sided sign test about `7.3e-14`).
+
+## Comparison
+
+| Selection/alignment rule | Own top excess | Same-index transfer | Aligned transfer | Aligned - same | Aligned better |
+|---|---:|---:|---:|---:|---:|
+| Fixed layer 3 | 1.6072 | 0.3142 | 1.0137 | 0.6995 | 40/72 |
+| Fixed layers 2+4 | 0.8974 | 0.3710 | 0.6151 | 0.2441 | 40/72 |
+| Cross-layer pool 2-4, top 2 | 2.2896 | 0.4876 | 2.2714 | 1.7838 | 66/72 |
+
+The candidate-pool result is much stronger than either fixed-slot rule. It
+raises own-head causal importance and makes cross-seed aligned transfer
+consistent across nearly all source-target pairs.
+
+## Interpretation
+
+This is the clearest current local-copy result:
+
+```text
+Functional specialization is stable across seeds after role-level relabeling,
+but the structural slot carrying the role can move across nearby layers.
+```
+
+So the right framing is not "does the same layer/head become functionally
+modular?" It is:
+
+```text
+Does structural/role specialization, after the correct cross-seed relabeling,
+lead to functional specialization?
+```
+
+For local-copy, the answer is currently yes under a cross-layer candidate pool.
+The weaker layer-3 result was not evidence that the role failed to transfer; it
+was evidence that fixed structural slots are too brittle.
+
+## Files
+
+- Script: `scripts/pythia_local_copy_candidate_pool_alignment.py`.
+- Result directory:
+  `results/phase1_pythia160m_local_copy_candidate_pool_layers2_4_top2/`.
+- Prior layer-selection memo:
+  `doc/phase1_pythia160m_local_copy_layer_selection.md`.

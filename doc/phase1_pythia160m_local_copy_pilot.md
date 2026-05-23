@@ -287,8 +287,12 @@ local-copy heads, just in different layers:
 The fixed layers 2+4 rule rescues own-head causality for the weak targets
 (`1.8528` own excess over random), but it is worse than layer 3 on the full
 all-target transfer comparison (`aligned-minus-same=0.2441` vs `0.6995` for
-layer 3). Details are in
-`doc/phase1_pythia160m_local_copy_layer_selection.md`.
+layer 3). A cross-layer candidate-pool follow-up then fixed the structural-slot
+problem: selecting the top 2 local-copy heads across layers 2-4 and matching
+over the full cross-layer candidate pool produced `aligned-minus-same=1.7838`,
+with aligned transfer better in `66/72` ordered pairs. Details are in
+`doc/phase1_pythia160m_local_copy_layer_selection.md` and
+`doc/phase1_pythia160m_local_copy_candidate_pool.md`.
 
 ## Recommended Next Step
 
@@ -299,6 +303,7 @@ Can a cross-layer candidate-pool method identify causally active local-copy
 heads before testing cross-seed transfer?
 ```
 
-Concretely, compare top-by-probe, top-by-source-causality, and aligned transfer
-from top-N cross-layer candidate heads. The goal is to avoid silently treating a
-high attention-probe score as if it were already a causal module.
+The first candidate-pool result is positive. The next step is to replicate the
+same cross-layer candidate-pool test at earlier checkpoints and/or on another
+role so we can distinguish a final-checkpoint phenomenon from a training-time
+developmental pattern.

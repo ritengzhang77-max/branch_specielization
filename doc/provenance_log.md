@@ -980,3 +980,32 @@ functional modularity?
   original layer-3 seeds.
 - Wrote the follow-up memo:
   `doc/phase1_pythia160m_local_copy_layer_selection.md`.
+
+## 2026-05-22 23:05 PDT - Cross-layer candidate-pool local-copy transfer
+
+- Added `scripts/pythia_local_copy_candidate_pool_alignment.py`.
+- Ran candidate-pool transfer on Pythia-160M final checkpoint:
+  - seeds: 1-9;
+  - target seeds: 1-9;
+  - candidate layers: 2, 3, 4;
+  - selected heads: top 2 local-copy probe heads per seed across the full
+    candidate pool;
+  - alignment: Hungarian matching over the full 36-head raw-score candidate
+    pool, allowing cross-layer head mappings.
+- Result directory:
+  `results/phase1_pythia160m_local_copy_candidate_pool_layers2_4_top2/`.
+- Full all-target transfer summary over 72 ordered source-target pairs:
+  - own top excess over random: `2.2896`;
+  - same-index source transfer: `0.4876`;
+  - cross-layer aligned source transfer: `2.2714`;
+  - aligned-minus-same: `1.7838`;
+  - aligned better count: `66/72`.
+- Per-target aligned-minus-same was positive for `9/9` target seeds
+  (two-sided sign `p=0.0039`); pair-level aligned-better sign test is about
+  `7.3e-14`.
+- This is the strongest current local-copy result. It supports the updated
+  framing: functional specialization is stable across seeds after role-level
+  relabeling, but the raw structural layer/head slot can shift across nearby
+  layers.
+- Wrote the candidate-pool memo:
+  `doc/phase1_pythia160m_local_copy_candidate_pool.md`.

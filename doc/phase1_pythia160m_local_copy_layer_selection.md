@@ -101,6 +101,22 @@ The clean next question is not whether local-copy transfers at one fixed layer.
 It is whether a candidate-pool method can identify causally active local-copy
 heads across layers before testing cross-seed transfer.
 
+## Candidate-Pool Update
+
+That next test was positive. Selecting the top 2 local-copy heads across layers
+2-4 and running Hungarian alignment over the full 36-head cross-layer candidate
+pool produced:
+
+- own top excess over random: `2.2896`;
+- same-index source transfer: `0.4876`;
+- cross-layer aligned source transfer: `2.2714`;
+- aligned-minus-same: `1.7838`;
+- aligned better count: `66/72`.
+
+This is substantially stronger than either fixed layer 3 or fixed layers 2+4.
+The detailed memo is
+`doc/phase1_pythia160m_local_copy_candidate_pool.md`.
+
 ## Files
 
 - Layer sweep script: `scripts/pythia_local_copy_layer_causal_sweep.py`.

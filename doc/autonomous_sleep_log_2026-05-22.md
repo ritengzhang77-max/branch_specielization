@@ -153,3 +153,28 @@ or negative result would also be informative.
   seeds, but its structural layer is seed-dependent. Fixed-slot specialization
   is therefore too brittle; the next test should use a cross-layer candidate
   pool rather than a single chosen layer.
+
+## 2026-05-22 22:50-23:05 PDT
+
+- Added `scripts/pythia_local_copy_candidate_pool_alignment.py`.
+- Ran a cross-layer candidate-pool local-copy transfer test:
+  - candidate layers: 2, 3, 4;
+  - selected heads per seed: top 2 by local-copy probe score across the
+    candidate pool;
+  - alignment: Hungarian matching over the full 36-head cross-layer raw-score
+    candidate pool;
+  - target seeds: all 9;
+  - ordered source-target transfer pairs: 72.
+- Result:
+  - own top excess over random: `2.2896`;
+  - same-index source transfer: `0.4876`;
+  - cross-layer aligned source transfer: `2.2714`;
+  - aligned-minus-same: `1.7838`;
+  - aligned better count: `66/72`.
+- Per-target aligned-minus-same was positive for `9/9` seeds. Pair-level
+  two-sided sign `p ~= 7.3e-14`; target-level sign `p=0.0039`.
+- Wrote the candidate-pool memo:
+  `doc/phase1_pythia160m_local_copy_candidate_pool.md`.
+- Current interpretation: the local-copy role is functionally stable across
+  seeds after cross-layer role relabeling. The earlier weak result was caused by
+  fixed structural-slot assumptions, not absence of a reusable function.

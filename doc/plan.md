@@ -283,6 +283,14 @@ These three numbers (S, C, M) are what the project should report for each archit
   structural specialization can lead to functional specialization, but not at a
   fixed raw layer/head slot across seeds; candidate selection must distinguish
   probe behavior from causal role usage.
+- A cross-layer candidate-pool run gave the strongest local-copy result so far.
+  Selecting the top 2 local-copy heads across layers 2-4 and matching over the
+  full 36-head candidate pool produced own-top excess `2.2896`, aligned transfer
+  `2.2714` versus same-index transfer `0.4876`, aligned-minus-same `1.7838`,
+  and aligned transfer better in `66/72` ordered source-target pairs. This is
+  the clearest Phase 1 evidence that functional specialization is stable across
+  seeds after role-level relabeling, while the raw structural slot can shift
+  across nearby layers.
 
 ### C. Resources concretely available (with HF / GitHub paths)
 - Pythia seeds: `EleutherAI/pythia-{14m,70m,160m,410m}-seed{1..9}`, plus `pythia-160m-weight-seed{1-3}` and `pythia-160m-data-seed{1-3}`. 154 checkpoints per model (steps 0, 1, 2, 4, 8, …, 143000). GitHub: `EleutherAI/pythia`.

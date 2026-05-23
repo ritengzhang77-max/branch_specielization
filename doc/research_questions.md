@@ -330,12 +330,18 @@ Second-role result:
   8. A fixed layers 2+4 transfer rule improves the weak targets but is worse
   than layer 3 globally (`aligned-minus-same=0.2441` vs `0.6995`), so the issue
   is not solved by picking one alternative fixed layer set.
+- The cross-layer candidate-pool test was strongly positive. Selecting the top
+  2 local-copy heads across layers 2-4 and aligning over the full 36-head
+  candidate pool gave own-top excess `2.2896`, same-index transfer `0.4876`,
+  aligned transfer `2.2714`, aligned-minus-same `1.7838`, and aligned transfer
+  better in `66/72` ordered source-target pairs. At the target level,
+  aligned-minus-same was positive for `9/9` seeds.
 
 The next Phase 1 question is now:
 
 ```text
-Can a cross-layer candidate-pool method identify causally active local-copy
-heads before testing cross-seed transfer?
+Does cross-layer candidate-pool functional transfer appear during training, or
+only at the final checkpoint?
 ```
 
 ### Phase 4: Mechanistic Interpretation
