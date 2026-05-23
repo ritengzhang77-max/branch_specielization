@@ -18,3 +18,7 @@ compiled PDF, copied data, and provenance notes when available.
   result is a gate-before-causality lag: role-aligned gates appeared by step
   400, but causal branch modularity appeared only after continued weak labels to
   about step 600.
+- `2026-05-22-1759-pythia-repeat-trajectory/`: Pythia-14M repeat-match
+  checkpoint trajectory. The main result is an analogous probe-before-causality
+  lag in a real pretrained transformer: repeat-match specialization rises before
+  top-head ablations become strongly worse than random same-layer controls.

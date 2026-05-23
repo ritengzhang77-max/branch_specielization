@@ -248,6 +248,19 @@ attention settings or in small real transformer tasks with role probes and
 causal patching?
 ```
 
+Initial real-transformer follow-up:
+
+- A Pythia-14M checkpoint trajectory over seeds 1-3 found an analogous
+  probe-before-causality pattern for repeat-match heads. The mean normalized
+  repeat-match specialization of selected layer-0/1 heads rose by step 4000
+  (`0.3675` vs `0.2590` at step0), while top-head ablation was still only
+  `0.0556` loss-delta above random same-layer controls. The causal excess became
+  much larger later: `1.3224` at step16000, `4.1506` at step64000, and `7.2982`
+  at step143000.
+- This does not show branch modularity in Pythia, but it supports the broader
+  measurement warning: probe-defined specialization can precede causal
+  importance, so specialization and causal tests must be reported separately.
+
 ### Phase 4: Mechanistic Interpretation
 
 If Phase 3 shows a signal, explain it mechanistically.

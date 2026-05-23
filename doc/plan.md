@@ -235,6 +235,15 @@ These three numbers (S, C, M) are what the project should report for each archit
   0.7652. Always-on labels kept strengthening the split to branch distance
   0.9773. This supports a causal-consolidation framing: role-aligned gates form
   before causally separable branch computations.
+- A small real-transformer follow-up on Pythia-14M checkpoints found an
+  analogous probe-before-causality pattern for repeat-match heads. Across seeds
+  1-3, selected layer-0/1 repeat-match specialization rose by step 4000
+  (`0.3675` vs `0.2590` at step0), while top-head ablation was only `0.0556`
+  loss-delta above random same-layer controls. The causal excess became
+  substantial later: `1.3224` at step16000, `4.1506` at step64000, and `7.2982`
+  at step143000. This does not establish branch modularity in Pythia, but it
+  strengthens the methodological framing that specialization probes and causal
+  importance can have different developmental timelines.
 
 ### C. Resources concretely available (with HF / GitHub paths)
 - Pythia seeds: `EleutherAI/pythia-{14m,70m,160m,410m}-seed{1..9}`, plus `pythia-160m-weight-seed{1-3}` and `pythia-160m-data-seed{1-3}`. 154 checkpoints per model (steps 0, 1, 2, 4, 8, …, 143000). GitHub: `EleutherAI/pythia`.

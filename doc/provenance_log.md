@@ -753,3 +753,33 @@ functional modularity?
 - Recorded the result in `doc/phase3_toy_router_trajectory.md`.
 - Created checkpoint deck:
   `presentations/2026-05-22-1745-router-trajectory/router_trajectory_checkpoint.pdf`.
+
+## 2026-05-22 Phase 1 Pythia-14M Repeat-Match Checkpoint Trajectory
+
+- Added `scripts/pythia_repeat_match_checkpoint_trajectory.py`.
+- Tested whether an attention-role probe for repeat-match heads appears before
+  those heads have a strong causal effect under head-output ablation.
+- Ran Pythia-14M seeds 1, 2, and 3 at revisions:
+  `step0`, `step64`, `step256`, `step1000`, `step4000`, `step16000`,
+  `step64000`, and `step143000`.
+- Selected the top repeat-match head in layers 0 and 1 from 64 synthetic probe
+  sequences, then evaluated head-output ablation on 64 separate repeated-token
+  evaluation sequences.
+- Compared top-head ablation to 8 random same-layer controls per seed and
+  checkpoint.
+- Main result:
+  - repeat-match specialization rose by step4000 (`0.3675` vs `0.2590` at
+    step0);
+  - top-head causal excess over random controls was still small at step4000
+    (`0.0556`);
+  - causal excess became larger at step16000 (`1.3224`), step64000 (`4.1506`),
+    and step143000 (`7.2982`).
+- Key interpretation:
+  - this is a real-transformer analogue of the toy measurement warning;
+  - attention-role specialization can precede strong causal importance;
+  - it does not establish branch modularity in Pythia, because these are ordinary
+    attention heads rather than routed branches.
+- Recorded the result in
+  `doc/phase1_pythia14m_repeat_match_checkpoint_trajectory.md`.
+- Created checkpoint deck:
+  `presentations/2026-05-22-1759-pythia-repeat-trajectory/pythia_repeat_trajectory_checkpoint.pdf`.
