@@ -266,10 +266,12 @@ These three numbers (S, C, M) are what the project should report for each archit
   `[x, SEP, x]` triples. A Pythia-160M two-seed final-checkpoint pilot on layer
   3 found strong within-seed causality (`own_top_excess_over_random=2.1609`) but
   weak cross-seed transfer (`same_index=0.0033`, `aligned=0.1033`, aligned
-  better in 1/2 ordered pairs). This suggests the repeat-match alignment result
-  may not automatically generalize to every attention pattern. All-seed scaling
-  was blocked by current machine/GPU contention, so the script now supports
-  partial outputs and `--target-seeds` chunking for later completion.
+  better in 1/2 ordered pairs). A larger chunk with all 9 source seeds and
+  target seeds 1-3 then showed strong aligned transfer (`aligned=1.5894` vs
+  `same_index=0.1901`, aligned better in 17/24 ordered pairs). This suggests
+  local-copy may be a second positive causal alignment-transfer role, but the
+  all-target result remains incomplete because target chunks 4-6 and 7-9 were
+  blocked by current machine/GPU contention.
 
 ### C. Resources concretely available (with HF / GitHub paths)
 - Pythia seeds: `EleutherAI/pythia-{14m,70m,160m,410m}-seed{1..9}`, plus `pythia-160m-weight-seed{1-3}` and `pythia-160m-data-seed{1-3}`. 154 checkpoints per model (steps 0, 1, 2, 4, 8, …, 143000). GitHub: `EleutherAI/pythia`.

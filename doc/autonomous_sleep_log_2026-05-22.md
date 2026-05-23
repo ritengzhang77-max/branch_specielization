@@ -53,3 +53,21 @@ or negative result would also be informative.
   result.
 - Wrote pilot report:
   `doc/phase1_pythia160m_local_copy_pilot.md`.
+
+## 2026-05-22 21:25-21:45 PDT
+
+- GPU 0 became stable enough to complete a larger local-copy target chunk.
+- Ran Pythia-160M final checkpoint with all 9 source seeds and target seeds 1-3
+  on layer 3.
+- Result over 24 ordered source-target pairs:
+  - own top excess over random: `2.8567`;
+  - same-index source transfer: `0.1901`;
+  - aligned source transfer: `1.5894`;
+  - aligned-minus-same: `1.3993`;
+  - aligned better count: `17/24`.
+- This changes the local-copy interpretation: the weak two-seed transfer was not
+  representative once all source seeds were available. The completed target
+  chunk suggests local-copy may be a second positive causal alignment-transfer
+  role, but target seeds 4-9 are still incomplete.
+- Retried target seeds 4-6, but the job was interrupted during probing before
+  target rows were written.

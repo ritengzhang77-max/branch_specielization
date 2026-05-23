@@ -308,11 +308,16 @@ Initial second-role pilot:
   seed causality but weak cross-seed transfer: own top excess over random was
   `2.1609`, same-index source transfer was `0.0033`, aligned source transfer was
   `0.1033`, and aligned-minus-same was `0.0999`.
-- This is not yet an all-seed result because current GPU/CPU jobs were
-  interrupted before enough target rows completed. The script now supports
-  partial outputs and target-seed chunking for a later stable run.
-- Tentative boundary condition: alignment-based causal transfer may be strong
-  for repeat-match but not automatic for every attention pattern.
+- A larger all-source chunk completed for target seeds 1-3: own top excess over
+  random was `2.8567`, same-index source transfer was `0.1901`, aligned source
+  transfer was `1.5894`, aligned-minus-same was `1.3993`, and aligned transfer
+  was better in `17/24` ordered source-target pairs.
+- This is not yet an all-target result because target seeds 4-9 remain
+  incomplete under current GPU contention. The script now supports partial
+  outputs and target-seed chunking.
+- Tentative update: local-copy may be a second positive causal alignment-transfer
+  role, but the project should wait for target chunks 4-6 and 7-9 before making
+  the all-seed claim.
 
 ### Phase 4: Mechanistic Interpretation
 

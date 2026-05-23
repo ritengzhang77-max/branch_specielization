@@ -868,12 +868,22 @@ functional modularity?
   - same-index source transfer `0.0033`;
   - aligned source transfer `0.1033`;
   - aligned-minus-same `0.0999`.
+- Completed a larger all-source target chunk:
+  - source seeds 1-9;
+  - target seeds 1-3;
+  - layer 3;
+  - final checkpoint `step143000`;
+  - own top excess over random `2.8567`;
+  - same-index source transfer `0.1901`;
+  - aligned source transfer `1.5894`;
+  - aligned-minus-same `1.3993`;
+  - aligned better in 17/24 ordered source-target pairs.
 - Interpretation:
-  - local-copy heads can be causal within a seed;
-  - the two-seed pilot does not show repeat-match-like cross-seed causal
-    transfer;
-  - this is a useful boundary condition to test when GPUs are stable.
-- Attempted all-9-seed local-copy scaling, but current GPU/CPU jobs were
-  interrupted before target rows completed. Updated the script with
+  - local-copy heads can be strongly causal within a seed;
+  - with all source seeds, raw-score alignment transfers local-copy causal heads
+    much better than same index for target seeds 1-3;
+  - the result is still target-partial, not a full all-seed claim.
+- Attempted the next chunk, target seeds 4-6, but current GPU jobs were
+  interrupted during probing before target rows completed. The script has
   partial-output writes and `--target-seeds` chunking for the next attempt.
 - Recorded the pilot in `doc/phase1_pythia160m_local_copy_pilot.md`.

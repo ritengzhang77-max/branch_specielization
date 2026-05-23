@@ -82,29 +82,66 @@ This is a useful contrast to repeat-match: local-copy may have strong within-see
 causal heads without strong cross-seed causal transfer, at least in the current
 small pilot.
 
+### Pythia-160M all-source / target-seeds 1-3 chunk
+
+After adding partial-output writes and `--target-seeds`, a larger chunk completed
+successfully:
+
+- source seeds: 1-9;
+- target seeds: 1-3;
+- checkpoint: `step143000`;
+- layer: 3;
+- probe/eval sequences: 64 each;
+- local-copy triples per sequence: 32;
+- transfer comparisons: 24 ordered source-target pairs.
+
+| Metric | Value |
+|---|---:|
+| selected local-copy specialization | 0.3258 |
+| baseline loss | 10.0969 |
+| own top loss delta | 2.8318 |
+| random loss delta | -0.0250 |
+| own top excess over random | 2.8567 |
+| same-index source transfer | 0.1901 |
+| aligned source transfer | 1.5894 |
+| aligned - same | 1.3993 |
+| aligned better count | 17/24 |
+
+Interpretation:
+
+- The weak two-seed cross-seed transfer was not representative of the larger
+  source pool.
+- For target seeds 1-3, raw-score alignment transfers local-copy causal heads
+  much better than same index.
+- This is still not a full all-target result. The completed chunk covers all
+  source seeds but only one third of the target seeds.
+
 ## Infrastructure Blocker
 
-Attempts to scale this exact local-copy experiment to all 9 Pythia-160M seeds
-were interrupted under current machine/GPU contention before target-seed rows
-could be completed. The script was updated to support:
+Attempts to scale this exact local-copy experiment to all 9 Pythia-160M target
+seeds were interrupted under current machine/GPU contention. The script was
+updated to support:
 
 - partial output writes after probing and after each target seed;
 - `--target-seeds` chunking.
 
-Even with chunking, the available GPUs and CPU runs were killed before a stable
-all-seed local-copy result could be produced during this block. This is a local
-infrastructure issue, not a model result.
+With chunking, target seeds 1-3 completed. A target seeds 4-6 retry was
+interrupted during probing before target rows were produced. This is a local
+infrastructure issue, not a model result for target seeds 4-9.
 
 ## Files
 
 - Script: `scripts/pythia_local_copy_alignment.py`.
 - 14M smoke results: `results/debug_pythia14m_local_copy_alignment/`.
 - 160M two-seed pilot results: `results/debug_pythia160m_local_copy_alignment/`.
+- 160M all-source target 1-3 results:
+  `results/phase1_pythia160m_local_copy_alignment_seed9_layer3_targets1_3/`.
 - Sleep-run log: `doc/autonomous_sleep_log_2026-05-22.md`.
 
 ## Current Interpretation
 
-The repeat-match result should not yet be generalized to all head roles.
+The repeat-match result now has a stronger second-role analogue, but the
+local-copy result is still partial.
 
 Current evidence separates three cases:
 
@@ -112,21 +149,22 @@ Current evidence separates three cases:
    transfer across all 9 seeds.
 2. **Previous-token attention probe**: all-seed role distributions are somewhat
    improved by alignment, but the role is distributed and less concentrated.
-3. **Local-copy causal pilot**: own selected heads can be strongly causal, but
-   cross-seed causal transfer is weak in the two-seed pilot.
+3. **Local-copy causal pilot**: own selected heads are strongly causal, and
+   aligned source-head transfer is strong for target seeds 1-3 when using all
+   source seeds. The all-target result remains incomplete.
 
-This is a promising boundary condition: alignment-based causal universality may
-hold for some roles but not automatically for every attention pattern.
+This is a promising extension of the alignment-transfer claim, but it needs the
+remaining target seeds before being treated as an all-seed result.
 
 ## Recommended Next Step
 
-Run a more robust second-role test when a GPU is free:
+Complete the remaining target chunks when a GPU is stable:
 
 ```text
-Pythia-160M, seeds 1-9, final checkpoint, local-copy layer 3,
-target seeds chunked as 1-3, 4-6, 7-9.
+Pythia-160M, source seeds 1-9, final checkpoint, local-copy layer 3,
+target seeds 4-6 and 7-9.
 ```
 
-Use the new `--target-seeds` flag and keep partial outputs. If local-copy remains
-weak under aligned transfer, write it up as a contrast result rather than trying
-to force the repeat-match story onto a different role.
+Use the new `--target-seeds` flag and keep partial outputs. If the remaining
+target chunks look like target seeds 1-3, local-copy becomes a second positive
+causal alignment-transfer role.
