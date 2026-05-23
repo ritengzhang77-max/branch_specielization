@@ -165,6 +165,7 @@ Added:
 
 ```text
 scripts/switchhead_checkpoint_parameter_diagnostics.py
+doc/phase3_switchhead_activation_patching_plan.md
 ```
 
 ## Pushed Commits
@@ -180,6 +181,8 @@ b8a8a1f Add attended SwitchHead value gate diagnostic
 869dd4d Document loaded SwitchHead swap workflow
 f5b0b46 Add SwitchHead checkpoint parameter diagnostics
 e33b11b Document one-layer SwitchHead parameter diagnostics
+a715dcb Add autonomous sleep research summary
+f39c0be Add SwitchHead activation patching plan
 ```
 
 ## Important Caveat
@@ -195,6 +198,12 @@ that every nominally identical CUDA/Triton rerun lands in the same basin.
 ## Next Best Step
 
 Add activation-patching utilities on top of checkpoint loading.
+
+Planning doc:
+
+```text
+doc/phase3_switchhead_activation_patching_plan.md
+```
 
 The most direct next test is:
 
