@@ -1378,3 +1378,58 @@ Wrote:
 ```text
 doc/phase3_toy_switchhead_seed_robustness.md
 ```
+
+## Progress: SwitchHead Expert-Swap Interventions
+
+Added frozen-model expert swaps to the SwitchHead toy script:
+
+```text
+--run-swap-interventions
+```
+
+The intervention grid swaps expert 0 and expert 1 rows for `v`, `o`, `sel_v`,
+and `sel_o`, individually and in paired/full relabeling combinations.
+
+Result directory:
+
+```text
+results/phase3_toy_switchhead_swap_interventions_w005_end800_seed5_steps2000/
+```
+
+Baseline again solved the induced one-layer condition:
+
+| Metric | Value |
+|---|---:|
+| Local accuracy | 1.0000 |
+| Induction accuracy | 1.0000 |
+| Routed expert match | 1.00 |
+| Output gate distance | 0.9645 |
+| Causal expert distance | 0.5664 |
+| Source-position value gate distance | 0.0029 |
+
+Main swap results:
+
+| Intervention | Local acc. | Induction acc. |
+|---|---:|---:|
+| baseline | 1.0000 | 1.0000 |
+| swap_v | 0.0804 | 0.0706 |
+| swap_value_selector | 0.0804 | 0.0706 |
+| swap_v_and_value_selector | 1.0000 | 1.0000 |
+| swap_o | 1.0000 | 1.0000 |
+| swap_output_selector | 1.0000 | 1.0000 |
+| swap_all | 1.0000 | 1.0000 |
+
+Interpretation:
+
+```text
+output-selector pressure is the clean sufficient training cue, but the frozen
+inference-time bottleneck is value-side. The value projection and value selector
+form a causal expert codebook; swapping either side alone breaks the model, and
+swapping both together restores it.
+```
+
+Wrote:
+
+```text
+doc/phase3_toy_switchhead_swap_interventions.md
+```

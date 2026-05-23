@@ -494,6 +494,13 @@ These three numbers (S, C, M) are what the project should report for each archit
   two-layer causal modules localized to `L1E0` and `L1E1` in all 10 seeds. The
   expanded spontaneous controls remained negative: one-layer spontaneous had
   only 2/10 routed match and two-layer spontaneous had only 1/10 routed match.
+- Expert-swap interventions refined the mechanism of the one-layer induced
+  SwitchHead result. Swapping `v` or `sel_v` alone collapsed accuracy to about
+  `0.08/0.07`, but coherently swapping `v` with `sel_v` restored performance.
+  Swapping `o` or `sel_o` alone was tolerated. This means output-selector
+  pressure is the clean sufficient training cue, but the learned frozen
+  computation is fragile on the value side: the value selector and value
+  projection form a causal expert codebook.
 
 ### C. Resources concretely available (with HF / GitHub paths)
 - Pythia seeds: `EleutherAI/pythia-{14m,70m,160m,410m}-seed{1..9}`, plus `pythia-160m-weight-seed{1-3}` and `pythia-160m-data-seed{1-3}`. 154 checkpoints per model (steps 0, 1, 2, 4, 8, …, 143000). GitHub: `EleutherAI/pythia`.

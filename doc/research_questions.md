@@ -256,6 +256,13 @@ SwitchHead feasibility update:
   10 tested seeds. Expanded spontaneous controls remained negative: one-layer
   spontaneous had only 2/10 routed match with near-zero causal distance, and
   two-layer spontaneous had only 1/10 routed match with shared gates.
+- Expert-swap interventions in the one-layer induced condition refined the
+  selector-type story. Swapping the value projection `v` or value selector
+  `sel_v` alone collapsed accuracy to roughly `0.08/0.07`, while coherently
+  swapping `v` with `sel_v` restored `1.00/1.00` accuracy. Swapping the output
+  projection `o` or output selector `sel_o` alone was tolerated. Thus the
+  output selector is the clean sufficient training cue, but the frozen
+  inference-time mechanism is fragile on the value side.
 
 ### Phase 3: Architectural Intervention
 

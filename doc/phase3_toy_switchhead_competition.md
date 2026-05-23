@@ -403,6 +403,18 @@ once induced, the role-aligned expert split can persist without the auxiliary
 selection loss remaining active.
 ```
 
+Later selector-type and swap-intervention follow-ups refine the mechanism:
+
+```text
+output-selector pressure is the clean sufficient training cue, but the frozen
+one-layer induced computation is fragile on the value side. Swapping `v` or
+`sel_v` alone destroys both roles; coherently swapping `v` with `sel_v` restores
+performance; swapping `o` or `sel_o` alone is tolerated.
+```
+
+See `doc/phase3_toy_switchhead_selector_type.md` and
+`doc/phase3_toy_switchhead_swap_interventions.md`.
+
 ## Caveats
 
 - These are very small SwitchHead models, not the paper-scale language model.
@@ -419,14 +431,14 @@ selection loss remaining active.
 ## Next Step
 
 Do not claim a general negative result about SwitchHead. The next useful
-SwitchHead-specific tests are:
+SwitchHead-specific tests are now:
 
-1. Sweep shorter auxiliary selection windows, especially end steps 100, 200,
-   and 400, to identify the minimum cue duration that survives later training.
-2. Add checkpointed trajectories to ask whether gate/expert-selection separation
-   ever precedes causal expert separation in this module.
-3. Sweep the supervision weight and end step to test whether selection compliance
-   precedes causal expert modularity as in the branch-router toy.
+1. Repeat the expert-swap grid in the two-layer induced condition to test
+   whether the layer-1 causal module is also value-side fragile.
+2. Save trained checkpoints so additional interventions can be run without
+   retraining the full seed set.
+3. Add attention-weighted value-gate diagnostics rather than only marginal
+   source-position averages.
 
 ## Artifacts
 
@@ -460,5 +472,7 @@ SwitchHead-specific tests are:
   `doc/phase3_toy_switchhead_two_layer_selector_type.md`
 - Seed robustness memo:
   `doc/phase3_toy_switchhead_seed_robustness.md`
+- Expert-swap intervention memo:
+  `doc/phase3_toy_switchhead_swap_interventions.md`
 - Feasibility memo:
   `doc/switchhead_followup_feasibility.md`

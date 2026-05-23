@@ -59,9 +59,10 @@ strong enough, and present long enough to reshape branch or expert computations.
 | SwitchHead reversed-label control | Reversed targets local -> expert 1 and induction -> expert 0 were reliable in 5/5 seeds at end step 800. | The induced roles follow the cue labels under sufficient duration, rather than exposing a fixed expert identity. |
 | Two-layer SwitchHead | Extra depth solved smoothly but did not create spontaneous modularity (`gate same-top=1.00`, routed match `0.20`); induced two-layer training reached routed match `1.00`. | The one-layer result survives depth; induced causal expert modularity localizes to layer 1. |
 | Layer-specific SwitchHead supervision | Layer-0-only supervision split gates but had routed match `0.40`; layer-1-only reached `0.80`; both layers reached `1.00`. | The cue must reach the causal layer; upstream gate splitting alone is not enough. |
-| SwitchHead selector-type control | Output-only supervision reached routed match `1.00`; value-only supervision split value gates but had routed match `0.00`; both split causally but hurt local accuracy. | The output selector, which writes back to the residual stream, is the clean sufficient cue. |
-| Two-layer selector-type control | On layer 1, output-only reached routed match `1.00`; value-only and both-selector supervision both reached `0.80`. | Value selection is not null at the causal layer, but output selection remains the clean sufficient cue. |
+| SwitchHead selector-type control | Output-only supervision reached routed match `1.00`; value-only supervision split value gates but had routed match `0.00`; both split causally but hurt local accuracy. | The output selector, which writes back to the residual stream, is the clean sufficient training cue. |
+| Two-layer selector-type control | On layer 1, output-only reached routed match `1.00`; value-only and both-selector supervision both reached `0.80`. | Value selection is not null at the causal layer, but output selection remains the clean sufficient training cue. |
 | SwitchHead expanded-seed robustness | One-layer and two-layer output-selector induced conditions both reached routed match `1.00` across seeds 1-10; spontaneous one-layer and two-layer controls had only 2/10 and 1/10 routed match. | The induced positive and spontaneous negative SwitchHead results both survive expanded seeds. |
+| SwitchHead expert-swap interventions | In the one-layer induced condition, `swap_v` and `swap_value_selector` collapsed accuracy to about `0.08/0.07`, while `swap_v_and_value_selector` and `swap_all` restored accuracy to `1.00/1.00`. `swap_o` and `swap_output_selector` alone were tolerated. | Output-selector pressure is the clean training cue, but the learned inference-time bottleneck is a value-side expert codebook, not a marginal output-gate split. |
 | Pythia repeat/copy follow-up | Pythia heads show cross-seed functional role stability after alignment, and causal transfer strengthens through training. | Real transformers support the role-stability part, but do not by themselves establish branch modularity. |
 
 ## Current Answer
@@ -122,9 +123,12 @@ The branch computations need time under role-aligned routing before causal
 modularity consolidates. The SwitchHead strength-duration sweep further suggests
 that the relevant quantity is not simply whether a cue exists, but whether it
 crosses a duration/strength threshold and reaches the layer where the causal
-role module forms. In SwitchHead specifically, the selector-type control suggests
-that the output selector is the clean path because it controls which expert
-writes the role-specific result back to the residual stream.
+role module forms. In SwitchHead specifically, the selector-type control shows
+that output-selector pressure is the clean sufficient training cue. The follow-up
+swap intervention refines this: once training is complete, the fragile causal
+code is on the value side. Swapping the value projection or value selector alone
+destroys the model, while swapping both together restores it; swapping the output
+selector or output projection alone is tolerated.
 
 ## Metrics That Matter Most
 
@@ -141,6 +145,10 @@ writes the role-specific result back to the residual stream.
 - `gate_routed_role_match` and `gate_distribution_distance`: router behavior.
   These are necessary diagnostics, but the supervision sweep and trajectory show
   that they can overstate modularity if reported without branch ablations.
+- `swap_*` intervention accuracy/loss: frozen-model tests of whether an expert
+  identity change is a harmless relabeling or a causal mismatch. These are
+  stronger than marginal gate statistics because paired swaps can distinguish
+  selector effects from expert-matrix codebook effects.
 - `own_top_excess`, `aligned_transfer`, and `aligned_minus_same`: Phase 1
   cross-seed role-stability metrics. These measure functional specialization and
   relabeled role universality, not branch modularity.
@@ -176,7 +184,10 @@ This framing makes positive and negative results both useful:
   to the later layer, and supervising only the upstream layer is not enough.
 - selector-type result: in SwitchHead, value routing alone can split internal
   expert reads without producing causal role modularity; output routing is the
-  clean sufficient cue.
+  clean sufficient training cue.
+- swap-intervention result: in the induced one-layer SwitchHead model, the
+  frozen causal code is fragile to value-side relabeling but tolerant to
+  output-side relabeling.
 
 ## Next Narrow Experiment
 
@@ -191,21 +202,22 @@ reversed-label control.
 two-layer localization and layer-specific supervision controls.
 selector-type control separating output and value routing.
 two-layer selector-type extension.
+expert-swap intervention showing value-side codebook fragility.
 ```
 
-The next narrow experiment should test whether the induced expert modules are
-truly role-specific in a stronger causal sense:
+The next narrow experiment should test whether the value-side codebook result
+also holds where the two-layer causal role localizes:
 
 ```text
-train the successful SwitchHead induced-modularity condition, then swap or patch
-expert outputs/gates across local and induction positions to test whether the
-roles transfer with the routed expert or depend on residual-stream context.
+repeat the expert-swap grid in the two-layer induced condition, focusing on
+whether layer 1 has the same value-side fragility and whether layer 0 remains
+mostly noncausal under swaps.
 ```
 
-If that path is too implementation-heavy, the next-best move is to repeat the
-selector-type control in the two-layer setting:
+The next measurement improvement is:
 
 ```text
-test whether value-only pressure also fails in two-layer SwitchHead, and whether
-output-only pressure on layer 1 remains the cleanest sufficient intervention.
+save trained checkpoints and add attention-weighted value-gate diagnostics, so
+new interventions can be run without retraining and value-side routing can be
+measured at the actually attended source tokens.
 ```

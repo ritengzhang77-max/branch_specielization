@@ -72,6 +72,9 @@ optimization relative to output-only pressure.
 
 For this toy SwitchHead setup, the relevant structural cue is specifically the
 output expert selector, not arbitrary expert routing inside the attention module.
+However, later swap-intervention results refine what "relevant" means here:
+output-selector pressure is the clean sufficient training cue, but the final
+inference-time bottleneck is not simply the output selector itself.
 
 This refines the mechanism:
 
@@ -81,14 +84,28 @@ residual stream; value routing alone can split internal reads without producing
 separable causal role modules.
 ```
 
+Follow-up expert swaps found that swapping the value projection `v` or value
+selector `sel_v` alone destroys the trained computation, while swapping the
+output projection `o` or output selector `sel_o` alone is tolerated. Coherently
+swapping `v` with `sel_v` restores performance. So the best current
+interpretation is:
+
+```text
+output-selector pressure induces the split, but the learned role computation
+consolidates into a value-side expert codebook.
+```
+
 This matters for larger-model analysis: measuring only token-to-value expert
-routing could miss the selector that actually controls downstream causal
-specialization.
+routing can miss the training cue, while measuring only output-selector routing
+can miss where the causal computation consolidates.
 
 A two-layer extension found the same overall ordering at the causal layer:
 layer-1 output-only supervision was reliable in 5/5 seeds, while layer-1
 value-only and both-selector supervision were both 4/5. See
 `doc/phase3_toy_switchhead_two_layer_selector_type.md`.
+
+For the swap-intervention refinement, see
+`doc/phase3_toy_switchhead_swap_interventions.md`.
 
 ## Result Directories
 

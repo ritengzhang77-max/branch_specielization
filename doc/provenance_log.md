@@ -2038,3 +2038,40 @@ computations to consolidate.
 - Updated `doc/phase3_toy_switchhead_seed_robustness.md`.
 - Interpretation update: the negative spontaneous result also survives the
   expanded seed set.
+
+## 2026-05-23 - SwitchHead expert-swap interventions
+
+- Added `--run-swap-interventions` to
+  `scripts/toy_switchhead_competition.py`.
+- Added frozen-model expert-row swap interventions for SwitchHead value
+  projections (`v`), output projections (`o`), value selectors (`sel_v`), and
+  output selectors (`sel_o`), plus paired and full relabeling controls.
+- Added source-aligned value-selector metrics:
+  `source_value_gate_distribution_distance`,
+  `source_value_gate_local_top_expert`, and related per-expert fields.
+- Ran the one-layer output-selector induced condition with the swap grid:
+  `results/phase3_toy_switchhead_swap_interventions_w005_end800_seed5_steps2000/`.
+- Baseline replicated the induced result:
+  - local accuracy `1.0000`;
+  - induction accuracy `1.0000`;
+  - routed expert match `1.00`;
+  - output gate distance `0.9645`;
+  - causal expert distance `0.5664`;
+  - query-position value gate distance `0.0134`;
+  - source-position value gate distance `0.0029`.
+- Swap results:
+  - `swap_v`: local/induction accuracy `0.0804/0.0706`;
+  - `swap_value_selector`: `0.0804/0.0706`;
+  - `swap_v_and_value_selector`: `1.0000/1.0000`;
+  - `swap_o`: `1.0000/1.0000`;
+  - `swap_output_selector`: `1.0000/1.0000`;
+  - `swap_o_and_output_selector`: `1.0000/1.0000`;
+  - `swap_all`: `1.0000/1.0000`.
+- Wrote `doc/phase3_toy_switchhead_swap_interventions.md`.
+- Updated `doc/phase3_structural_to_functional_synthesis.md`,
+  `doc/phase3_toy_switchhead_selector_type.md`,
+  `doc/research_questions.md`, and `doc/plan.md`.
+- Interpretation update: output-selector pressure remains the clean sufficient
+  training cue, but the frozen inference-time code is fragile on the value side.
+  Coherent full relabeling is harmless; mismatching the value selector and value
+  projection destroys both roles.

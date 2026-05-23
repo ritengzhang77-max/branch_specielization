@@ -51,6 +51,10 @@ class ModelSummary:
     value_gate_local_top_expert: int
     value_gate_induction_top_expert: int
     value_gate_same_top_expert: bool
+    source_value_gate_distribution_distance: float
+    source_value_gate_local_top_expert: int
+    source_value_gate_induction_top_expert: int
+    source_value_gate_same_top_expert: bool
     local_top_loss_delta: float
     induction_top_loss_delta: float
     n_layers: int
@@ -74,6 +78,20 @@ class ExpertScore:
     gate_induction_mean: float
     value_gate_local_mean: float
     value_gate_induction_mean: float
+    source_value_gate_local_mean: float
+    source_value_gate_induction_mean: float
+
+
+@dataclass
+class SwapInterventionScore:
+    config: str
+    seed: int
+    intervention: str
+    eval_loss: float
+    local_loss: float
+    induction_loss: float
+    local_accuracy: float
+    induction_accuracy: float
 
 
 def parse_args() -> argparse.Namespace:
@@ -127,6 +145,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--local-weight", type=float, default=1.0)
     parser.add_argument("--induction-weight", type=float, default=1.0)
     parser.add_argument("--trajectory-eval-steps", nargs="*", type=int, default=[])
+    parser.add_argument("--run-swap-interventions", action="store_true")
     parser.add_argument("--device", default="auto", choices=["auto", "cuda", "cpu"])
     parser.add_argument("--output-dir", type=Path, default=Path("results/phase3_toy_switchhead_competition"))
     return parser.parse_args()
@@ -164,6 +183,81 @@ def zero_switchhead_expert(attn: nn.Module, expert_idx: int):
         with torch.no_grad():
             attn.v.index_copy_(0, row_idx, v_backup)
             attn.o.index_copy_(0, row_idx, o_backup)
+
+
+@contextlib.contextmanager
+def swap_tensor_rows(tensor: torch.Tensor, row_a: torch.Tensor, row_b: torch.Tensor):
+    with torch.no_grad():
+        backup_a = tensor[row_a].detach().clone()
+        backup_b = tensor[row_b].detach().clone()
+        tensor.index_copy_(0, row_a, backup_b)
+        tensor.index_copy_(0, row_b, backup_a)
+    try:
+        yield
+    finally:
+        with torch.no_grad():
+            tensor.index_copy_(0, row_a, backup_a)
+            tensor.index_copy_(0, row_b, backup_b)
+
+
+@contextlib.contextmanager
+def swap_switchhead_experts(
+    attn: nn.Module,
+    expert_a: int = 0,
+    expert_b: int = 1,
+    *,
+    swap_v: bool = False,
+    swap_o: bool = False,
+    swap_sel_v: bool = False,
+    swap_sel_o: bool = False,
+):
+    n_experts = int(getattr(attn, "n_experts"))
+    n_heads = int(getattr(attn, "n_heads"))
+    if n_experts <= max(expert_a, expert_b):
+        yield
+        return
+    device = attn.v.device
+    row_a = torch.arange(n_heads, device=device, dtype=torch.long) * n_experts + int(expert_a)
+    row_b = torch.arange(n_heads, device=device, dtype=torch.long) * n_experts + int(expert_b)
+    stack = contextlib.ExitStack()
+    try:
+        if swap_v:
+            stack.enter_context(swap_tensor_rows(attn.v, row_a, row_b))
+        if swap_o:
+            stack.enter_context(swap_tensor_rows(attn.o, row_a, row_b))
+        if swap_sel_v:
+            stack.enter_context(swap_tensor_rows(attn.sel_v, row_a, row_b))
+        if swap_sel_o:
+            stack.enter_context(swap_tensor_rows(attn.sel_o, row_a, row_b))
+        yield
+    finally:
+        stack.close()
+
+
+@contextlib.contextmanager
+def apply_swap_to_layers(
+    model: "TinySwitchHeadTransformer",
+    *,
+    swap_v: bool = False,
+    swap_o: bool = False,
+    swap_sel_v: bool = False,
+    swap_sel_o: bool = False,
+):
+    stack = contextlib.ExitStack()
+    try:
+        for block in model.blocks:
+            stack.enter_context(
+                swap_switchhead_experts(
+                    block.attn,
+                    swap_v=swap_v,
+                    swap_o=swap_o,
+                    swap_sel_v=swap_sel_v,
+                    swap_sel_o=swap_sel_o,
+                )
+            )
+        yield
+    finally:
+        stack.close()
 
 
 class SwitchHeadBlock(nn.Module):
@@ -408,6 +502,35 @@ def collect_gate_metrics(
     return gate_local, gate_induction
 
 
+def collect_source_value_gate_metrics(
+    model: TinySwitchHeadTransformer,
+    input_ids: torch.Tensor,
+    layout: dict[str, torch.Tensor | int],
+    args: argparse.Namespace,
+    device: torch.device,
+) -> tuple[np.ndarray, np.ndarray]:
+    local_source = layout.get("local_source_positions", layout["local_prev_positions"])
+    induction_source = layout.get("induction_source_next_positions", layout["induction_match_positions"])
+    local_positions = local_source.to(device)  # type: ignore[union-attr]
+    induction_positions = induction_source.to(device)  # type: ignore[union-attr]
+    local_totals = [[] for _ in range(args.n_layers)]
+    induction_totals = [[] for _ in range(args.n_layers)]
+    model.eval()
+    with torch.no_grad():
+        for ids in iter_batches(input_ids, args.batch_size):
+            ids = ids.to(device)
+            for layer_idx, dist in enumerate(model.collect_selector_distributions(ids, "value")):
+                local_totals[layer_idx].append(
+                    dist[:, local_positions].mean(dim=(0, 1, 2)).detach().cpu().numpy()
+                )
+                induction_totals[layer_idx].append(
+                    dist[:, induction_positions].mean(dim=(0, 1, 2)).detach().cpu().numpy()
+                )
+    gate_local = np.stack([np.mean(layer_totals, axis=0) for layer_totals in local_totals], axis=0)
+    gate_induction = np.stack([np.mean(layer_totals, axis=0) for layer_totals in induction_totals], axis=0)
+    return gate_local, gate_induction
+
+
 def distribution_distance(a: np.ndarray, b: np.ndarray) -> float:
     return float(0.5 * np.abs(a - b).sum())
 
@@ -454,6 +577,14 @@ def analyze_model(
     value_gate_local_top = int(np.argmax(value_gate_local))
     value_gate_induction_top = int(np.argmax(value_gate_induction))
     value_gate_dist = distribution_distance(value_gate_local, value_gate_induction)
+    source_value_gate_local_by_layer, source_value_gate_induction_by_layer = collect_source_value_gate_metrics(
+        model, eval_ids, layout, args, device
+    )
+    source_value_gate_local = source_value_gate_local_by_layer.mean(axis=0)
+    source_value_gate_induction = source_value_gate_induction_by_layer.mean(axis=0)
+    source_value_gate_local_top = int(np.argmax(source_value_gate_local))
+    source_value_gate_induction_top = int(np.argmax(source_value_gate_induction))
+    source_value_gate_dist = distribution_distance(source_value_gate_local, source_value_gate_induction)
 
     expert_scores = []
     for layer_idx in range(args.n_layers):
@@ -473,6 +604,12 @@ def analyze_model(
                     gate_induction_mean=float(gate_induction_by_layer[layer_idx, expert_idx]),
                     value_gate_local_mean=float(value_gate_local_by_layer[layer_idx, expert_idx]),
                     value_gate_induction_mean=float(value_gate_induction_by_layer[layer_idx, expert_idx]),
+                    source_value_gate_local_mean=float(
+                        source_value_gate_local_by_layer[layer_idx, expert_idx]
+                    ),
+                    source_value_gate_induction_mean=float(
+                        source_value_gate_induction_by_layer[layer_idx, expert_idx]
+                    ),
                 )
             )
 
@@ -502,6 +639,10 @@ def analyze_model(
         value_gate_local_top_expert=value_gate_local_top,
         value_gate_induction_top_expert=value_gate_induction_top,
         value_gate_same_top_expert=value_gate_local_top == value_gate_induction_top,
+        source_value_gate_distribution_distance=source_value_gate_dist,
+        source_value_gate_local_top_expert=source_value_gate_local_top,
+        source_value_gate_induction_top_expert=source_value_gate_induction_top,
+        source_value_gate_same_top_expert=source_value_gate_local_top == source_value_gate_induction_top,
         local_top_loss_delta=float(local_deltas[local_top]),
         induction_top_loss_delta=float(induction_deltas[induction_top]),
         n_layers=args.n_layers,
@@ -521,6 +662,51 @@ def write_csv(path: Path, rows: list[dict[str, object]]) -> None:
         writer.writerows(rows)
 
 
+def collect_swap_interventions(
+    model: TinySwitchHeadTransformer,
+    eval_ids: torch.Tensor,
+    layout: dict[str, torch.Tensor | int],
+    args: argparse.Namespace,
+    device: torch.device,
+    seed: int,
+) -> list[SwapInterventionScore]:
+    specs = [
+        ("baseline", {}),
+        ("swap_v", {"swap_v": True}),
+        ("swap_o", {"swap_o": True}),
+        ("swap_v_o", {"swap_v": True, "swap_o": True}),
+        ("swap_value_selector", {"swap_sel_v": True}),
+        ("swap_output_selector", {"swap_sel_o": True}),
+        ("swap_both_selectors", {"swap_sel_v": True, "swap_sel_o": True}),
+        ("swap_v_and_value_selector", {"swap_v": True, "swap_sel_v": True}),
+        ("swap_o_and_output_selector", {"swap_o": True, "swap_sel_o": True}),
+        ("swap_v_and_output_selector", {"swap_v": True, "swap_sel_o": True}),
+        ("swap_o_and_value_selector", {"swap_o": True, "swap_sel_v": True}),
+        ("swap_v_o_and_value_selector", {"swap_v": True, "swap_o": True, "swap_sel_v": True}),
+        ("swap_v_o_and_output_selector", {"swap_v": True, "swap_o": True, "swap_sel_o": True}),
+        ("swap_v_and_both_selectors", {"swap_v": True, "swap_sel_v": True, "swap_sel_o": True}),
+        ("swap_o_and_both_selectors", {"swap_o": True, "swap_sel_v": True, "swap_sel_o": True}),
+        ("swap_all", {"swap_v": True, "swap_o": True, "swap_sel_v": True, "swap_sel_o": True}),
+    ]
+    rows = []
+    for name, kwargs in specs:
+        with apply_swap_to_layers(model, **kwargs):
+            metrics = evaluate(model, eval_ids, layout, args, device)
+        rows.append(
+            SwapInterventionScore(
+                config=args.config,
+                seed=seed,
+                intervention=name,
+                eval_loss=metrics["loss"],
+                local_loss=metrics["local_loss"],
+                induction_loss=metrics["induction_loss"],
+                local_accuracy=metrics["local_accuracy"],
+                induction_accuracy=metrics["induction_accuracy"],
+            )
+        )
+    return rows
+
+
 def summarize(rows: list[ModelSummary]) -> dict[str, object]:
     return {
         "n_models": len(rows),
@@ -536,6 +722,12 @@ def summarize(rows: list[ModelSummary]) -> dict[str, object]:
             np.mean([row.value_gate_distribution_distance for row in rows])
         ),
         "value_gate_same_top_expert_rate": float(np.mean([row.value_gate_same_top_expert for row in rows])),
+        "source_value_gate_distribution_distance_mean": float(
+            np.mean([row.source_value_gate_distribution_distance for row in rows])
+        ),
+        "source_value_gate_same_top_expert_rate": float(
+            np.mean([row.source_value_gate_same_top_expert for row in rows])
+        ),
         "local_top_loss_delta_mean": float(np.mean([row.local_top_loss_delta for row in rows])),
         "induction_top_loss_delta_mean": float(np.mean([row.induction_top_loss_delta for row in rows])),
     }
@@ -560,6 +752,7 @@ def main() -> None:
     expert_rows: list[ExpertScore] = []
     trajectory_model_rows: list[ModelSummary] = []
     trajectory_expert_rows: list[ExpertScore] = []
+    swap_rows: list[SwapInterventionScore] = []
     trajectory_steps = {step for step in args.trajectory_eval_steps if step >= 0}
     if any(step > args.steps for step in trajectory_steps):
         raise ValueError("All --trajectory-eval-steps must be <= --steps.")
@@ -591,11 +784,14 @@ def main() -> None:
         summary, scores = analyze_model(model, eval_ids, layout, args, device, seed, args.steps)
         model_rows.append(summary)
         expert_rows.extend(scores)
+        if args.run_swap_interventions:
+            swap_rows.extend(collect_swap_interventions(model, eval_ids, layout, args, device, seed))
 
     write_csv(args.output_dir / "model_summary.csv", [asdict(row) for row in model_rows])
     write_csv(args.output_dir / "expert_scores.csv", [asdict(row) for row in expert_rows])
     write_csv(args.output_dir / "trajectory_model_summary.csv", [asdict(row) for row in trajectory_model_rows])
     write_csv(args.output_dir / "trajectory_expert_scores.csv", [asdict(row) for row in trajectory_expert_rows])
+    write_csv(args.output_dir / "swap_intervention_summary.csv", [asdict(row) for row in swap_rows])
     payload = {
         "args": vars(args) | {"switchhead_path": str(args.switchhead_path), "output_dir": str(args.output_dir)},
         "summary": summarize(model_rows),
