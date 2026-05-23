@@ -485,7 +485,9 @@ These three numbers (S, C, M) are what the project should report for each archit
   routed match `0.40`, layer-1-only had `0.80`, and both-layer supervision had
   `1.00`. A selector-type control further showed that output selector pressure
   is the clean sufficient cue: value-only pressure split value gates but did not
-  induce causal role modularity.
+  induce causal role modularity. In a two-layer extension, value-only pressure
+  on the causal layer was not null (`routed match=0.80`), but output-only
+  pressure remained the clean 5/5 condition.
 
 ### C. Resources concretely available (with HF / GitHub paths)
 - Pythia seeds: `EleutherAI/pythia-{14m,70m,160m,410m}-seed{1..9}`, plus `pythia-160m-weight-seed{1-3}` and `pythia-160m-data-seed{1-3}`. 154 checkpoints per model (steps 0, 1, 2, 4, 8, …, 143000). GitHub: `EleutherAI/pythia`.

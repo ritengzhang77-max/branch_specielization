@@ -1321,3 +1321,28 @@ Wrote:
 ```text
 doc/phase3_toy_switchhead_selector_type.md
 ```
+
+## Progress: Two-Layer SwitchHead Selector-Type Control
+
+Extended the selector-type control to layer 1 of the two-layer SwitchHead model.
+
+Summary:
+
+| Selector on layer 1 | Routed match | Output gate dist. | Value gate dist. | Causal dist. |
+|---|---:|---:|---:|---:|
+| output only | 1.00 | 0.4301 | 0.0063 | 0.6143 |
+| value only | 0.80 | 0.0046 | 0.4197 | 0.5522 |
+| both | 0.80 | 0.2764 | 0.3518 | 0.7956 |
+
+Interpretation:
+
+```text
+value selector pressure is not null at the causal layer in a two-layer model,
+but output selector pressure remains the clean sufficient cue.
+```
+
+Wrote:
+
+```text
+doc/phase3_toy_switchhead_two_layer_selector_type.md
+```

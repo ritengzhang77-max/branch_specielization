@@ -354,6 +354,11 @@ selector supervision alone was sufficient for 5/5 causal role modularity; value
 selector supervision alone strongly split value gates but produced no causal role
 modularity. See `doc/phase3_toy_switchhead_selector_type.md`.
 
+The two-layer selector-type extension preserved the same ordering at the causal
+layer: output-only layer-1 supervision was 5/5 reliable, while value-only and
+both-selector layer-1 supervision were both 4/5. See
+`doc/phase3_toy_switchhead_two_layer_selector_type.md`.
+
 So the best interpretation is:
 
 ```text
@@ -445,5 +450,7 @@ SwitchHead-specific tests are:
   `doc/phase3_toy_switchhead_layer_specific_supervision.md`
 - Selector-type control memo:
   `doc/phase3_toy_switchhead_selector_type.md`
+- Two-layer selector-type memo:
+  `doc/phase3_toy_switchhead_two_layer_selector_type.md`
 - Feasibility memo:
   `doc/switchhead_followup_feasibility.md`

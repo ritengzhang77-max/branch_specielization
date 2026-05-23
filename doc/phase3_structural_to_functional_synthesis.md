@@ -60,6 +60,7 @@ strong enough, and present long enough to reshape branch or expert computations.
 | Two-layer SwitchHead | Extra depth solved smoothly but did not create spontaneous modularity (`gate same-top=1.00`, routed match `0.20`); induced two-layer training reached routed match `1.00`. | The one-layer result survives depth; induced causal expert modularity localizes to layer 1. |
 | Layer-specific SwitchHead supervision | Layer-0-only supervision split gates but had routed match `0.40`; layer-1-only reached `0.80`; both layers reached `1.00`. | The cue must reach the causal layer; upstream gate splitting alone is not enough. |
 | SwitchHead selector-type control | Output-only supervision reached routed match `1.00`; value-only supervision split value gates but had routed match `0.00`; both split causally but hurt local accuracy. | The output selector, which writes back to the residual stream, is the clean sufficient cue. |
+| Two-layer selector-type control | On layer 1, output-only reached routed match `1.00`; value-only and both-selector supervision both reached `0.80`. | Value selection is not null at the causal layer, but output selection remains the clean sufficient cue. |
 | Pythia repeat/copy follow-up | Pythia heads show cross-seed functional role stability after alignment, and causal transfer strengthens through training. | Real transformers support the role-stability part, but do not by themselves establish branch modularity. |
 
 ## Current Answer
@@ -188,6 +189,7 @@ strength-duration threshold;
 reversed-label control.
 two-layer localization and layer-specific supervision controls.
 selector-type control separating output and value routing.
+two-layer selector-type extension.
 ```
 
 The next narrow experiment should test whether the induced expert modules are

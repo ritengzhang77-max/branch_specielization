@@ -1975,3 +1975,28 @@ computations to consolidate.
 - Interpretation update: output selector pressure is the clean sufficient path.
   Value selector pressure alone can split value routing but does not produce
   causal role modularity; adding it to output pressure can hurt optimization.
+
+## 2026-05-23 - Two-layer SwitchHead selector-type control
+
+- Ran selector-type controls with supervision restricted to layer 1 in a
+  two-layer SwitchHead model:
+  - output only:
+    `results/phase3_toy_switchhead_2layer_selector_output_l1_w005_end800_seed5_steps2000/`;
+  - value only:
+    `results/phase3_toy_switchhead_2layer_selector_value_l1_w005_end800_seed5_steps2000/`;
+  - both:
+    `results/phase3_toy_switchhead_2layer_selector_both_l1_w005_end800_seed5_steps2000/`.
+- Results:
+  - output only: local acc `1.0000`, induction acc `1.0000`, routed match
+    `1.00`, output gate distance `0.4301`, value gate distance `0.0063`, causal
+    distance `0.6143`;
+  - value only: local acc `1.0000`, induction acc `1.0000`, routed match `0.80`,
+    output gate distance `0.0046`, value gate distance `0.4197`, causal distance
+    `0.5522`;
+  - both: local acc `1.0000`, induction acc `1.0000`, routed match `0.80`,
+    output gate distance `0.2764`, value gate distance `0.3518`, causal distance
+    `0.7956`.
+- Wrote `doc/phase3_toy_switchhead_two_layer_selector_type.md`.
+- Interpretation update: value selector pressure is not null at the causal layer
+  in a two-layer model, but output selector pressure remains the cleaner
+  sufficient cue.

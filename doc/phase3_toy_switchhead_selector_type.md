@@ -85,6 +85,11 @@ This matters for larger-model analysis: measuring only token-to-value expert
 routing could miss the selector that actually controls downstream causal
 specialization.
 
+A two-layer extension found the same overall ordering at the causal layer:
+layer-1 output-only supervision was reliable in 5/5 seeds, while layer-1
+value-only and both-selector supervision were both 4/5. See
+`doc/phase3_toy_switchhead_two_layer_selector_type.md`.
+
 ## Result Directories
 
 - `results/phase3_toy_switchhead_selector_output_w005_end800_seed5_steps2000/`

@@ -246,6 +246,10 @@ SwitchHead feasibility update:
   match `0.00` and same causal top expert in 5/5 seeds. This distinguishes
   routing that writes to the residual stream from routing that selects value
   projections.
+- A two-layer selector-type extension showed that value selection is not null
+  when applied at the causal layer: layer-1 value-only supervision reached
+  routed match `0.80`. But layer-1 output-only supervision remained the only
+  clean 5/5 condition among output/value/both selector controls.
 
 ### Phase 3: Architectural Intervention
 
