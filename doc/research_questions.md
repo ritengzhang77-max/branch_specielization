@@ -263,6 +263,13 @@ SwitchHead feasibility update:
   projection `o` or output selector `sel_o` alone was tolerated. Thus the
   output selector is the clean sufficient training cue, but the frozen
   inference-time mechanism is fragile on the value side.
+- A grouped two-layer swap run evaluated layer 0, layer 1, and all-layer swaps
+  on the same trained models. Layer-1 value-side swaps hurt both roles
+  (`0.6117/0.5892` local/induction accuracy), while layer-0 value-side swaps
+  mainly hurt local (`0.8913/0.9995`). This preserves the value-side codebook
+  story at the later causal layer and shows that upstream local-supporting
+  structure is visible to swaps even when top ablation localizes both roles to
+  layer 1.
 
 ### Phase 3: Architectural Intervention
 

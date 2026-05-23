@@ -2075,3 +2075,38 @@ computations to consolidate.
   training cue, but the frozen inference-time code is fragile on the value side.
   Coherent full relabeling is harmless; mismatching the value selector and value
   projection destroys both roles.
+
+## 2026-05-23 - Two-layer SwitchHead expert-swap interventions
+
+- Added layer-specific swap support to `scripts/toy_switchhead_competition.py`:
+  - `--swap-intervention-layers`;
+  - `--swap-intervention-layer-groups`, accepting values like `0 1 all`.
+- Ran preliminary separate layer-0 and layer-1 two-layer swap checks:
+  - `results/phase3_toy_switchhead_2layer_swap_l0_w005_end800_seed5_steps2000/`;
+  - `results/phase3_toy_switchhead_2layer_swap_l1_w005_end800_seed5_steps2000/`.
+- Then ran the cleaner grouped comparison on the same trained seed set:
+  `results/phase3_toy_switchhead_2layer_swap_groups_w005_end800_seed5_steps2000/`.
+- Baseline grouped result:
+  - local accuracy `1.0000`;
+  - induction accuracy `1.0000`;
+  - routed expert match `1.00`;
+  - local top `L1E0` and induction top `L1E1` in 5/5 seeds;
+  - output gate distance `0.7275`;
+  - causal expert distance `0.6360`;
+  - source-position value gate distance `0.0019`.
+- Layer-specific swap result:
+  - layer-0 `swap_v`: local/induction accuracy `0.8913/0.9995`;
+  - layer-0 `swap_o`: `0.9254/1.0000`;
+  - layer-1 `swap_v`: `0.6117/0.5892`;
+  - layer-1 `swap_o`: `1.0000/1.0000`;
+  - all-layer `swap_v`: `0.5156/0.5743`;
+  - all-layer `swap_o`: `0.9237/1.0000`;
+  - paired value-side relabeling and full relabeling restored `1.0000/1.0000`
+    for all layer groups.
+- Wrote `doc/phase3_toy_switchhead_two_layer_swap_interventions.md`.
+- Updated `doc/phase3_structural_to_functional_synthesis.md`,
+  `doc/phase3_toy_switchhead_swap_interventions.md`,
+  `doc/research_questions.md`, and `doc/plan.md`.
+- Interpretation update: the main two-role value-side codebook localizes to
+  layer 1, while layer 0 still has local-supporting expert-label structure that
+  single top-component ablations understate.

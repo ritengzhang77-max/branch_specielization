@@ -501,6 +501,11 @@ These three numbers (S, C, M) are what the project should report for each archit
   pressure is the clean sufficient training cue, but the learned frozen
   computation is fragile on the value side: the value selector and value
   projection form a causal expert codebook.
+- Two-layer expert-swap interventions localized the main value-side codebook to
+  the later causal layer. On the same trained models, layer-1 `swap_v` dropped
+  local/induction accuracy to `0.6117/0.5892`, while layer-0 `swap_v` mostly
+  hurt local (`0.8913/0.9995`). Paired value-side relabeling and full relabeling
+  restored both roles to `1.0000/1.0000`.
 
 ### C. Resources concretely available (with HF / GitHub paths)
 - Pythia seeds: `EleutherAI/pythia-{14m,70m,160m,410m}-seed{1..9}`, plus `pythia-160m-weight-seed{1-3}` and `pythia-160m-data-seed{1-3}`. 154 checkpoints per model (steps 0, 1, 2, 4, 8, …, 143000). GitHub: `EleutherAI/pythia`.

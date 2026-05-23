@@ -86,6 +86,7 @@ class ExpertScore:
 class SwapInterventionScore:
     config: str
     seed: int
+    swap_layers: str
     intervention: str
     eval_loss: float
     local_loss: float
@@ -146,6 +147,22 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--induction-weight", type=float, default=1.0)
     parser.add_argument("--trajectory-eval-steps", nargs="*", type=int, default=[])
     parser.add_argument("--run-swap-interventions", action="store_true")
+    parser.add_argument(
+        "--swap-intervention-layers",
+        nargs="*",
+        type=int,
+        default=None,
+        help="Layer indices where expert swaps are applied. Defaults to all layers.",
+    )
+    parser.add_argument(
+        "--swap-intervention-layer-groups",
+        nargs="*",
+        default=None,
+        help=(
+            "Optional comma-separated layer groups for swap interventions, e.g. "
+            "`0 1 0,1`. Overrides --swap-intervention-layers."
+        ),
+    )
     parser.add_argument("--device", default="auto", choices=["auto", "cuda", "cpu"])
     parser.add_argument("--output-dir", type=Path, default=Path("results/phase3_toy_switchhead_competition"))
     return parser.parse_args()
@@ -242,10 +259,13 @@ def apply_swap_to_layers(
     swap_o: bool = False,
     swap_sel_v: bool = False,
     swap_sel_o: bool = False,
+    layers: set[int] | None = None,
 ):
     stack = contextlib.ExitStack()
     try:
-        for block in model.blocks:
+        for layer_idx, block in enumerate(model.blocks):
+            if layers is not None and layer_idx not in layers:
+                continue
             stack.enter_context(
                 swap_switchhead_experts(
                     block.attn,
@@ -435,6 +455,48 @@ def resolve_supervised_layers(args: argparse.Namespace) -> set[int]:
     if any(layer < 0 or layer >= args.n_layers for layer in layers):
         raise ValueError("--expert-supervision-layers values must be in [0, n_layers).")
     return layers
+
+
+def resolve_swap_intervention_layers(args: argparse.Namespace) -> set[int]:
+    if args.swap_intervention_layers is None:
+        return set(range(args.n_layers))
+    layers = set(int(layer) for layer in args.swap_intervention_layers)
+    validate_layer_set(layers, args.n_layers, "--swap-intervention-layers")
+    return layers
+
+
+def validate_layer_set(layers: set[int], n_layers: int, name: str) -> None:
+    if not layers:
+        raise ValueError(f"{name} must not be empty when provided.")
+    if any(layer < 0 or layer >= n_layers for layer in layers):
+        raise ValueError(f"{name} values must be in [0, n_layers).")
+
+
+def parse_swap_layer_group(text: str, args: argparse.Namespace) -> set[int]:
+    if text in {"all", "*"}:
+        return set(range(args.n_layers))
+    try:
+        layers = set(int(part) for part in text.split(",") if part != "")
+    except ValueError as exc:
+        raise ValueError(f"Invalid --swap-intervention-layer-groups entry: {text}") from exc
+    if len(layers) != len([part for part in text.split(",") if part != ""]):
+        raise ValueError(f"Duplicate layer in --swap-intervention-layer-groups entry: {text}")
+    validate_layer_set(layers, args.n_layers, "--swap-intervention-layer-groups")
+    return layers
+
+
+def resolve_swap_intervention_layer_groups(args: argparse.Namespace) -> list[set[int]]:
+    if args.swap_intervention_layer_groups is None:
+        return [resolve_swap_intervention_layers(args)]
+    if not args.swap_intervention_layer_groups:
+        raise ValueError("--swap-intervention-layer-groups must not be empty when provided.")
+    return [parse_swap_layer_group(text, args) for text in args.swap_intervention_layer_groups]
+
+
+def format_layer_group(layers: set[int], n_layers: int) -> str:
+    if layers == set(range(n_layers)):
+        return "all"
+    return ",".join(str(layer) for layer in sorted(layers))
 
 
 def resolve_supervised_selectors(args: argparse.Namespace) -> list[str]:
@@ -689,21 +751,24 @@ def collect_swap_interventions(
         ("swap_all", {"swap_v": True, "swap_o": True, "swap_sel_v": True, "swap_sel_o": True}),
     ]
     rows = []
-    for name, kwargs in specs:
-        with apply_swap_to_layers(model, **kwargs):
-            metrics = evaluate(model, eval_ids, layout, args, device)
-        rows.append(
-            SwapInterventionScore(
-                config=args.config,
-                seed=seed,
-                intervention=name,
-                eval_loss=metrics["loss"],
-                local_loss=metrics["local_loss"],
-                induction_loss=metrics["induction_loss"],
-                local_accuracy=metrics["local_accuracy"],
-                induction_accuracy=metrics["induction_accuracy"],
+    for swap_layers in resolve_swap_intervention_layer_groups(args):
+        swap_layers_label = format_layer_group(swap_layers, args.n_layers)
+        for name, kwargs in specs:
+            with apply_swap_to_layers(model, layers=swap_layers, **kwargs):
+                metrics = evaluate(model, eval_ids, layout, args, device)
+            rows.append(
+                SwapInterventionScore(
+                    config=args.config,
+                    seed=seed,
+                    swap_layers=swap_layers_label,
+                    intervention=name,
+                    eval_loss=metrics["loss"],
+                    local_loss=metrics["local_loss"],
+                    induction_loss=metrics["induction_loss"],
+                    local_accuracy=metrics["local_accuracy"],
+                    induction_accuracy=metrics["induction_accuracy"],
+                )
             )
-        )
     return rows
 
 
@@ -742,6 +807,7 @@ def main() -> None:
     if not 0 <= args.induction_target_expert < args.n_experts:
         raise ValueError("--induction-target-expert must be in [0, n_experts).")
     resolve_supervised_layers(args)
+    resolve_swap_intervention_layer_groups(args)
     resolve_supervised_selectors(args)
     switchhead = import_switchhead(args.switchhead_path)
     device = resolve_device(args.device)

@@ -166,6 +166,10 @@ Main limits:
 
 ## Next Step
 
-Repeat the swap grid in the two-layer induced condition. The key question is
-whether the layer-1 causal localization result also has a value-side expert
-codebook, or whether depth makes output-side routing causally fragile again.
+This was completed in `doc/phase3_toy_switchhead_two_layer_swap_interventions.md`.
+The two-layer result preserves the main value-side codebook pattern in layer 1,
+while showing that layer 0 swaps mainly damage the local role.
+
+The next implementation improvement is to save trained checkpoints and add
+attention-weighted source diagnostics, so additional interventions can be run on
+exactly the same models without retraining.

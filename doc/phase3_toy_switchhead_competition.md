@@ -415,6 +415,15 @@ performance; swapping `o` or `sel_o` alone is tolerated.
 See `doc/phase3_toy_switchhead_selector_type.md` and
 `doc/phase3_toy_switchhead_swap_interventions.md`.
 
+The two-layer swap follow-up adds:
+
+```text
+the layer-1 causal module has the same value-side codebook fragility, while
+layer-0 swaps mainly damage local-role support.
+```
+
+See `doc/phase3_toy_switchhead_two_layer_swap_interventions.md`.
+
 ## Caveats
 
 - These are very small SwitchHead models, not the paper-scale language model.
@@ -474,5 +483,7 @@ SwitchHead-specific tests are now:
   `doc/phase3_toy_switchhead_seed_robustness.md`
 - Expert-swap intervention memo:
   `doc/phase3_toy_switchhead_swap_interventions.md`
+- Two-layer expert-swap intervention memo:
+  `doc/phase3_toy_switchhead_two_layer_swap_interventions.md`
 - Feasibility memo:
   `doc/switchhead_followup_feasibility.md`

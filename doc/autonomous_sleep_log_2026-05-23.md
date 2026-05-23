@@ -1433,3 +1433,59 @@ Wrote:
 ```text
 doc/phase3_toy_switchhead_swap_interventions.md
 ```
+
+## Progress: Two-Layer SwitchHead Expert-Swap Interventions
+
+Added layer-specific swap support:
+
+```text
+--swap-intervention-layers
+--swap-intervention-layer-groups 0 1 all
+```
+
+The grouped run evaluates layer 0, layer 1, and all-layer swaps on the same
+trained two-layer models.
+
+Result directory:
+
+```text
+results/phase3_toy_switchhead_2layer_swap_groups_w005_end800_seed5_steps2000/
+```
+
+Baseline:
+
+```text
+local accuracy = 1.0000
+induction accuracy = 1.0000
+routed expert match = 1.00
+top components = local L1E0, induction L1E1 in 5/5 seeds
+causal expert distance = 0.6360
+source-position value gate distance = 0.0019
+```
+
+Key grouped swap results:
+
+| Swap layers | Intervention | Local acc. | Induction acc. |
+|---|---|---:|---:|
+| 0 | swap_v | 0.8913 | 0.9995 |
+| 0 | swap_o | 0.9254 | 1.0000 |
+| 1 | swap_v | 0.6117 | 0.5892 |
+| 1 | swap_o | 1.0000 | 1.0000 |
+| all | swap_v | 0.5156 | 0.5743 |
+| all | swap_o | 0.9237 | 1.0000 |
+| all | swap_v_and_value_selector | 1.0000 | 1.0000 |
+| all | swap_all | 1.0000 | 1.0000 |
+
+Interpretation:
+
+```text
+the main two-role value-side codebook is in layer 1. Layer 0 is not irrelevant,
+but its swap fragility is mostly local-role support rather than the final
+induction module.
+```
+
+Wrote:
+
+```text
+doc/phase3_toy_switchhead_two_layer_swap_interventions.md
+```

@@ -63,6 +63,7 @@ strong enough, and present long enough to reshape branch or expert computations.
 | Two-layer selector-type control | On layer 1, output-only reached routed match `1.00`; value-only and both-selector supervision both reached `0.80`. | Value selection is not null at the causal layer, but output selection remains the clean sufficient training cue. |
 | SwitchHead expanded-seed robustness | One-layer and two-layer output-selector induced conditions both reached routed match `1.00` across seeds 1-10; spontaneous one-layer and two-layer controls had only 2/10 and 1/10 routed match. | The induced positive and spontaneous negative SwitchHead results both survive expanded seeds. |
 | SwitchHead expert-swap interventions | In the one-layer induced condition, `swap_v` and `swap_value_selector` collapsed accuracy to about `0.08/0.07`, while `swap_v_and_value_selector` and `swap_all` restored accuracy to `1.00/1.00`. `swap_o` and `swap_output_selector` alone were tolerated. | Output-selector pressure is the clean training cue, but the learned inference-time bottleneck is a value-side expert codebook, not a marginal output-gate split. |
+| Two-layer SwitchHead swap interventions | On the same trained two-layer models, layer-1 `swap_v` dropped local/induction accuracy to `0.6117/0.5892`, while layer-0 `swap_v` mainly hurt local (`0.8913/0.9995`). Paired value-side relabeling and full relabeling restored `1.00/1.00`. | The value-side codebook localizes mostly to the later causal layer, but layer 0 still carries local-supporting expert-label structure. |
 | Pythia repeat/copy follow-up | Pythia heads show cross-seed functional role stability after alignment, and causal transfer strengthens through training. | Real transformers support the role-stability part, but do not by themselves establish branch modularity. |
 
 ## Current Answer
@@ -128,7 +129,9 @@ that output-selector pressure is the clean sufficient training cue. The follow-u
 swap intervention refines this: once training is complete, the fragile causal
 code is on the value side. Swapping the value projection or value selector alone
 destroys the model, while swapping both together restores it; swapping the output
-selector or output projection alone is tolerated.
+selector or output projection alone is tolerated. In the two-layer model, this
+value-side fragility is strongest in layer 1, while layer 0 swaps mainly damage
+the local role.
 
 ## Metrics That Matter Most
 
@@ -188,6 +191,9 @@ This framing makes positive and negative results both useful:
 - swap-intervention result: in the induced one-layer SwitchHead model, the
   frozen causal code is fragile to value-side relabeling but tolerant to
   output-side relabeling.
+- two-layer swap result: the layer-1 value-side codebook explains the main
+  two-role fragility, while layer 0 contains local-supporting expert-label
+  structure that top-component ablations understate.
 
 ## Next Narrow Experiment
 
@@ -203,18 +209,11 @@ two-layer localization and layer-specific supervision controls.
 selector-type control separating output and value routing.
 two-layer selector-type extension.
 expert-swap intervention showing value-side codebook fragility.
+two-layer expert-swap intervention localizing that fragility mostly to layer 1.
 ```
 
-The next narrow experiment should test whether the value-side codebook result
-also holds where the two-layer causal role localizes:
-
-```text
-repeat the expert-swap grid in the two-layer induced condition, focusing on
-whether layer 1 has the same value-side fragility and whether layer 0 remains
-mostly noncausal under swaps.
-```
-
-The next measurement improvement is:
+The next narrow experiment should make the swap/patch workflow less wasteful and
+more diagnostic:
 
 ```text
 save trained checkpoints and add attention-weighted value-gate diagnostics, so
