@@ -164,11 +164,14 @@ Summary:
 - Pythia-410M, all 9 seeds, all-layer candidate pool: own top excess `0.2416`;
   aligned-minus-same `0.0455`; target-level bootstrap CI
   `[-0.0190, 0.0894]`; aligned-minus-same positive for 8/9 target seeds.
+- A 128-probe / 128-eval Pythia-410M replication weakened the estimate:
+  own top excess `0.1809`; aligned-minus-same `0.0293`; target-level bootstrap
+  CI `[-0.0237, 0.0630]`; target seed 6 remained a large negative outlier.
 
-Interpretation: the naturalistic result is positive for 160M and suggestive for
-410M, but much smaller than the synthetic `[x, SEP, x]` result. This supports
-the external-validity direction while keeping the current paper claim modest:
-natural text preserves a weak aligned-transfer signal, not the large synthetic
-effect size.
+Interpretation: the naturalistic result is positive for 160M and weak /
+heterogeneous for 410M, and both are much smaller than the synthetic
+`[x, SEP, x]` result. This supports the external-validity direction while
+keeping the current paper claim modest: natural text preserves a weak
+aligned-transfer signal in 160M, not the large synthetic effect size.
 
 Full memo: `doc/phase1_naturalistic_span_candidate_pool.md`.

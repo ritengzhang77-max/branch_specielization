@@ -166,3 +166,28 @@ evaluation sequences.
 Interpretation: the initialization control is null. The naturalistic 160M
 aligned-transfer effect is therefore small but training-created, not a raw
 matching artifact.
+
+## Progress: Larger-Sample 410M Replication
+
+Reran the Pythia-410M all-layer naturalistic experiment with 128 probe sequences
+and 128 evaluation sequences.
+
+- result directory:
+  `results/phase1_pythia410m_naturalistic_span_candidate_pool_seed9_all_layers_n128/`;
+- own top excess: `0.1809`;
+- same-index transfer: `-0.0046`;
+- aligned transfer: `0.0247`;
+- aligned-minus-same: `0.0293`;
+- pair CI: `[-0.0102, 0.0636]`;
+- target CI: `[-0.0237, 0.0630]`;
+- target positives: 8/9.
+
+Target seed 6 remained a stable negative outlier:
+
+- 64-example aligned-minus-same: `-0.1853`;
+- 128-example aligned-minus-same: `-0.1659`.
+
+Interpretation: the 410M naturalistic result is weaker than the 160M result and
+weaker after doubling examples. The sign pattern is positive, but CIs cross zero
+and the seed-6 failure is stable. This should be presented as weak /
+heterogeneous, not as a clean 410M naturalistic confirmation.

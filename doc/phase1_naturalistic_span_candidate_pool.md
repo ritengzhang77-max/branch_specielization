@@ -108,6 +108,24 @@ The WikiText repeated-span effect is small, but it is stable to doubling the
 sample count and absent at initialization.
 ```
 
+I also reran the Pythia-410M all-layer final-checkpoint experiment with 128
+probe and 128 evaluation sequences. This did not strengthen the 410M result.
+
+| 410M condition | Probe/eval sequences | Own top excess | Same-index transfer | Aligned transfer | Aligned - same | Target CI for aligned - same |
+|---|---:|---:|---:|---:|---:|---:|
+| `step143000`, all layers | 64 / 64 | 0.2416 | 0.0007 | 0.0462 | 0.0455 | [-0.0190, 0.0894] |
+| `step143000`, all layers | 128 / 128 | 0.1809 | -0.0046 | 0.0247 | 0.0293 | [-0.0237, 0.0630] |
+
+The sign pattern remains mostly positive, but the effect is smaller. Target seed
+6 remains a stable negative outlier (`aligned-minus-same=-0.1659` in the
+128-example run, compared with `-0.1853` in the 64-example run). The right
+interpretation is therefore:
+
+```text
+Pythia-410M naturalistic repeated-span transfer is weak and heterogeneous under
+this probe, despite strong synthetic local-copy transfer.
+```
+
 ## Comparison To Synthetic Local-Copy
 
 The naturalistic result is positive but much smaller than the synthetic
@@ -154,7 +172,10 @@ The 410M result should be treated as weaker:
 - own-head causal excess is positive, but smaller than 160M;
 - aligned-minus-same is positive by sign count but has bootstrap CIs crossing
   zero;
-- one target seed has a large negative aligned-transfer gap.
+- one target seed has a large negative aligned-transfer gap;
+- the 128-example replication reduces the aligned-minus-same mean from `0.0455`
+  to `0.0293`, so the 410M naturalistic result should not be used as a strong
+  positive claim.
 
 Main limitations:
 
@@ -172,8 +193,11 @@ Main limitations:
    already passed the main stability check.
 2. Build a naturally occurring repeated-ngram variant that does not insert the
    second span manually. This is lower-control but higher-validity.
-3. Test whether the seed-6 410M failure persists with more evaluation examples
-   or whether it is sampling noise.
+3. Diagnose why 410M synthetic local-copy is strong while 410M WikiText
+   repeated-span transfer is weak. Candidate explanations: natural-token
+   predictability reduces causal reliance on copy heads; all-layer matching
+   selects a less coherent role; or the local-copy role is distributed
+   differently in larger models.
 
 ## Files
 
@@ -186,4 +210,6 @@ Main limitations:
   `results/phase1_pythia160m_naturalistic_span_candidate_pool_seed9_all_layers_step0_n128/`.
 - Pythia-410M all-seed result:
   `results/phase1_pythia410m_naturalistic_span_candidate_pool_seed9_all_layers/`.
+- Pythia-410M 128-example replication:
+  `results/phase1_pythia410m_naturalistic_span_candidate_pool_seed9_all_layers_n128/`.
 - Initial design memo: `doc/naturalistic_local_copy_probe_design.md`.

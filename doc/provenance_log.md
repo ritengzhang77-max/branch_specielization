@@ -1211,3 +1211,25 @@ functional modularity?
 - Interpretation: the small naturalistic 160M effect replicated almost exactly
   after doubling the sample count and is absent at initialization. This supports
   a training-created weak aligned-transfer signal.
+
+## 2026-05-23 - Naturalistic 410M larger-sample replication
+
+- Reran Pythia-410M all-layer WikiText repeated-span candidate-pool alignment
+  with 128 probe sequences and 128 evaluation sequences.
+- Result directory:
+  `results/phase1_pythia410m_naturalistic_span_candidate_pool_seed9_all_layers_n128/`.
+- Result:
+  - own top excess over random: `0.1809`;
+  - same-index transfer: `-0.0046`;
+  - aligned transfer: `0.0247`;
+  - aligned-minus-same: `0.0293`;
+  - pair CI: `[-0.0102, 0.0636]`, pair sign `p=0.0444`;
+  - target CI: `[-0.0237, 0.0630]`, target sign `p=0.0391`;
+  - target positives: 8/9.
+- Target seed 6 remained a stable negative outlier:
+  - 64-example run: aligned-minus-same `-0.1853`;
+  - 128-example run: aligned-minus-same `-0.1659`.
+- Interpretation: the 410M naturalistic result is weak and heterogeneous. The
+  positive sign pattern persists, but the larger-sample effect size is smaller
+  and bootstrap intervals cross zero. This should not be treated as a strong
+  positive replication of the 160M naturalistic result.

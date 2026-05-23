@@ -335,9 +335,11 @@ These three numbers (S, C, M) are what the project should report for each archit
   (`aligned-minus-same=0.0816`, target CI `[0.0333, 0.1300]`), while a matched
   `step0` control was null (`aligned-minus-same=0.0007`, target CI
   `[-0.0004, 0.0016]`). Pythia 410M was weaker: own-head excess `0.2416`,
-  aligned-minus-same `0.0455`, and target-level CI `[-0.0190, 0.0894]`. This
-  reduces the risk that the synthetic result is purely artificial, but the
-  naturalistic effect is much smaller and should be framed as supporting
+  aligned-minus-same `0.0455`, and target-level CI `[-0.0190, 0.0894]`. A
+  128-example 410M replication weakened this to aligned-minus-same `0.0293`
+  with target CI `[-0.0237, 0.0630]`; target seed 6 remained a stable negative
+  outlier. This reduces the risk that the synthetic result is purely artificial,
+  but the naturalistic effect is much smaller and should be framed as supporting
   evidence rather than the main evidence.
 
 ### C. Resources concretely available (with HF / GitHub paths)
