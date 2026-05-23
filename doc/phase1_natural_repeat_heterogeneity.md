@@ -70,6 +70,29 @@ The exact-repeat task is therefore not one semantic behavior. It mixes ordinary
 phrases, numbers/dates, titles/quotes, names, and tokenization artifacts such as
 `@-@`. This supports stratifying future runs before making model-size claims.
 
+## Ordinary-Phrase Filtered Result
+
+I then added `--span-primary-category ordinary_phrase` to the natural-repeat
+runner and tested Pythia-160M on WikiText-103 exact 8-gram ordinary phrases.
+
+Setup:
+
+- token stream length: 1000066;
+- ordinary-phrase candidates: 147;
+- 64 probe plus 64 evaluation examples, sampled without replacement.
+
+Result:
+
+| Alignment source | Own top excess | Same-index | Aligned | Aligned - same | Target CI |
+|---|---:|---:|---:|---:|---:|
+| Phase 0 generic | 0.3133 | 0.0248 | 0.0384 | 0.0137 | [-0.0044, 0.0305] |
+| task repeat | 0.3133 | 0.0248 | 0.2500 | 0.2252 | [0.1096, 0.3776] |
+| task repeat `step0` | 0.0009 | -0.0000 | 0.0012 | 0.0012 | [-0.0005, 0.0028] |
+
+Interpretation: ordinary phrases preserve the core 160M result. This weakens the
+concern that the natural-repeat signal is only an artifact of numbers, titles,
+proper names, or tokenizer-markup spans.
+
 ## Interpretation
 
 The 410M natural-repeat weakness should not be summarized as "alignment does not

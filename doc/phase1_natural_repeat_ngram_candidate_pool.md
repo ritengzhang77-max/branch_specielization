@@ -183,6 +183,37 @@ essentially neutral on this weak natural role, while role-specific matching is
 positive. However, the 410M effect remains much smaller and more heterogeneous
 than 160M.
 
+## Ordinary-Phrase Filtered Check
+
+I added `--span-primary-category` to the natural-repeat runner and used the
+category helper's same heuristics to filter exact 8-gram candidates. The first
+filtered check uses only `ordinary_phrase` spans.
+
+Pythia-160M WikiText-103 ordinary-phrase exact 8-gram setup:
+
+- token stream length: `1000066`;
+- ordinary-phrase candidate windows: `147`;
+- sampled windows: 64 probe plus 64 evaluation, without replacement.
+
+Results:
+
+| Condition | Alignment source | Seeds | Own top excess | Same-index transfer | Aligned transfer | Aligned - same | Target CI for aligned - same |
+|---|---|---:|---:|---:|---:|---:|---:|
+| `step0` | task repeat | 9 | 0.0009 | -0.0000 | 0.0012 | 0.0012 | [-0.0005, 0.0028] |
+| `step143000` | Phase 0 generic | 9 | 0.3133 | 0.0248 | 0.0384 | 0.0137 | [-0.0044, 0.0305] |
+| `step143000` | task repeat | 9 | 0.3133 | 0.0248 | 0.2500 | 0.2252 | [0.1096, 0.3776] |
+
+Additional task-repeat details:
+
+- own top excess is positive for 9/9 targets;
+- task-repeat aligned-minus-same is positive for 8/9 targets;
+- task-repeat pair-level CI is `[0.1510, 0.3070]`;
+- task-repeat aligned-better count is 68/72.
+
+Interpretation: filtering to ordinary phrases does not eliminate the 160M
+natural-repeat result. The result remains role-specific: generic Phase 0
+alignment is neutral, while task-repeat alignment gives clear held-out transfer.
+
 ## Interpretation
 
 This probe separates two claims:
@@ -281,6 +312,13 @@ Weaker parts:
   `results/phase1_pythia410m_wikitext103_natural_repeat_8gram_task_alignment_seed9_n128/`.
 - Pythia-410M WikiText-103 exact 8-gram task-repeat `step0` control:
   `results/phase1_pythia410m_wikitext103_natural_repeat_8gram_task_alignment_seed9_n128_step0/`.
+- Pythia-160M WikiText-103 ordinary-phrase exact 8-gram Phase 0 alignment:
+  `results/phase1_pythia160m_wikitext103_natural_repeat_8gram_ordinary_phase0_alignment_seed9_n64/`.
+- Pythia-160M WikiText-103 ordinary-phrase exact 8-gram task-repeat alignment:
+  `results/phase1_pythia160m_wikitext103_natural_repeat_8gram_ordinary_task_alignment_seed9_n64/`.
+- Pythia-160M WikiText-103 ordinary-phrase exact 8-gram task-repeat `step0`
+  control:
+  `results/phase1_pythia160m_wikitext103_natural_repeat_8gram_ordinary_task_alignment_seed9_n64_step0/`.
 - Natural-repeat heterogeneity memo:
   `doc/phase1_natural_repeat_heterogeneity.md`.
 - Category helper:

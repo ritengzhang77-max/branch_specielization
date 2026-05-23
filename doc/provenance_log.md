@@ -1553,3 +1553,35 @@ functional modularity?
 - Interpretation: natural exact repeats are semantically mixed. The next
   filtering experiment should stratify by category or baseline predictability
   before making model-size claims.
+
+## 2026-05-23 - Ordinary-phrase exact 8-gram filtered check
+
+- Added `--span-primary-category` to
+  `scripts/pythia_natural_repeat_ngram_candidate_pool_alignment.py`.
+- Ran Pythia-160M WikiText-103 exact 8-gram ordinary-phrase task-repeat
+  alignment:
+  `results/phase1_pythia160m_wikitext103_natural_repeat_8gram_ordinary_task_alignment_seed9_n64/`.
+  - token stream length: `1000066`;
+  - ordinary-phrase candidate windows: `147`;
+  - sampled 64 probe plus 64 evaluation windows, without replacement;
+  - own top excess: `0.3133`;
+  - same-index transfer: `0.0248`;
+  - task-repeat aligned transfer: `0.2500`;
+  - aligned-minus-same: `0.2252`;
+  - pair CI: `[0.1510, 0.3070]`, pair sign `p=4.6e-16`;
+  - target CI: `[0.1096, 0.3776]`, target sign `p=0.0391`;
+  - target positives: 8/9;
+  - aligned better count: 68/72.
+- Ran matched `step0` task-repeat control:
+  `results/phase1_pythia160m_wikitext103_natural_repeat_8gram_ordinary_task_alignment_seed9_n64_step0/`.
+  - own top excess: `0.0009`;
+  - aligned-minus-same: `0.0012`;
+  - target CI: `[-0.0005, 0.0028]`.
+- Ran generic Phase 0 comparison:
+  `results/phase1_pythia160m_wikitext103_natural_repeat_8gram_ordinary_phase0_alignment_seed9_n64/`.
+  - own top excess: `0.3133`;
+  - generic aligned transfer: `0.0384`;
+  - aligned-minus-same: `0.0137`;
+  - target CI: `[-0.0044, 0.0305]`.
+- Interpretation: the ordinary-phrase filtered task preserves the 160M
+  task-specific transfer result and keeps generic Phase 0 matching neutral.

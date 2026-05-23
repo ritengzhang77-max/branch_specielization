@@ -394,6 +394,17 @@ These three numbers (S, C, M) are what the project should report for each archit
   target CI `[-0.0042, 0.0708]`, 8/9 target positives). The 410M `step0`
   task-repeat control was null. This means exact natural repeats should not yet
   support a simple monotonic scaling claim.
+- A category-filtered natural-repeat follow-up added
+  `--span-primary-category` and tested Pythia-160M on WikiText-103 exact 8-gram
+  ordinary phrases only. The filtered pool had 147 candidates from 1000066
+  tokens, enough for 64 probe plus 64 eval windows without replacement. The
+  result preserved the 160M natural-repeat finding: own-top excess `0.3133`,
+  generic Phase 0 aligned-minus-same `0.0137` with target CI crossing zero, and
+  task-repeat aligned-minus-same `0.2252` with target CI `[0.1096, 0.3776]`
+  plus 8/9 target positives. The matched `step0` task-repeat control was null
+  at this scale (`0.0012`, target CI `[-0.0005, 0.0028]`). This weakens the
+  concern that the natural-repeat signal is only due to numbers, titles, proper
+  names, or tokenizer-artifact spans.
 
 ### C. Resources concretely available (with HF / GitHub paths)
 - Pythia seeds: `EleutherAI/pythia-{14m,70m,160m,410m}-seed{1..9}`, plus `pythia-160m-weight-seed{1-3}` and `pythia-160m-data-seed{1-3}`. 154 checkpoints per model (steps 0, 1, 2, 4, 8, …, 143000). GitHub: `EleutherAI/pythia`.

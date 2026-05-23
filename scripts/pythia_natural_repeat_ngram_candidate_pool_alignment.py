@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import re
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
@@ -64,6 +65,20 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--span-length", type=int, default=4)
     parser.add_argument("--min-gap", type=int, default=8)
     parser.add_argument("--window-stride", type=int, default=8)
+    parser.add_argument(
+        "--span-primary-category",
+        default="all",
+        choices=[
+            "all",
+            "ordinary_phrase",
+            "numeric_or_date",
+            "quoted_or_title",
+            "proper_name_like",
+            "initialism_or_all_caps",
+            "tokenizer_markup",
+        ],
+        help="Optional heuristic filter on the repeated span text.",
+    )
     parser.add_argument("--batch-size", type=int, default=8)
     parser.add_argument("--dataset-name", default="wikitext")
     parser.add_argument("--dataset-config", default="wikitext-2-raw-v1")
@@ -141,6 +156,38 @@ def find_repeat_in_window(
     return None
 
 
+def classify_span_text(text: str) -> str:
+    has_digit = any(char.isdigit() for char in text)
+    has_quote = any(char in text for char in ['"', "'", "“", "”"])
+    has_tokenizer_markup = "@" in text
+    capitalized_words = re.findall(r"\b[A-Z][a-zA-Z]+\b", text)
+    all_caps = re.findall(r"\b[A-Z]{2,}\b", text)
+    labels = []
+    if has_digit:
+        labels.append("numeric_or_date")
+    if has_quote:
+        labels.append("quoted_or_title")
+    if has_tokenizer_markup:
+        labels.append("tokenizer_markup")
+    if len(capitalized_words) >= 2:
+        labels.append("proper_name_like")
+    if all_caps:
+        labels.append("initialism_or_all_caps")
+    if not labels:
+        labels.append("ordinary_phrase")
+    for category in [
+        "numeric_or_date",
+        "quoted_or_title",
+        "proper_name_like",
+        "initialism_or_all_caps",
+        "tokenizer_markup",
+        "ordinary_phrase",
+    ]:
+        if category in labels:
+            return category
+    return "ordinary_phrase"
+
+
 def collect_repeat_candidates(
     token_stream: list[int],
     tokenizer,
@@ -157,6 +204,9 @@ def collect_repeat_candidates(
         if repeat is None:
             continue
         first_start, second_start = repeat
+        span_text = tokenizer.decode(window[first_start : first_start + args.span_length])
+        if args.span_primary_category != "all" and classify_span_text(span_text) != args.span_primary_category:
+            continue
         fingerprint = (tuple(window), first_start, second_start)
         if fingerprint in seen:
             continue
@@ -445,6 +495,7 @@ def main() -> None:
                         "eval_sequences": args.eval_sequences,
                         "context_length": args.context_length,
                         "span_length": args.span_length,
+                        "span_primary_category": args.span_primary_category,
                         "min_gap": args.min_gap,
                         "window_stride": args.window_stride,
                     },

@@ -621,3 +621,52 @@ Interpretation: exact natural repeats are not one clean semantic behavior. They
 mix ordinary phrases, numeric/date spans, quoted titles, proper-name-like spans,
 and tokenizer-artifact spans. The next filtering experiment should stratify or
 filter examples before interpreting model-size differences.
+
+## Progress: Ordinary-Phrase Filtered Exact 8-Gram Check
+
+Added `--span-primary-category` to
+`scripts/pythia_natural_repeat_ngram_candidate_pool_alignment.py` and ran a
+Pythia-160M ordinary-phrase-only check.
+
+Setup:
+
+- dataset: WikiText-103 train;
+- token stream length: `1000066`;
+- repeated span: exact 8-gram;
+- primary category: `ordinary_phrase`;
+- candidates: `147`;
+- probe/eval: 64/64, no replacement.
+
+Task-repeat alignment:
+
+- result directory:
+  `results/phase1_pythia160m_wikitext103_natural_repeat_8gram_ordinary_task_alignment_seed9_n64/`;
+- own top excess: `0.3133`;
+- same-index transfer: `0.0248`;
+- task-repeat aligned transfer: `0.2500`;
+- aligned-minus-same: `0.2252`;
+- pair CI: `[0.1510, 0.3070]`;
+- target CI: `[0.1096, 0.3776]`;
+- target positives: 8/9;
+- aligned better count: 68/72.
+
+Matched `step0` task-repeat control:
+
+- result directory:
+  `results/phase1_pythia160m_wikitext103_natural_repeat_8gram_ordinary_task_alignment_seed9_n64_step0/`;
+- own top excess: `0.0009`;
+- aligned-minus-same: `0.0012`;
+- target CI: `[-0.0005, 0.0028]`.
+
+Generic Phase 0 comparison:
+
+- result directory:
+  `results/phase1_pythia160m_wikitext103_natural_repeat_8gram_ordinary_phase0_alignment_seed9_n64/`;
+- own top excess: `0.3133`;
+- generic aligned transfer: `0.0384`;
+- aligned-minus-same: `0.0137`;
+- target CI: `[-0.0044, 0.0305]`.
+
+Interpretation: filtering to ordinary phrases does not remove the 160M
+natural-repeat effect. The result remains strongly alignment-basis dependent:
+task-repeat matching transfers, generic Phase 0 matching is neutral.

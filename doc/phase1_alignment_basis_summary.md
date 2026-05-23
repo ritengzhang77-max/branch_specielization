@@ -34,6 +34,7 @@ heads.
 | naturally occurring exact 4-gram repeat | 410M | not run | 0.0215 | -0.0022 | weak own-head signal, no clean target-level transfer |
 | naturally occurring exact 8-gram repeat, WikiText-103 | 160M | 0.0063 | 0.2820 | -0.0018 | longer natural repeats strengthen 160M task-specific transfer |
 | naturally occurring exact 8-gram repeat, WikiText-103 | 410M | -0.0022 | 0.0378 | -0.0002 | longer repeats improve 410M but remain weak/heterogeneous |
+| ordinary-phrase exact 8-gram repeat, WikiText-103 | 160M | 0.0137 | 0.2252 | 0.0012 | category filtering preserves 160M task-specific transfer |
 
 ## Interpretation
 
