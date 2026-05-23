@@ -1925,3 +1925,24 @@ computations to consolidate.
 - Interpretation update: extra SwitchHead depth does not create spontaneous role
   modularity, but induced causal expert modularity survives and localizes to the
   later layer.
+
+## 2026-05-23 - Layer-specific SwitchHead supervision
+
+- Added `--expert-supervision-layers` to
+  `scripts/toy_switchhead_competition.py`.
+- Ran two-layer layer-specific induced conditions:
+  - layer 0 only:
+    `results/phase3_toy_switchhead_2layer_supervise_l0_w005_end800_seed5_steps2000/`;
+  - layer 1 only:
+    `results/phase3_toy_switchhead_2layer_supervise_l1_w005_end800_seed5_steps2000/`.
+- Results:
+  - layer 0 only: gate same-top `0.00`, causal same-top `0.60`, routed match
+    `0.40`, gate distance `0.4862`, causal distance `0.2499`;
+  - layer 1 only: gate same-top `0.20`, causal same-top `0.20`, routed match
+    `0.80`, gate distance `0.4155`, causal distance `0.5791`;
+  - both layers: gate same-top `0.00`, causal same-top `0.00`, routed match
+    `1.00`, gate distance `0.7066`, causal distance `0.6148`.
+- Wrote `doc/phase3_toy_switchhead_layer_specific_supervision.md`.
+- Interpretation update: upstream gate splitting alone is not enough. Direct
+  role-aligned pressure on the later causal layer is much closer to sufficient,
+  but both-layer pressure is the robust condition in this setup.

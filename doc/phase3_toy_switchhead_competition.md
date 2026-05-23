@@ -344,6 +344,11 @@ modularity: the spontaneous two-layer model solved the task but had gate same-to
 role modularity, with the top causal modules localized in layer 1. See
 `doc/phase3_toy_switchhead_two_layer.md`.
 
+A layer-specific follow-up showed that the selector cue must reach the relevant
+layer: supervising layer 0 only was not enough, layer 1 only was partial, and
+both-layer supervision was reliable. See
+`doc/phase3_toy_switchhead_layer_specific_supervision.md`.
+
 So the best interpretation is:
 
 ```text
@@ -431,5 +436,7 @@ SwitchHead-specific tests are:
   `doc/phase3_toy_switchhead_label_control.md`
 - Two-layer SwitchHead memo:
   `doc/phase3_toy_switchhead_two_layer.md`
+- Layer-specific supervision memo:
+  `doc/phase3_toy_switchhead_layer_specific_supervision.md`
 - Feasibility memo:
   `doc/switchhead_followup_feasibility.md`

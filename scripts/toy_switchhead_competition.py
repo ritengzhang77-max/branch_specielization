@@ -95,6 +95,13 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--local-target-expert", type=int, default=0)
     parser.add_argument("--induction-target-expert", type=int, default=1)
     parser.add_argument(
+        "--expert-supervision-layers",
+        nargs="*",
+        type=int,
+        default=None,
+        help="Layer indices to apply expert-selection supervision to. Defaults to all layers.",
+    )
+    parser.add_argument(
         "--expert-supervision-end-step",
         type=int,
         default=-1,
@@ -279,13 +286,27 @@ def expert_selection_supervision_loss(
         raise ValueError("--induction-target-expert must be in [0, n_experts).")
     local_positions = layout["local_positions"].to(input_ids.device)
     induction_positions = layout["induction_positions"].to(input_ids.device)
+    supervised_layers = resolve_supervised_layers(model.args)
     losses = []
-    for dist in model.collect_gate_distributions(input_ids):
+    for layer_idx, dist in enumerate(model.collect_gate_distributions(input_ids)):
+        if layer_idx not in supervised_layers:
+            continue
         # dist: batch, seq, heads, experts, normalized over experts.
         local_prob = dist[:, local_positions, :, local_target].clamp_min(1e-12)
         induction_prob = dist[:, induction_positions, :, induction_target].clamp_min(1e-12)
         losses.append(-0.5 * (local_prob.log().mean() + induction_prob.log().mean()))
+    if not losses:
+        raise ValueError("No layers selected for expert supervision.")
     return torch.stack(losses).mean()
+
+
+def resolve_supervised_layers(args: argparse.Namespace) -> set[int]:
+    if args.expert_supervision_layers is None:
+        return set(range(args.n_layers))
+    layers = set(int(layer) for layer in args.expert_supervision_layers)
+    if any(layer < 0 or layer >= args.n_layers for layer in layers):
+        raise ValueError("--expert-supervision-layers values must be in [0, n_layers).")
+    return layers
 
 
 def evaluate(
@@ -465,6 +486,7 @@ def main() -> None:
         raise ValueError("--local-target-expert must be in [0, n_experts).")
     if not 0 <= args.induction_target_expert < args.n_experts:
         raise ValueError("--induction-target-expert must be in [0, n_experts).")
+    resolve_supervised_layers(args)
     switchhead = import_switchhead(args.switchhead_path)
     device = resolve_device(args.device)
     layout = build_layout(args)

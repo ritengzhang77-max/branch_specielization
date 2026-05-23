@@ -480,7 +480,10 @@ These three numbers (S, C, M) are what the project should report for each archit
   are optimization- and label-assignment-sensitive rather than universal. A
   two-layer SwitchHead follow-up preserved the pattern: extra depth did not
   create spontaneous modularity, while induced modularity was reliable and
-  localized causally to layer 1.
+  localized causally to layer 1. A layer-specific supervision follow-up showed
+  that upstream gate splitting alone is not enough: layer-0-only supervision had
+  routed match `0.40`, layer-1-only had `0.80`, and both-layer supervision had
+  `1.00`.
 
 ### C. Resources concretely available (with HF / GitHub paths)
 - Pythia seeds: `EleutherAI/pythia-{14m,70m,160m,410m}-seed{1..9}`, plus `pythia-160m-weight-seed{1-3}` and `pythia-160m-data-seed{1-3}`. 154 checkpoints per model (steps 0, 1, 2, 4, 8, …, 143000). GitHub: `EleutherAI/pythia`.

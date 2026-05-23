@@ -235,6 +235,11 @@ SwitchHead feasibility update:
   role modularity, with local top `L1E0` and induction top `L1E1` in 5/5 seeds.
   This suggests induced causal modularity can localize to a later layer even when
   gate pressure is applied across layers.
+- Layer-specific two-layer supervision showed that the cue must reach the
+  relevant layer. Supervising layer 0 only split gates but gave routed match
+  `0.40`; supervising layer 1 only improved to `0.80`; supervising both layers
+  reached `1.00`. This reinforces the need for layer-wise gate and causal
+  metrics in larger routed-attention models.
 
 ### Phase 3: Architectural Intervention
 

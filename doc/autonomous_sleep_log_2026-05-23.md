@@ -1247,3 +1247,38 @@ Wrote:
 ```text
 doc/phase3_toy_switchhead_two_layer.md
 ```
+
+## Progress: Layer-Specific SwitchHead Supervision
+
+Added:
+
+```text
+--expert-supervision-layers
+```
+
+to `scripts/toy_switchhead_competition.py`.
+
+Ran two-layer selector supervision on only layer 0 and only layer 1.
+
+Summary:
+
+| Condition | Gate same top | Causal same top | Routed match | Gate distance | Causal distance |
+|---|---:|---:|---:|---:|---:|
+| spontaneous | 1.00 | 0.80 | 0.20 | 0.0017 | 0.1617 |
+| layer 0 only | 0.00 | 0.60 | 0.40 | 0.4862 | 0.2499 |
+| layer 1 only | 0.20 | 0.20 | 0.80 | 0.4155 | 0.5791 |
+| both layers | 0.00 | 0.00 | 1.00 | 0.7066 | 0.6148 |
+
+Interpretation:
+
+```text
+supervising only the upstream layer can split gates but does not reliably induce
+the late causal module. Supervising the causal layer is much closer, but both
+layers are needed for the robust 5/5 result in this setup.
+```
+
+Wrote:
+
+```text
+doc/phase3_toy_switchhead_layer_specific_supervision.md
+```

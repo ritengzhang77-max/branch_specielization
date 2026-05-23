@@ -98,6 +98,12 @@ That is useful for future real-model analysis: routed attention experts may show
 role-aligned gates in several layers while the causal role module is concentrated
 in a narrower layer range.
 
+A layer-specific supervision follow-up found that supervising layer 0 only is
+not enough (`routed match=0.40`), supervising layer 1 only is closer but still
+partial (`routed match=0.80`), and supervising both layers is reliable
+(`routed match=1.00`). See
+`doc/phase3_toy_switchhead_layer_specific_supervision.md`.
+
 ## Caveats
 
 - This is still a tiny synthetic model.
