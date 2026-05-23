@@ -154,12 +154,34 @@ Additional task-repeat details:
 - generic Phase 0 aligned-minus-same has target CI crossing zero and only 5/9
   positive targets.
 
-Interpretation: the larger-corpus exact 8-gram check strengthens the 160M
-natural-repeat result. The task is more natural than inserted spans, uses longer
-exact repeated phrases, avoids sampling replacement, and still shows trained
-own-head causality plus task-specific cross-seed transfer. It also preserves
-the alignment-basis lesson: generic Phase 0 matching is essentially neutral on
-this weak natural role, while role-specific matching is positive.
+Pythia-410M WikiText-103 exact 8-gram results:
+
+| Condition | Alignment source | Seeds | Own top excess | Same-index transfer | Aligned transfer | Aligned - same | Target CI for aligned - same |
+|---|---|---:|---:|---:|---:|---:|---:|
+| `step0` | task repeat | 9 | 0.0004 | -0.0000 | -0.0003 | -0.0002 | [-0.0019, 0.0013] |
+| `step143000` | Phase 0 generic | 9 | 0.0580 | 0.0193 | 0.0171 | -0.0022 | [-0.0333, 0.0196] |
+| `step143000` | task repeat | 9 | 0.0580 | 0.0193 | 0.0571 | 0.0378 | [-0.0042, 0.0708] |
+
+The 410M run found 491 candidate windows and sampled 128 probe plus 128
+evaluation windows without replacement.
+
+Additional 410M details:
+
+- own top excess is positive for 8/9 target seeds;
+- task-repeat aligned-minus-same is positive for 8/9 target seeds;
+- task-repeat pair-level CI is `[0.0065, 0.0612]`;
+- task-repeat aligned-better count is 57/72;
+- target-level bootstrap CI still slightly crosses zero;
+- generic Phase 0 aligned-minus-same is neutral/slightly negative.
+
+Interpretation: the larger-corpus exact 8-gram check strengthens the natural
+repeat result, especially for 160M. The task is more natural than inserted
+spans, uses longer exact repeated phrases, avoids sampling replacement, and
+still shows trained own-head causality plus task-specific cross-seed transfer.
+It also preserves the alignment-basis lesson: generic Phase 0 matching is
+essentially neutral on this weak natural role, while role-specific matching is
+positive. However, the 410M effect remains much smaller and more heterogeneous
+than 160M.
 
 ## Interpretation
 
@@ -187,11 +209,11 @@ must be close to the role being transferred.
 
 Likely reasons:
 
-- exact naturally occurring 4-token repeats are often article-specific names,
-  headings, boilerplate, or local phrase reuse rather than a clean induction
-  role;
-- the 4-token span is short, so there are only 3 scored next-token positions per
-  example;
+- exact naturally occurring repeats are often article-specific names, headings,
+  boilerplate, or local phrase reuse rather than a clean induction role;
+- the original 4-token span was short, so there were only 3 scored next-token
+  positions per example; WikiText-103 exact 8-grams reduce this issue but do
+  not remove the semantic mixture;
 - the generic Phase 0 raw-score alignment is not specific enough for this weaker
   role;
 - same-index heads may already capture enough of this broad natural-repeat
@@ -204,7 +226,7 @@ Stronger parts:
 - the script uses unmodified corpus windows;
 - examples are inspectable in `example_rows.csv`;
 - own-head causality is positive for 9/9 final-checkpoint seeds;
-- both `step0` controls are null with respect to positive transfer;
+- matched `step0` controls are null with respect to positive transfer;
 - the task-specific alignment result uses held-out evaluation windows.
 - the WikiText-103 exact 8-gram extension uses longer repeated spans and enough
   candidates to sample probe/evaluation windows without replacement.
@@ -212,7 +234,8 @@ Stronger parts:
 Weaker parts:
 
 - exact repeats are semantically mixed;
-- the 410M exact-repeat result is still weak under the current setup;
+- the 410M exact-repeat result is still weak/heterogeneous even after moving to
+  WikiText-103 exact 8-grams;
 - generic-alignment aligned-minus-same has high variance and target-level CI
   crosses zero;
 - the task-specific alignment result is stronger but more role-informed, so it
@@ -224,8 +247,8 @@ Weaker parts:
    more on copying rather than ordinary language-model context.
 2. Compare same-index vs aligned transfer separately for name/title repeats,
    numeric repeats, and ordinary phrase repeats.
-3. Run the WikiText-103 exact 8-gram task on Pythia-410M to test whether the
-   weak 410M exact-repeat result was mainly a short-span/WikiText-2 issue.
+3. Inspect the remaining 410M weak cases by repeat type and target seed, rather
+   than making a simple monotonic model-size claim.
 
 ## Files
 
@@ -252,3 +275,9 @@ Weaker parts:
   `results/phase1_pythia160m_wikitext103_natural_repeat_8gram_task_alignment_seed9_n128/`.
 - Pythia-160M WikiText-103 exact 8-gram task-repeat `step0` control:
   `results/phase1_pythia160m_wikitext103_natural_repeat_8gram_task_alignment_seed9_n128_step0/`.
+- Pythia-410M WikiText-103 exact 8-gram Phase 0 alignment:
+  `results/phase1_pythia410m_wikitext103_natural_repeat_8gram_phase0_alignment_seed9_n128/`.
+- Pythia-410M WikiText-103 exact 8-gram task-repeat alignment:
+  `results/phase1_pythia410m_wikitext103_natural_repeat_8gram_task_alignment_seed9_n128/`.
+- Pythia-410M WikiText-103 exact 8-gram task-repeat `step0` control:
+  `results/phase1_pythia410m_wikitext103_natural_repeat_8gram_task_alignment_seed9_n128_step0/`.

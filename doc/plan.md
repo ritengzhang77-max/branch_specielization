@@ -385,8 +385,15 @@ These three numbers (S, C, M) are what the project should report for each archit
   alignment was positive (`aligned-minus-same=0.2820`, target CI
   `[0.0995, 0.5164]`, 8/9 target positives), with a matched `step0` control
   near zero/slightly negative (`aligned-minus-same=-0.0018`). This strengthens
-  the external-validity claim for 160M natural repeats and makes 410M exact
-  8-grams the next natural check.
+  the external-validity claim for 160M natural repeats. The corresponding 410M
+  exact 8-gram check improved over the earlier WikiText-2 4-gram result but
+  remained weak: own-top excess was `0.0580` with target CI
+  `[0.0059, 0.1088]`, generic Phase 0 alignment was neutral
+  (`aligned-minus-same=-0.0022`, target CI `[-0.0333, 0.0196]`), and task-repeat
+  alignment was positive but target-heterogeneous (`aligned-minus-same=0.0378`,
+  target CI `[-0.0042, 0.0708]`, 8/9 target positives). The 410M `step0`
+  task-repeat control was null. This means exact natural repeats should not yet
+  support a simple monotonic scaling claim.
 
 ### C. Resources concretely available (with HF / GitHub paths)
 - Pythia seeds: `EleutherAI/pythia-{14m,70m,160m,410m}-seed{1..9}`, plus `pythia-160m-weight-seed{1-3}` and `pythia-160m-data-seed{1-3}`. 154 checkpoints per model (steps 0, 1, 2, 4, 8, …, 143000). GitHub: `EleutherAI/pythia`.

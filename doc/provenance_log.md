@@ -1480,3 +1480,38 @@ functional modularity?
   the 160M natural-repeat result. The role is causally stronger than in the
   WikiText-2 4-gram task, but generic Phase 0 alignment remains neutral; the
   positive transfer appears under task-repeat matching.
+
+## 2026-05-23 - 410M WikiText-103 exact 8-gram repeat check
+
+- Ran Pythia-410M all-seed exact 8-gram task-repeat alignment with 128 probe and
+  128 evaluation windows, sampled without replacement:
+  `results/phase1_pythia410m_wikitext103_natural_repeat_8gram_task_alignment_seed9_n128/`.
+  - repeat candidate count: 491;
+  - own top excess: `0.0580`;
+  - own top target CI: `[0.0059, 0.1088]`;
+  - own top positives: 8/9;
+  - same-index transfer: `0.0193`;
+  - task-repeat aligned transfer: `0.0571`;
+  - aligned-minus-same: `0.0378`;
+  - pair CI: `[0.0065, 0.0612]`, pair sign `p=6.5e-07`;
+  - target CI: `[-0.0042, 0.0708]`, target sign `p=0.0391`;
+  - target positives: 8/9;
+  - aligned better count: 57/72.
+- Ran matched Pythia-410M `step0` task-repeat control:
+  `results/phase1_pythia410m_wikitext103_natural_repeat_8gram_task_alignment_seed9_n128_step0/`.
+  - own top excess: `0.0004`;
+  - aligned-minus-same: `-0.0002`;
+  - target CI: `[-0.0019, 0.0013]`.
+- Ran Pythia-410M all-seed exact 8-gram generic Phase 0 comparison:
+  `results/phase1_pythia410m_wikitext103_natural_repeat_8gram_phase0_alignment_seed9_n128/`.
+  - own top excess: `0.0580`;
+  - same-index transfer: `0.0193`;
+  - generic aligned transfer: `0.0171`;
+  - aligned-minus-same: `-0.0022`;
+  - pair CI: `[-0.0303, 0.0183]`;
+  - target CI: `[-0.0333, 0.0196]`;
+  - target positives: 6/9.
+- Interpretation: moving to WikiText-103 exact 8-grams improves 410M relative
+  to the earlier WikiText-2 exact 4-gram task, but 410M still remains much
+  weaker and more heterogeneous than 160M. Generic Phase 0 alignment is neutral;
+  task-repeat alignment is directionally positive with target-level uncertainty.

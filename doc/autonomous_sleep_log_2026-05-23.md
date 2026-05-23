@@ -533,3 +533,50 @@ Interpretation: longer exact natural repeats strengthen the 160M external
 validity result. The role is causally stronger than in the 4-gram WikiText-2
 task, but the alignment-basis conclusion remains: generic Phase 0 matching is
 neutral, while task-repeat matching gives positive held-out transfer.
+
+## Progress: 410M WikiText-103 Exact 8-Gram Check
+
+Ran the same exact 8-gram setup on Pythia-410M with all 24 layers in the
+candidate pool.
+
+Task-repeat alignment:
+
+- result directory:
+  `results/phase1_pythia410m_wikitext103_natural_repeat_8gram_task_alignment_seed9_n128/`;
+- repeat candidate count: 491;
+- own top excess: `0.0580`;
+- own top target CI: `[0.0059, 0.1088]`;
+- own top positives: 8/9;
+- same-index transfer: `0.0193`;
+- task-repeat aligned transfer: `0.0571`;
+- aligned-minus-same: `0.0378`;
+- pair CI: `[0.0065, 0.0612]`;
+- target CI: `[-0.0042, 0.0708]`;
+- target positives: 8/9;
+- aligned better count: 57/72.
+
+Matched `step0` task-repeat control:
+
+- result directory:
+  `results/phase1_pythia410m_wikitext103_natural_repeat_8gram_task_alignment_seed9_n128_step0/`;
+- own top excess: `0.0004`;
+- aligned-minus-same: `-0.0002`;
+- target CI: `[-0.0019, 0.0013]`.
+
+Generic Phase 0 comparison:
+
+- result directory:
+  `results/phase1_pythia410m_wikitext103_natural_repeat_8gram_phase0_alignment_seed9_n128/`;
+- own top excess: `0.0580`;
+- same-index transfer: `0.0193`;
+- generic aligned transfer: `0.0171`;
+- aligned-minus-same: `-0.0022`;
+- pair CI: `[-0.0303, 0.0183]`;
+- target CI: `[-0.0333, 0.0196]`;
+- target positives: 6/9.
+
+Interpretation: 410M improves when the exact-repeat task uses WikiText-103
+8-grams rather than WikiText-2 4-grams, but it is still much weaker than 160M.
+The right wording is not "larger model improves natural-repeat transfer"; it is
+"longer natural repeats reveal a small trained 410M signal, still
+heterogeneous and alignment-basis dependent."
