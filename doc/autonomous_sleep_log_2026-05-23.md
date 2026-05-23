@@ -1175,3 +1175,33 @@ Wrote:
 ```text
 doc/phase3_toy_switchhead_label_control.md
 ```
+
+## Progress: Phase 3 Synthesis Updated
+
+Updated:
+
+```text
+doc/phase3_structural_to_functional_synthesis.md
+```
+
+Current synthesis:
+
+```text
+Structural heterogeneity can stabilize function-to-slot mappings.
+Structural routing/expert design does not by itself guarantee functional
+modularity.
+Role-informed routing pressure can induce persistent functional modularity when
+the cue is strong enough and present long enough.
+Gate specialization appears before causal functional modularity.
+```
+
+SwitchHead now supports the same mechanism in a less hand-designed routed
+attention module:
+
+```text
+spontaneous SwitchHead: solves task, no reliable role modularity
+weak selector cue: reliable induced modularity
+trajectory: gate split before causal split
+tradeoff: strength-duration threshold
+label control: roles can follow reversed expert labels
+```

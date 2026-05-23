@@ -1886,3 +1886,7 @@ computations to consolidate.
 - Interpretation update: under sufficient cue duration, the causal roles follow
   the requested expert labels. The 450-step asymmetry cautions that the exact
   threshold is optimization- and label-assignment-sensitive.
+- Updated `doc/phase3_structural_to_functional_synthesis.md` to incorporate the
+  SwitchHead spontaneous negative result, induced positive result,
+  gate-before-causality trajectory, strength-duration threshold, and
+  reversed-label control.

@@ -28,8 +28,8 @@ functional modularity. It supports a more precise conditional claim:
 ```text
 Structural heterogeneity can create stable functional specialization slots.
 Structural branch/routing design can support functional modularity, but reliable
-functional modularity appears only when the training signal is role-informative
-for long enough to reshape branch computations.
+functional modularity appears only when the training signal is role-informative,
+strong enough, and present long enough to reshape branch or expert computations.
 ```
 
 ## Evidence Summary
@@ -51,6 +51,12 @@ for long enough to reshape branch computations.
 | Conflict-heavy bidirectional lookup | Even direct predecessor-vs-successor role conflict did not make unlabeled routers split roles; weak labels and oracle routing both reached `1.00`. | Task conflict alone did not rescue spontaneous modularity in this pilot. |
 | Annealed weak labels | Labels through step 400 failed despite solved task and role-aligned gates; labels through step 800 partially persisted; labels through step 1200 persisted more strongly. | Role-informative pressure must last beyond early symmetry breaking. |
 | Router trajectory | At step 400, gate match was `1.00` but causal routed role match was `0.00`; with continued labels, causal routed role match reached `1.00` by step 600. | Gate alignment appears before causal branch separation. |
+| SwitchHead spontaneous pilot | One-layer two-expert SwitchHead solved the conflict-heavy task in 5/5 seeds, but gate same-top expert was `1.00`, causal same-top expert was `0.80`, and causal expert distance was `0.0087`. | A real routed-attention module still does not spontaneously split roles in this toy setup. |
+| SwitchHead capacity variant | Four experts with `moe_k=2` solved the task, but causal same-top expert was `1.00` and single-expert deltas were tiny. | More active experts produced redundancy, not role modularity. |
+| SwitchHead weak selector pressure | With weight `0.05`, local -> expert 0 and induction -> expert 1 gave routed expert match `1.00`; an end-step-800 run preserved the split after 1200 steps without auxiliary loss. | Role-informed expert selection can become persistent causal functional modularity. |
+| SwitchHead selector trajectory | With selector pressure ending at step 450, reliable gate separation appeared by checkpoint 425; reliable causal expert separation appeared by checkpoint 500. | The gate-before-causality ordering transfers from the hand-built router to SwitchHead. |
+| SwitchHead strength-duration tradeoff | At end step 450, the first tested reliable weight was `0.05`; at end step 800, it dropped to `0.025`. | Functional modularity requires a strength-duration threshold, not arbitrary tiny cues. |
+| SwitchHead reversed-label control | Reversed targets local -> expert 1 and induction -> expert 0 were reliable in 5/5 seeds at end step 800. | The induced roles follow the cue labels under sufficient duration, rather than exposing a fixed expert identity. |
 | Pythia repeat/copy follow-up | Pythia heads show cross-seed functional role stability after alignment, and causal transfer strengthens through training. | Real transformers support the role-stability part, but do not by themselves establish branch modularity. |
 
 ## Current Answer
@@ -101,11 +107,16 @@ The reliable mechanism observed so far is role-informative routing pressure:
 - weak scored-position routing labels are sufficient;
 - late removal of weak labels can preserve a weakened split;
 - early removal fails even when the task is already solved and the gate is
-  already role-aligned.
+  already role-aligned;
+- SwitchHead attention experts show the same pattern: spontaneous routing and
+  extra active experts solve the task without modularity, while weak
+  role-informed selector pressure can induce persistent causal expert modules.
 
 The mechanism is therefore not just "the router points to different branches."
 The branch computations need time under role-aligned routing before causal
-modularity consolidates.
+modularity consolidates. The SwitchHead strength-duration sweep further suggests
+that the relevant quantity is not simply whether a cue exists, but whether it
+crosses a duration/strength threshold.
 
 ## Metrics That Matter Most
 
@@ -140,7 +151,8 @@ The clean paper claim is:
 Structural design changes which functional specialization slots are stable
 across seeds. Functional modularity is a stricter causal property: it emerges
 reliably in these toy branch models only when role-informative routing pressure
-is supplied for long enough to consolidate branch computations.
+is supplied strongly enough and for long enough to consolidate branch or expert
+computations.
 ```
 
 This framing makes positive and negative results both useful:
@@ -150,33 +162,31 @@ This framing makes positive and negative results both useful:
   insufficient without role information;
 - positive conditional-modularity result: weak role routing creates modularity;
 - developmental result: gate alignment precedes causal branch separation.
+- transfer-to-SwitchHead result: the same conditional mechanism appears in a
+  less hand-designed routed-attention module.
 
 ## Next Narrow Experiment
 
-The existing trajectory had a coarse jump between step 400 and step 600:
+The immediate SwitchHead question has shifted. The project now has:
 
 ```text
-step 400: gate match 1.00, causal routed role match 0.00
-step 600: gate match 1.00, causal routed role match 1.00
+spontaneous SwitchHead negative result;
+induced SwitchHead positive result;
+trajectory showing gate-before-causality;
+strength-duration threshold;
+reversed-label control.
 ```
 
-I ran the denser trajectory in that window for the `end800` weak-token-router
-condition:
+The next narrow experiment should test whether the induced expert modules are
+truly role-specific in a stronger causal sense:
 
 ```text
-steps: 400, 450, 500, 550, 600, 650, 700, 750, 800
+train the successful SwitchHead induced-modularity condition, then swap or patch
+expert outputs/gates across local and induction positions to test whether the
+roles transfer with the routed expert or depend on residual-stream context.
 ```
 
-Result:
-
-```text
-first solved checkpoint with gate match 5/5: step 400
-first solved checkpoint with causal routed-role match 5/5: step 550
-first solved checkpoint with branch distance >= 0.30: step 600
-first solved checkpoint with branch distance >= 0.40: step 750
-```
-
-This locates the causal consolidation window after gate alignment but before
-full branch-modularity strength. The next useful move is no longer another
-generic entropy/balance sweep; it is to test whether the same probe/gate-before-
-causality lag appears in a less hand-designed routed attention setting.
+If that path is too implementation-heavy, the next-best move is to run a
+two-layer SwitchHead version of the same toy experiment and ask whether the
+role-specific expert split localizes to one layer, distributes across layers, or
+collapses into redundancy.
