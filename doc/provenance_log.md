@@ -1009,3 +1009,23 @@ functional modularity?
   layers.
 - Wrote the candidate-pool memo:
   `doc/phase1_pythia160m_local_copy_candidate_pool.md`.
+
+## 2026-05-22 23:30 PDT - Candidate-pool local-copy checkpoint trajectory
+
+- Ran the cross-layer candidate-pool local-copy experiment at additional
+  Pythia-160M checkpoints: `step0`, `step4000`, and `step16000`.
+- Added `scripts/analyze_candidate_pool_trajectory.py`.
+- Combined trajectory summary:
+  `results/phase1_pythia160m_local_copy_candidate_pool_trajectory/`.
+- Trajectory:
+  - `step0`: own top excess `-0.0004`, aligned-minus-same `-0.0004`, aligned
+    better `34/72`;
+  - `step4000`: own top excess `0.4339`, aligned-minus-same `0.4191`, aligned
+    better `66/72`;
+  - `step16000`: own top excess `1.9006`, aligned-minus-same `1.2037`, aligned
+    better `66/72`;
+  - `step143000`: own top excess `2.2896`, aligned-minus-same `1.7838`,
+    aligned better `66/72`.
+- Interpretation: local-copy candidate-pool transfer is not an initialization
+  artifact. It is already detectable by `step4000` and grows in causal magnitude
+  through training.

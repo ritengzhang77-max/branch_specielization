@@ -291,6 +291,15 @@ These three numbers (S, C, M) are what the project should report for each archit
   the clearest Phase 1 evidence that functional specialization is stable across
   seeds after role-level relabeling, while the raw structural slot can shift
   across nearby layers.
+- The candidate-pool trajectory mirrors the repeat-match timing story but with a
+  clean null at initialization. At `step0`, own-head excess and aligned transfer
+  were essentially zero (`aligned-minus-same=-0.0004`). By `step4000`, aligned
+  transfer was already positive (`0.4822` vs same-index `0.0631`,
+  aligned-minus-same `0.4191`, 66/72 pairs). It strengthened at `step16000`
+  (`aligned-minus-same=1.2037`) and final checkpoint
+  (`aligned-minus-same=1.7838`). This supports a training-development claim:
+  cross-seed functional role alignment appears early and then grows in causal
+  magnitude.
 
 ### C. Resources concretely available (with HF / GitHub paths)
 - Pythia seeds: `EleutherAI/pythia-{14m,70m,160m,410m}-seed{1..9}`, plus `pythia-160m-weight-seed{1-3}` and `pythia-160m-data-seed{1-3}`. 154 checkpoints per model (steps 0, 1, 2, 4, 8, …, 143000). GitHub: `EleutherAI/pythia`.

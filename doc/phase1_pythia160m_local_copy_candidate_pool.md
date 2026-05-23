@@ -91,6 +91,25 @@ The candidate-pool result is much stronger than either fixed-slot rule. It
 raises own-head causal importance and makes cross-seed aligned transfer
 consistent across nearly all source-target pairs.
 
+## Training Trajectory
+
+The same candidate-pool experiment was run at selected Pythia-160M checkpoints:
+
+| Checkpoint | Own top excess | Same-index transfer | Aligned transfer | Aligned - same | Aligned better |
+|---|---:|---:|---:|---:|---:|
+| step0 | -0.0004 | 0.0001 | -0.0003 | -0.0004 | 34/72 |
+| step4000 | 0.4339 | 0.0631 | 0.4822 | 0.4191 | 66/72 |
+| step16000 | 1.9006 | 0.3281 | 1.5318 | 1.2037 | 66/72 |
+| step143000 | 2.2896 | 0.4876 | 2.2714 | 1.7838 | 66/72 |
+
+Interpretation:
+
+- The effect is absent at initialization.
+- Cross-layer aligned causal transfer is already detectable by `step4000`.
+- Magnitude grows substantially by `step16000` and again by the final checkpoint.
+- The pairwise aligned-better count saturates early (`66/72` from `step4000`
+  onward), while the causal effect size keeps increasing.
+
 ## Interpretation
 
 This is the clearest current local-copy result:
@@ -117,5 +136,8 @@ was evidence that fixed structural slots are too brittle.
 - Script: `scripts/pythia_local_copy_candidate_pool_alignment.py`.
 - Result directory:
   `results/phase1_pythia160m_local_copy_candidate_pool_layers2_4_top2/`.
+- Trajectory combiner: `scripts/analyze_candidate_pool_trajectory.py`.
+- Trajectory summary:
+  `results/phase1_pythia160m_local_copy_candidate_pool_trajectory/`.
 - Prior layer-selection memo:
   `doc/phase1_pythia160m_local_copy_layer_selection.md`.

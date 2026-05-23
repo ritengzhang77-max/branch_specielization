@@ -303,7 +303,8 @@ Can a cross-layer candidate-pool method identify causally active local-copy
 heads before testing cross-seed transfer?
 ```
 
-The first candidate-pool result is positive. The next step is to replicate the
-same cross-layer candidate-pool test at earlier checkpoints and/or on another
-role so we can distinguish a final-checkpoint phenomenon from a training-time
-developmental pattern.
+The first candidate-pool trajectory is also positive: the effect is absent at
+`step0`, detectable by `step4000` (`aligned-minus-same=0.4191`), stronger by
+`step16000` (`1.2037`), and strongest at `step143000` (`1.7838`). The next step
+is to test whether the same candidate-pool framing applies to another role or to
+larger model sizes.

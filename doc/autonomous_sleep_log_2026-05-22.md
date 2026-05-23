@@ -178,3 +178,35 @@ or negative result would also be informative.
 - Current interpretation: the local-copy role is functionally stable across
   seeds after cross-layer role relabeling. The earlier weak result was caused by
   fixed structural-slot assumptions, not absence of a reusable function.
+
+## 2026-05-22 23:05-23:30 PDT
+
+- Ran the same cross-layer candidate-pool local-copy experiment at earlier
+  Pythia-160M checkpoints.
+- `step0` control:
+  - own top excess over random: `-0.0004`;
+  - same-index transfer: `0.0001`;
+  - aligned transfer: `-0.0003`;
+  - aligned-minus-same: `-0.0004`;
+  - aligned better count: `34/72`.
+- `step4000`:
+  - own top excess over random: `0.4339`;
+  - same-index transfer: `0.0631`;
+  - aligned transfer: `0.4822`;
+  - aligned-minus-same: `0.4191`;
+  - aligned better count: `66/72`.
+- `step16000`:
+  - own top excess over random: `1.9006`;
+  - same-index transfer: `0.3281`;
+  - aligned transfer: `1.5318`;
+  - aligned-minus-same: `1.2037`;
+  - aligned better count: `66/72`.
+- Final `step143000` remains strongest:
+  - own top excess over random: `2.2896`;
+  - aligned-minus-same: `1.7838`;
+  - aligned better count: `66/72`.
+- Added `scripts/analyze_candidate_pool_trajectory.py` and wrote
+  `results/phase1_pythia160m_local_copy_candidate_pool_trajectory/`.
+- Current interpretation: local-copy candidate-pool transfer is absent at
+  initialization, detectable by `step4000`, and grows in causal magnitude
+  through training.

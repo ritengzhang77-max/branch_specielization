@@ -336,12 +336,17 @@ Second-role result:
   aligned transfer `2.2714`, aligned-minus-same `1.7838`, and aligned transfer
   better in `66/72` ordered source-target pairs. At the target level,
   aligned-minus-same was positive for `9/9` seeds.
+- The selected-checkpoint trajectory shows development rather than an
+  initialization artifact: `step0` has no effect
+  (`aligned-minus-same=-0.0004`), `step4000` is already positive (`0.4191`),
+  `step16000` is stronger (`1.2037`), and the final checkpoint is strongest
+  (`1.7838`).
 
 The next Phase 1 question is now:
 
 ```text
-Does cross-layer candidate-pool functional transfer appear during training, or
-only at the final checkpoint?
+Does cross-layer candidate-pool functional transfer generalize beyond
+local-copy/repeat-match, or to larger model sizes?
 ```
 
 ### Phase 4: Mechanistic Interpretation
