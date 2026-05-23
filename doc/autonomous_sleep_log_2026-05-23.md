@@ -1282,3 +1282,11 @@ Wrote:
 ```text
 doc/phase3_toy_switchhead_layer_specific_supervision.md
 ```
+
+Updated the Phase 3 synthesis again with the two-layer and layer-specific
+SwitchHead findings. The current mechanistic summary is now:
+
+```text
+role-informed cues must be strong enough, last long enough, and reach the layer
+where the causal role module forms.
+```

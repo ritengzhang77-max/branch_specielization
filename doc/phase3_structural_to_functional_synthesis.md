@@ -57,6 +57,8 @@ strong enough, and present long enough to reshape branch or expert computations.
 | SwitchHead selector trajectory | With selector pressure ending at step 450, reliable gate separation appeared by checkpoint 425; reliable causal expert separation appeared by checkpoint 500. | The gate-before-causality ordering transfers from the hand-built router to SwitchHead. |
 | SwitchHead strength-duration tradeoff | At end step 450, the first tested reliable weight was `0.05`; at end step 800, it dropped to `0.025`. | Functional modularity requires a strength-duration threshold, not arbitrary tiny cues. |
 | SwitchHead reversed-label control | Reversed targets local -> expert 1 and induction -> expert 0 were reliable in 5/5 seeds at end step 800. | The induced roles follow the cue labels under sufficient duration, rather than exposing a fixed expert identity. |
+| Two-layer SwitchHead | Extra depth solved smoothly but did not create spontaneous modularity (`gate same-top=1.00`, routed match `0.20`); induced two-layer training reached routed match `1.00`. | The one-layer result survives depth; induced causal expert modularity localizes to layer 1. |
+| Layer-specific SwitchHead supervision | Layer-0-only supervision split gates but had routed match `0.40`; layer-1-only reached `0.80`; both layers reached `1.00`. | The cue must reach the causal layer; upstream gate splitting alone is not enough. |
 | Pythia repeat/copy follow-up | Pythia heads show cross-seed functional role stability after alignment, and causal transfer strengthens through training. | Real transformers support the role-stability part, but do not by themselves establish branch modularity. |
 
 ## Current Answer
@@ -116,7 +118,8 @@ The mechanism is therefore not just "the router points to different branches."
 The branch computations need time under role-aligned routing before causal
 modularity consolidates. The SwitchHead strength-duration sweep further suggests
 that the relevant quantity is not simply whether a cue exists, but whether it
-crosses a duration/strength threshold.
+crosses a duration/strength threshold and reaches the layer where the causal
+role module forms.
 
 ## Metrics That Matter Most
 
@@ -164,6 +167,8 @@ This framing makes positive and negative results both useful:
 - developmental result: gate alignment precedes causal branch separation.
 - transfer-to-SwitchHead result: the same conditional mechanism appears in a
   less hand-designed routed-attention module.
+- layer-localization result: in two-layer SwitchHead, the causal split localizes
+  to the later layer, and supervising only the upstream layer is not enough.
 
 ## Next Narrow Experiment
 
@@ -175,6 +180,7 @@ induced SwitchHead positive result;
 trajectory showing gate-before-causality;
 strength-duration threshold;
 reversed-label control.
+two-layer localization and layer-specific supervision controls.
 ```
 
 The next narrow experiment should test whether the induced expert modules are
@@ -186,7 +192,10 @@ expert outputs/gates across local and induction positions to test whether the
 roles transfer with the routed expert or depend on residual-stream context.
 ```
 
-If that path is too implementation-heavy, the next-best move is to run a
-two-layer SwitchHead version of the same toy experiment and ask whether the
-role-specific expert split localizes to one layer, distributes across layers, or
-collapses into redundancy.
+If that path is too implementation-heavy, the next-best move is to separate
+SwitchHead's output selector from its value selector:
+
+```text
+supervise output selection only vs value selection only vs both, then ask which
+selector actually controls the causal expert split.
+```

@@ -1946,3 +1946,5 @@ computations to consolidate.
 - Interpretation update: upstream gate splitting alone is not enough. Direct
   role-aligned pressure on the later causal layer is much closer to sufficient,
   but both-layer pressure is the robust condition in this setup.
+- Updated `doc/phase3_structural_to_functional_synthesis.md` with the two-layer
+  and layer-specific SwitchHead results.
