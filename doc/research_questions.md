@@ -300,6 +300,21 @@ Initial real-transformer follow-up:
   This makes alignment basis a first-class methodological variable: generic
   attention-score matching can miss a weak natural functional role that
   role-specific matching recovers.
+
+Alignment-basis summary as of 2026-05-23:
+
+- Generic Phase 0 alignment works for high-signal synthetic local-copy
+  (`aligned-minus-same=1.7838` for 160M, `1.6554` for 410M).
+- For weak natural roles, task-specific alignment is decisive:
+  - inserted WikiText repeated spans, 160M: generic `0.0835`, task-specific
+    `0.5645`;
+  - inserted WikiText repeated spans, 410M: generic `0.0455`, task-specific
+    `0.1544`;
+  - naturally occurring exact repeats, 160M: generic `-0.0016`,
+    task-specific `0.1897`.
+- This means the alignment representation must be specified as part of the
+  metric. Generic alignment is an unsupervised baseline; role-specific alignment
+  is the better measurement for weak functional roles.
 - A Pythia-160M follow-up over seeds 1-3 added checkpoint-specific raw-score
   alignment and source-head transfer. Repeat-match specialization rose by
   `step4000` (`0.4794`), while causal own-top excess over random controls was

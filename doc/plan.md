@@ -351,6 +351,14 @@ These three numbers (S, C, M) are what the project should report for each archit
   (`aligned-minus-same=0.1158`, target CI `[0.0222, 0.1884]`). This makes the
   methodological lesson sharper: weak natural roles require role-specific
   alignment representations.
+- The alignment-basis summary as of 2026-05-23 is now a core Phase 1 result:
+  generic Phase 0 alignment works for high-signal synthetic local-copy, but
+  underestimates weak natural roles. Task-specific repeated-position alignment
+  raises inserted WikiText 160M aligned-minus-same from `0.0835` to `0.5645`,
+  inserted WikiText 410M from `0.0455` to `0.1544`, and naturally occurring
+  exact-repeat 160M from `-0.0016` to `0.1897`. The paper should report generic
+  alignment as an unsupervised baseline and task-specific alignment as the
+  role-level measurement.
 - A stricter natural-repeat follow-up scanned unmodified WikiText windows for
   exact repeated 4-token n-grams. Pythia-160M all-layer candidate pools across 9
   seeds showed trained causal repeat heads (`own_top_excess=0.1588`, target CI

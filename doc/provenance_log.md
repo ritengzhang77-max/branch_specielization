@@ -1354,3 +1354,18 @@ functional modularity?
   role-specific task-span alignment recovers a positive naturalistic transfer
   effect. Seed 6 remains a negative outlier, so the 410M effect is more
   heterogeneous than 160M.
+
+## 2026-05-23 - Alignment-basis summary
+
+- Wrote `doc/phase1_alignment_basis_summary.md`.
+- Consolidated the emerging methodological result:
+  - synthetic local-copy is high-signal and transfers under generic Phase 0
+    alignment;
+  - inserted natural repeated spans and naturally occurring exact repeats are
+    weaker roles whose cross-seed transfer is strongly underestimated by generic
+    alignment;
+  - task-specific alignment over repeated-position attention vectors recovers
+    held-out transfer for both inserted repeated spans and exact natural repeats.
+- Updated framing:
+  `alignment representation is part of the measured phenomenon, not only a
+  technical detail`.

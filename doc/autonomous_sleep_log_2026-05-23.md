@@ -377,3 +377,22 @@ Pythia-410M task-span alignment with 128 probe and 128 evaluation spans:
 Interpretation: task-span alignment remains positive under doubled sample count
 for both 160M and 410M. The 410M effect is smaller and retains the seed-6
 negative outlier; the 160M effect remains large.
+
+## Progress: Alignment-Basis Summary Memo
+
+Wrote `doc/phase1_alignment_basis_summary.md`.
+
+Current consolidated conclusion:
+
+```text
+Functional repeat/copy roles are stable across seeds after role-level
+relabeling, but weak natural roles require role-specific alignment features.
+```
+
+The hierarchy is now:
+
+1. synthetic local-copy: high signal, generic alignment works;
+2. inserted WikiText repeated spans: generic alignment positive but too
+   conservative, task-specific alignment strong;
+3. naturally occurring exact repeats: generic alignment neutral, task-specific
+   alignment positive.
