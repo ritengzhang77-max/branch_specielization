@@ -277,6 +277,28 @@ Does the Pythia-160M aligned-transfer result survive a broader seed set and a
 larger alignment probe corpus?
 ```
 
+Seed-9 selected-checkpoint follow-up:
+
+- The aligned-transfer result survived the full Pythia-160M seed set at the
+  selected checkpoints `step4000`, `step16000`, and `step143000`, using all 8
+  fixed alignment probe texts. At the final checkpoint, aligned transfer was
+  `1.0619` versus `0.2541` for same-index transfer, with aligned transfer
+  better in `59/72` ordered source-target pairs.
+- The timing story was revised. In the 3-seed pilot, `step4000` looked mostly
+  probe-only. In the 9-seed run, `step4000` already had own-top causal excess
+  `0.1659` and aligned-minus-same transfer `0.1731`, with aligned transfer
+  better in `62/72` ordered source-target pairs.
+- The better current claim is that probe specialization, causal importance, and
+  aligned transfer all strengthen across training; aligned causal transfer is
+  detectable by `step4000` and much larger by `step143000`.
+
+The next Phase 1 question is now:
+
+```text
+Does alignment-based causal transfer generalize beyond repeat-match heads to a
+second head-role task?
+```
+
 ### Phase 4: Mechanistic Interpretation
 
 If Phase 3 shows a signal, explain it mechanistically.

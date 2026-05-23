@@ -1,0 +1,4 @@
+revision,revision_index,n_pairs,same_index_loss_delta_mean,aligned_loss_delta_mean,aligned_minus_same_index_mean,aligned_minus_same_index_std,aligned_better_count,source_dir,selected_revision_index
+step4000,0,72,-0.004881128875745667,0.16822124645113945,0.1731023753268851,0.19730628139876866,62,results/phase1_pythia160m_repeat_match_alignment_seed9_step4000,0
+step16000,0,72,0.07851033399088515,0.3958332565509611,0.31732292256007594,0.36413218137859754,64,results/phase1_pythia160m_repeat_match_alignment_seed9_step16000,1
+step143000,0,72,0.254056963034802,1.0619041240877576,0.8078471610529555,0.7784106985715131,59,results/phase1_pythia160m_repeat_match_alignment_seed9_step143000,2

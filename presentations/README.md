@@ -4,8 +4,17 @@ This directory contains checkpoint decks for the branch-specialization research
 project. Each dated subdirectory is a self-contained snapshot with source,
 compiled PDF, copied data, and provenance notes when available.
 
+## Themes
+
+- `phase1/`: existing multi-seed transformer analyses and alignment-transfer
+  checkpoints.
+
 ## 2026-05-22
 
+- `phase1/2026-05-22-2032-pythia160m-seed9-alignment/`: all-seed Pythia-160M
+  selected-checkpoint repeat-match alignment-transfer result. Raw-score
+  alignment transfers the causal head role much better than same-index transfer
+  across all 9 seeds.
 - `2026-05-22-1902-pythia160m-alignment-trajectory/`: Pythia-160M
   repeat-match alignment trajectory. The main result is that causal
   repeat-match transfer across seeds is weak by same head index but strong after

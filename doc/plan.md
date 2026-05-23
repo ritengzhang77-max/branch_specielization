@@ -254,6 +254,14 @@ These three numbers (S, C, M) are what the project should report for each archit
   transfer better in all 6 ordered seed pairs. This strengthens the Phase 1
   framing: head-role identity is weakly universal after relabeling/alignment,
   not reliably tied to the same raw head index.
+- Scaling the same analysis to all 9 official Pythia-160M seeds at selected
+  checkpoints strengthened the alignment-transfer claim and revised the timing
+  story. With 72 ordered source-target pairs per checkpoint, aligned transfer
+  beat same-index transfer at step4000 (`0.1682` vs `-0.0049`, 62/72 pairs),
+  step16000 (`0.3958` vs `0.0785`, 64/72 pairs), and step143000 (`1.0619` vs
+  `0.2541`, 59/72 pairs). The 3-seed "probe before causal transfer" story was
+  too sharp for Pythia-160M: aligned causal transfer is already detectable by
+  step4000, but it strengthens substantially through training.
 
 ### C. Resources concretely available (with HF / GitHub paths)
 - Pythia seeds: `EleutherAI/pythia-{14m,70m,160m,410m}-seed{1..9}`, plus `pythia-160m-weight-seed{1-3}` and `pythia-160m-data-seed{1-3}`. 154 checkpoints per model (steps 0, 1, 2, 4, 8, …, 143000). GitHub: `EleutherAI/pythia`.

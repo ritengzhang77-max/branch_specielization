@@ -821,3 +821,30 @@ functional modularity?
   `doc/phase1_pythia160m_repeat_match_alignment_trajectory.md`.
 - Created checkpoint deck:
   `presentations/2026-05-22-1902-pythia160m-alignment-trajectory/pythia160m_alignment_trajectory_checkpoint.pdf`.
+
+## 2026-05-22 Phase 1 Pythia-160M Seed-9 Selected Checkpoints
+
+- Added `scripts/analyze_pythia_seed9_alignment_selected.py`.
+- Scaled the Pythia-160M repeat-match alignment-transfer analysis to all 9
+  official seeds at selected checkpoints:
+  `step4000`, `step16000`, and `step143000`.
+- Used all 8 fixed probe texts for raw-score alignment.
+- Ran each selected checkpoint as a separate one-checkpoint job after an earlier
+  all-checkpoint job was interrupted by unrelated GPU contention before writing
+  results.
+- Main result:
+  - step4000: aligned transfer `0.1682`, same-index transfer `-0.0049`,
+    aligned-minus-same `0.1731`, aligned better in 62/72 ordered seed pairs;
+  - step16000: aligned transfer `0.3958`, same-index transfer `0.0785`,
+    aligned-minus-same `0.3173`, aligned better in 64/72 pairs;
+  - step143000: aligned transfer `1.0619`, same-index transfer `0.2541`,
+    aligned-minus-same `0.8078`, aligned better in 59/72 pairs.
+- Interpretation:
+  - the aligned-transfer claim survives the full Pythia-160M seed set;
+  - same-index transfer remains weak relative to raw-score alignment;
+  - the timing story is revised because causal aligned transfer is already
+    detectable by step4000 in the 9-seed run, not only at later checkpoints.
+- Recorded the result in
+  `doc/phase1_pythia160m_seed9_alignment_selected_checkpoints.md`.
+- Created checkpoint deck:
+  `presentations/phase1/2026-05-22-2032-pythia160m-seed9-alignment/outputs/pythia160m_seed9_alignment_checkpoint.pdf`.
