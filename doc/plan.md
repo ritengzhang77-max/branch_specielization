@@ -506,6 +506,11 @@ These three numbers (S, C, M) are what the project should report for each archit
   local/induction accuracy to `0.6117/0.5892`, while layer-0 `swap_v` mostly
   hurt local (`0.8913/0.9995`). Paired value-side relabeling and full relabeling
   restored both roles to `1.0000/1.0000`.
+- An attention-weighted value-gate diagnostic did not explain the one-layer
+  value-side swap fragility: weighting source value-selector distributions by
+  actual local/induction attention patterns gave only `0.0091` distance. The
+  codebook effect is therefore not just marginal value-expert usage hidden by
+  the wrong source-position average.
 
 ### C. Resources concretely available (with HF / GitHub paths)
 - Pythia seeds: `EleutherAI/pythia-{14m,70m,160m,410m}-seed{1..9}`, plus `pythia-160m-weight-seed{1-3}` and `pythia-160m-data-seed{1-3}`. 154 checkpoints per model (steps 0, 1, 2, 4, 8, …, 143000). GitHub: `EleutherAI/pythia`.

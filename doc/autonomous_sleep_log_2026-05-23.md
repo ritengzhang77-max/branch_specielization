@@ -1489,3 +1489,41 @@ Wrote:
 ```text
 doc/phase3_toy_switchhead_two_layer_swap_interventions.md
 ```
+
+## Progress: Attention-Weighted Value-Gate Diagnostic
+
+Added a diagnostic that reconstructs each block's attention weights from Q/K and
+weights source-token value-selector distributions by actual attention flow from
+local and induction query positions.
+
+Smoke:
+
+```text
+results/debug_switchhead_attended_value_gate/
+```
+
+One-layer induced run:
+
+```text
+results/phase3_toy_switchhead_attended_value_gate_w005_end800_seed5_steps2000/
+```
+
+Result:
+
+```text
+local accuracy = 1.0000
+induction accuracy = 1.0000
+routed expert match = 1.00
+output gate distance = 0.9645
+query-position value gate distance = 0.0134
+source-position value gate distance = 0.0029
+attended value-gate distance = 0.0091
+```
+
+Interpretation:
+
+```text
+the value-side swap fragility is not explained by simple attended role-wise
+value-expert usage. The better description is an internal expert-codebook /
+basis-consistency relation.
+```

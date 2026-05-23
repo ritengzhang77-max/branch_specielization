@@ -147,6 +147,5 @@ substantially damaged both roles.
 ## Next Step
 
 The next implementation improvement is to save trained checkpoints and add
-attention-weighted source diagnostics. That would allow additional swaps,
-activation patches, and value-gate readouts on exactly the same trained models
-without rerunning training.
+activation-patching utilities. That would allow additional swaps and codebook
+patches on exactly the same trained models without rerunning training.

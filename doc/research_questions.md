@@ -270,6 +270,11 @@ SwitchHead feasibility update:
   story at the later causal layer and shows that upstream local-supporting
   structure is visible to swaps even when top ablation localizes both roles to
   layer 1.
+- An attention-weighted value-gate diagnostic reconstructed attention weights
+  from Q/K and weighted value-selector distributions by actual local/induction
+  attention flow. In the one-layer induced condition, the attended value-gate
+  distance was still only `0.0091`, so the value-side swap fragility is not
+  explained by simple attended value-expert usage.
 
 ### Phase 3: Architectural Intervention
 

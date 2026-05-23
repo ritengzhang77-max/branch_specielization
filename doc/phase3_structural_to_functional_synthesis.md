@@ -64,6 +64,7 @@ strong enough, and present long enough to reshape branch or expert computations.
 | SwitchHead expanded-seed robustness | One-layer and two-layer output-selector induced conditions both reached routed match `1.00` across seeds 1-10; spontaneous one-layer and two-layer controls had only 2/10 and 1/10 routed match. | The induced positive and spontaneous negative SwitchHead results both survive expanded seeds. |
 | SwitchHead expert-swap interventions | In the one-layer induced condition, `swap_v` and `swap_value_selector` collapsed accuracy to about `0.08/0.07`, while `swap_v_and_value_selector` and `swap_all` restored accuracy to `1.00/1.00`. `swap_o` and `swap_output_selector` alone were tolerated. | Output-selector pressure is the clean training cue, but the learned inference-time bottleneck is a value-side expert codebook, not a marginal output-gate split. |
 | Two-layer SwitchHead swap interventions | On the same trained two-layer models, layer-1 `swap_v` dropped local/induction accuracy to `0.6117/0.5892`, while layer-0 `swap_v` mainly hurt local (`0.8913/0.9995`). Paired value-side relabeling and full relabeling restored `1.00/1.00`. | The value-side codebook localizes mostly to the later causal layer, but layer 0 still carries local-supporting expert-label structure. |
+| Attention-weighted value-gate diagnostic | In the one-layer induced model, attention-weighting source value gates by the actual local/induction attention patterns still gave only `0.0091` distance. | The value-side swap fragility is not explained by simple marginal or attended role-wise value-expert usage; it is more like an internal codebook/basis consistency relation. |
 | Pythia repeat/copy follow-up | Pythia heads show cross-seed functional role stability after alignment, and causal transfer strengthens through training. | Real transformers support the role-stability part, but do not by themselves establish branch modularity. |
 
 ## Current Answer
@@ -131,7 +132,9 @@ code is on the value side. Swapping the value projection or value selector alone
 destroys the model, while swapping both together restores it; swapping the output
 selector or output projection alone is tolerated. In the two-layer model, this
 value-side fragility is strongest in layer 1, while layer 0 swaps mainly damage
-the local role.
+the local role. An attention-weighted value-gate diagnostic still shows only a
+tiny local-vs-induction split, so the codebook effect is not reducible to
+role-averaged value-expert usage.
 
 ## Metrics That Matter Most
 
@@ -216,7 +219,7 @@ The next narrow experiment should make the swap/patch workflow less wasteful and
 more diagnostic:
 
 ```text
-save trained checkpoints and add attention-weighted value-gate diagnostics, so
-new interventions can be run without retraining and value-side routing can be
-measured at the actually attended source tokens.
+save trained checkpoints and add activation-patching utilities, so new
+interventions can be run without retraining and value-side codebook effects can
+be tested on exactly the same models.
 ```

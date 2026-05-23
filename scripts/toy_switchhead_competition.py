@@ -55,6 +55,10 @@ class ModelSummary:
     source_value_gate_local_top_expert: int
     source_value_gate_induction_top_expert: int
     source_value_gate_same_top_expert: bool
+    attended_value_gate_distribution_distance: float
+    attended_value_gate_local_top_expert: int
+    attended_value_gate_induction_top_expert: int
+    attended_value_gate_same_top_expert: bool
     local_top_loss_delta: float
     induction_top_loss_delta: float
     n_layers: int
@@ -80,6 +84,8 @@ class ExpertScore:
     value_gate_induction_mean: float
     source_value_gate_local_mean: float
     source_value_gate_induction_mean: float
+    attended_value_gate_local_mean: float
+    attended_value_gate_induction_mean: float
 
 
 @dataclass
@@ -593,6 +599,65 @@ def collect_source_value_gate_metrics(
     return gate_local, gate_induction
 
 
+def attention_weighted_expert_distribution(
+    attention: torch.Tensor,
+    value_distribution: torch.Tensor,
+    query_positions: torch.Tensor,
+) -> torch.Tensor:
+    # attention: batch, heads, query, source
+    # value_distribution: batch, source, heads, experts
+    selected_attention = attention[:, :, query_positions, :]
+    weighted = torch.einsum("bhqs,bshe->bhqe", selected_attention, value_distribution)
+    return weighted.mean(dim=(0, 1, 2))
+
+
+def collect_attended_value_gate_metrics(
+    model: TinySwitchHeadTransformer,
+    input_ids: torch.Tensor,
+    layout: dict[str, torch.Tensor | int],
+    args: argparse.Namespace,
+    device: torch.device,
+) -> tuple[np.ndarray, np.ndarray]:
+    local_positions = layout["local_positions"].to(device)
+    induction_positions = layout["induction_positions"].to(device)
+    local_totals = [[] for _ in range(args.n_layers)]
+    induction_totals = [[] for _ in range(args.n_layers)]
+    model.eval()
+    with torch.no_grad():
+        for ids in iter_batches(input_ids, args.batch_size):
+            ids = ids.to(device)
+            x = model.embed_input(ids)
+            seq_len = ids.shape[1]
+            causal_mask = torch.triu(torch.ones(seq_len, seq_len, dtype=torch.bool, device=device), diagonal=1)
+            for layer_idx, block in enumerate(model.blocks):
+                value_distribution = block.value_gate_distribution(x)
+                xn = block.ln1(x)
+                scale = block.attn.scale.sqrt().type_as(xn)
+                q = block.attn.q(xn) * scale
+                k = block.attn.k(xn) * scale
+                q = block.attn.project_to_torch_order(q)
+                k = block.attn.project_to_torch_order(k)
+                if getattr(block.attn, "n_rotate", 0) > 0:
+                    q, k = block.attn.rotate(q, k, 0)
+                scores = torch.matmul(q, k.transpose(-1, -2))
+                scores = scores.masked_fill(causal_mask.view(1, 1, seq_len, seq_len), float("-inf"))
+                attention = torch.softmax(scores, dim=-1)
+                local_totals[layer_idx].append(
+                    attention_weighted_expert_distribution(
+                        attention, value_distribution, local_positions
+                    ).detach().cpu().numpy()
+                )
+                induction_totals[layer_idx].append(
+                    attention_weighted_expert_distribution(
+                        attention, value_distribution, induction_positions
+                    ).detach().cpu().numpy()
+                )
+                x = block(x)
+    gate_local = np.stack([np.mean(layer_totals, axis=0) for layer_totals in local_totals], axis=0)
+    gate_induction = np.stack([np.mean(layer_totals, axis=0) for layer_totals in induction_totals], axis=0)
+    return gate_local, gate_induction
+
+
 def distribution_distance(a: np.ndarray, b: np.ndarray) -> float:
     return float(0.5 * np.abs(a - b).sum())
 
@@ -647,6 +712,14 @@ def analyze_model(
     source_value_gate_local_top = int(np.argmax(source_value_gate_local))
     source_value_gate_induction_top = int(np.argmax(source_value_gate_induction))
     source_value_gate_dist = distribution_distance(source_value_gate_local, source_value_gate_induction)
+    attended_value_gate_local_by_layer, attended_value_gate_induction_by_layer = (
+        collect_attended_value_gate_metrics(model, eval_ids, layout, args, device)
+    )
+    attended_value_gate_local = attended_value_gate_local_by_layer.mean(axis=0)
+    attended_value_gate_induction = attended_value_gate_induction_by_layer.mean(axis=0)
+    attended_value_gate_local_top = int(np.argmax(attended_value_gate_local))
+    attended_value_gate_induction_top = int(np.argmax(attended_value_gate_induction))
+    attended_value_gate_dist = distribution_distance(attended_value_gate_local, attended_value_gate_induction)
 
     expert_scores = []
     for layer_idx in range(args.n_layers):
@@ -671,6 +744,12 @@ def analyze_model(
                     ),
                     source_value_gate_induction_mean=float(
                         source_value_gate_induction_by_layer[layer_idx, expert_idx]
+                    ),
+                    attended_value_gate_local_mean=float(
+                        attended_value_gate_local_by_layer[layer_idx, expert_idx]
+                    ),
+                    attended_value_gate_induction_mean=float(
+                        attended_value_gate_induction_by_layer[layer_idx, expert_idx]
                     ),
                 )
             )
@@ -705,6 +784,10 @@ def analyze_model(
         source_value_gate_local_top_expert=source_value_gate_local_top,
         source_value_gate_induction_top_expert=source_value_gate_induction_top,
         source_value_gate_same_top_expert=source_value_gate_local_top == source_value_gate_induction_top,
+        attended_value_gate_distribution_distance=attended_value_gate_dist,
+        attended_value_gate_local_top_expert=attended_value_gate_local_top,
+        attended_value_gate_induction_top_expert=attended_value_gate_induction_top,
+        attended_value_gate_same_top_expert=attended_value_gate_local_top == attended_value_gate_induction_top,
         local_top_loss_delta=float(local_deltas[local_top]),
         induction_top_loss_delta=float(induction_deltas[induction_top]),
         n_layers=args.n_layers,
@@ -792,6 +875,12 @@ def summarize(rows: list[ModelSummary]) -> dict[str, object]:
         ),
         "source_value_gate_same_top_expert_rate": float(
             np.mean([row.source_value_gate_same_top_expert for row in rows])
+        ),
+        "attended_value_gate_distribution_distance_mean": float(
+            np.mean([row.attended_value_gate_distribution_distance for row in rows])
+        ),
+        "attended_value_gate_same_top_expert_rate": float(
+            np.mean([row.attended_value_gate_same_top_expert for row in rows])
         ),
         "local_top_loss_delta_mean": float(np.mean([row.local_top_loss_delta for row in rows])),
         "induction_top_loss_delta_mean": float(np.mean([row.induction_top_loss_delta for row in rows])),

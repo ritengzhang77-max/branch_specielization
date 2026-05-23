@@ -133,10 +133,20 @@ The new source-aligned value-gate metric remained near zero:
 source-position value gate distance = 0.0029
 ```
 
+I then added an attention-weighted value-gate diagnostic, reconstructing the
+block's attention weights from Q/K and weighting source-token value-selector
+distributions by the actual attention paid from local and induction query
+positions. This also remained small:
+
+```text
+attended value-gate distance = 0.0091
+```
+
 So simple role-averaged value-gate statistics do not explain the destructive
-value-side swaps. The relevant structure is not an obvious local-vs-induction
-split in marginal value-gate usage. It is an internal consistency relation
-between selected value experts and their learned value projections.
+value-side swaps, even when weighted by attention flow. The relevant structure
+is not an obvious local-vs-induction split in marginal or attended value-gate
+usage. It is an internal consistency relation between selected value experts and
+their learned value projections.
 
 This is another instance of the project-level warning:
 
@@ -171,5 +181,5 @@ The two-layer result preserves the main value-side codebook pattern in layer 1,
 while showing that layer 0 swaps mainly damage the local role.
 
 The next implementation improvement is to save trained checkpoints and add
-attention-weighted source diagnostics, so additional interventions can be run on
-exactly the same models without retraining.
+activation-patching utilities, so additional interventions can be run on exactly
+the same models without retraining.

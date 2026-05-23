@@ -2110,3 +2110,33 @@ computations to consolidate.
 - Interpretation update: the main two-role value-side codebook localizes to
   layer 1, while layer 0 still has local-supporting expert-label structure that
   single top-component ablations understate.
+
+## 2026-05-23 - Attention-weighted value-gate diagnostic
+
+- Added attention-weighted value-gate metrics to
+  `scripts/toy_switchhead_competition.py`:
+  - `attended_value_gate_distribution_distance`;
+  - `attended_value_gate_local_top_expert`;
+  - `attended_value_gate_induction_top_expert`;
+  - per-expert attended value-gate means.
+- The diagnostic reconstructs causal attention weights from each block's Q/K
+  projections and RoPE transform, then weights source-token value-selector
+  distributions by the attention paid from local and induction query positions.
+- Smoke-tested the metric in `results/debug_switchhead_attended_value_gate/`.
+- Ran the one-layer induced condition:
+  `results/phase3_toy_switchhead_attended_value_gate_w005_end800_seed5_steps2000/`.
+- Result:
+  - local accuracy `1.0000`;
+  - induction accuracy `1.0000`;
+  - routed expert match `1.00`;
+  - output gate distance `0.9645`;
+  - query-position value gate distance `0.0134`;
+  - source-position value gate distance `0.0029`;
+  - attended value-gate distance `0.0091`.
+- Updated `doc/phase3_toy_switchhead_swap_interventions.md`,
+  `doc/phase3_structural_to_functional_synthesis.md`,
+  `doc/research_questions.md`, and `doc/plan.md`.
+- Interpretation update: the value-side swap fragility is not explained by
+  simple marginal or attention-weighted local-vs-induction value-expert usage.
+  It is better described as an internal expert-codebook or basis-consistency
+  relation.
