@@ -860,3 +860,36 @@ Use the plug-in `switchhead` implementation for the first local bridge
 experiment. Do not attempt a full W&B-based `moe_attention` reproduction as the
 next autonomous step.
 ```
+
+## Progress: SwitchHead Toy Competition Pilot
+
+Implemented `scripts/toy_switchhead_competition.py` and ran a 5-seed
+`SwitchHeadRope` pilot on the conflict-heavy bidirectional lookup task.
+
+Setup:
+
+- one SwitchHead layer;
+- two heads;
+- two experts;
+- `moe_k=1`;
+- 2000 training steps.
+
+Aggregate result:
+
+| Metric | Value |
+|---|---:|
+| Local accuracy | 1.0000 |
+| Induction accuracy | 1.0000 |
+| Gate same top expert | 1.00 |
+| Causal same top expert | 0.80 |
+| Routed expert match | 0.20 |
+| Gate distance | 0.0032 |
+| Causal expert distance | 0.0087 |
+
+Interpretation:
+
+```text
+SwitchHead solves the task, but the attention experts are shared across roles
+rather than cleanly modular. This extends the negative spontaneous-modularity
+result from hand-built routers to a real routed-attention module.
+```

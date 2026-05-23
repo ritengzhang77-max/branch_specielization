@@ -163,3 +163,29 @@ plug-in repo:  https://github.com/RobertCsordas/switchhead
 ```
 
 not `github.com/RobertCsordas/moe`.
+
+## First Pilot Result
+
+I implemented the local plug-in experiment in
+`scripts/toy_switchhead_competition.py` and ran a 5-seed one-layer
+`SwitchHeadRope` pilot on the conflict-heavy task.
+
+Result:
+
+```text
+local accuracy: 1.0000
+induction accuracy: 1.0000
+gate same top expert: 1.00
+causal same top expert: 0.80
+gate distribution distance: 0.0032
+causal expert distribution distance: 0.0087
+```
+
+Interpretation:
+
+```text
+SwitchHead solves the task, but its experts remain shared across roles in this
+pilot. This is not spontaneous role-aligned functional modularity.
+```
+
+See `doc/phase3_toy_switchhead_competition.md`.

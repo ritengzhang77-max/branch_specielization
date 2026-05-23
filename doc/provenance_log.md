@@ -1711,3 +1711,30 @@ computations to consolidate.
 - Updated `doc/plan.md` and `doc/research_questions.md` to use
   `RobertCsordas/moe_attention` for training code and `RobertCsordas/switchhead`
   for the first local plug-in experiment.
+
+## 2026-05-23 - SwitchHead toy competition pilot
+
+- Added `scripts/toy_switchhead_competition.py`.
+- Smoke-tested expert ablation and fixed an indexing bug where advanced
+  indexing zeroed a copy rather than the original expert rows.
+- Ran a 5-seed one-layer SwitchHead pilot:
+  `results/phase3_toy_switchhead_competition_seed5_steps2000/`.
+- Setup:
+  - `SwitchHeadRope`;
+  - one layer;
+  - two heads;
+  - two experts;
+  - `moe_k=1`;
+  - conflict-heavy `bidirectional_lookup`;
+  - 2000 training steps.
+- Result:
+  - local accuracy: `1.0000`;
+  - induction accuracy: `1.0000`;
+  - gate same top expert: `1.00`;
+  - causal same top expert: `0.80`;
+  - routed expert match: `0.20`;
+  - gate distribution distance: `0.0032`;
+  - causal expert distribution distance: `0.0087`.
+- Wrote `doc/phase3_toy_switchhead_competition.md`.
+- Interpretation: this SwitchHead pilot solves the task but does not
+  spontaneously separate local and induction into different experts.

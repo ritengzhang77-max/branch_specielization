@@ -184,6 +184,10 @@ SwitchHead feasibility update:
   MoE-MLP codebase.
 - A GPU smoke test of `SwitchHeadRope` passed locally; CPU is not suitable
   because the implementation uses Triton expert-projection kernels.
+- The first tiny SwitchHead pilot solved the conflict-heavy task in 5/5 seeds
+  but did not show meaningful role-aligned expert modularity: gate same-top
+  expert was 1.00, causal same-top expert was 0.80, and causal expert
+  distribution distance was only 0.0087.
 
 ### Phase 3: Architectural Intervention
 

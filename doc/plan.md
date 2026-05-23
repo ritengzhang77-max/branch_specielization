@@ -241,6 +241,14 @@ These three numbers (S, C, M) are what the project should report for each archit
   to 2/5 at step 450, 3/5 at step 500, and 5/5 at step 550. Branch-distance
   strength continued growing after the top-branch split appeared, crossing 0.30
   at step 600 and reaching 0.4996 at step 800.
+- A first SwitchHead bridge pilot used the official plug-in `SwitchHeadRope`
+  implementation on the same conflict-heavy task. The tiny model solved both
+  roles across 5/5 seeds, but did not show meaningful expert-level functional
+  modularity: gate same-top-expert rate was 1.00, causal same-top-expert rate
+  was 0.80, gate distribution distance was 0.0032, and causal expert
+  distribution distance was 0.0087. This suggests that attention-expert routing,
+  like branch towers and generic learned routers, can solve the task while
+  sharing experts across roles.
 - A small real-transformer follow-up on Pythia-14M checkpoints found an
   analogous probe-before-causality pattern for repeat-match heads. Across seeds
   1-3, selected layer-0/1 repeat-match specialization rose by step 4000
