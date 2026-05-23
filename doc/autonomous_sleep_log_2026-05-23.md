@@ -347,3 +347,33 @@ Updated interpretation: task-span alignment also rescues 410M naturalistic
 transfer, though less cleanly than 160M because target seed 6 remains a negative
 outlier. The earlier weak 410M result should be framed as a generic-alignment
 failure, not absence of a transferable role.
+
+## Progress: Task-Span Alignment 128/128 Replications
+
+Pythia-160M task-span alignment with 128 probe and 128 evaluation spans:
+
+- result directory:
+  `results/phase1_pythia160m_naturalistic_span_task_alignment_seed9_all_layers_n128/`;
+- own top excess: `0.6060`;
+- same-index transfer: `-0.0281`;
+- task-span aligned transfer: `0.4492`;
+- aligned-minus-same: `0.4773`;
+- pair CI: `[0.3682, 0.5899]`;
+- target CI: `[0.2829, 0.6852]`;
+- target positives: 8/9.
+
+Pythia-410M task-span alignment with 128 probe and 128 evaluation spans:
+
+- result directory:
+  `results/phase1_pythia410m_naturalistic_span_task_alignment_seed9_all_layers_n128/`;
+- own top excess: `0.1809`;
+- same-index transfer: `-0.0046`;
+- task-span aligned transfer: `0.1112`;
+- aligned-minus-same: `0.1158`;
+- pair CI: `[0.0650, 0.1604]`;
+- target CI: `[0.0222, 0.1884]`;
+- target positives: 8/9.
+
+Interpretation: task-span alignment remains positive under doubled sample count
+for both 160M and 410M. The 410M effect is smaller and retains the seed-6
+negative outlier; the 160M effect remains large.

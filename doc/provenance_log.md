@@ -1315,6 +1315,14 @@ functional modularity?
   - own top excess: `0.0002`;
   - aligned-minus-same: `0.0003`;
   - target CI: `[-0.0008, 0.0015]`.
+- Pythia-160M 128/128 task-span alignment replication:
+  `results/phase1_pythia160m_naturalistic_span_task_alignment_seed9_all_layers_n128/`.
+  - own top excess: `0.6060`;
+  - task-span aligned transfer: `0.4492`;
+  - aligned-minus-same: `0.4773`;
+  - pair CI: `[0.3682, 0.5899]`;
+  - target CI: `[0.2829, 0.6852]`;
+  - target positives: 8/9.
 - Interpretation: the inserted WikiText repeated-span task has a much stronger
   cross-seed transfer signal when alignment is computed on role-specific
   repeated-span attention vectors. Generic Phase 0 alignment underestimates this
@@ -1334,6 +1342,14 @@ functional modularity?
   - own top excess: `-0.0008`;
   - aligned-minus-same: `-0.0003`;
   - target CI: `[-0.0005, 0.0000]`.
+- Pythia-410M 128/128 task-span alignment replication:
+  `results/phase1_pythia410m_naturalistic_span_task_alignment_seed9_all_layers_n128/`.
+  - own top excess: `0.1809`;
+  - task-span aligned transfer: `0.1112`;
+  - aligned-minus-same: `0.1158`;
+  - pair CI: `[0.0650, 0.1604]`;
+  - target CI: `[0.0222, 0.1884]`;
+  - target positives: 8/9.
 - Revised 410M interpretation: 410M was weak under generic Phase 0 matching, but
   role-specific task-span alignment recovers a positive naturalistic transfer
   effect. Seed 6 remains a negative outlier, so the 410M effect is more

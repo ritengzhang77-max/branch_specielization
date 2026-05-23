@@ -147,10 +147,12 @@ Pythia-160M all-layer result:
 | `step0` | task span | 0.0002 | -0.0003 | 0.0001 | 0.0003 | [-0.0008, 0.0015] |
 | `step143000` | Phase 0 generic | 0.6458 | -0.0170 | 0.0665 | 0.0835 | [0.0334, 0.1343] |
 | `step143000` | task span | 0.6458 | -0.0170 | 0.5475 | 0.5645 | [0.3653, 0.8068] |
+| `step143000` | task span, 128/128 | 0.6060 | -0.0281 | 0.4492 | 0.4773 | [0.2829, 0.6852] |
 
 Task-span alignment is much stronger than generic alignment:
 
 - aligned-minus-same rises from `0.0835` to `0.5645`;
+- the larger 128/128 run remains strongly positive at `0.4773`;
 - target positives rise from 8/9 to 9/9;
 - aligned-better count rises to 68/72;
 - the matched `step0` task-span control is null.
@@ -170,10 +172,12 @@ Pythia-410M shows the same pattern, though less cleanly:
 | `step0` | task span | -0.0008 | 0.0004 | 0.0002 | -0.0003 | [-0.0005, 0.0000] |
 | `step143000` | Phase 0 generic | 0.2416 | 0.0007 | 0.0462 | 0.0455 | [-0.0190, 0.0894] |
 | `step143000` | task span | 0.2416 | 0.0007 | 0.1551 | 0.1544 | [0.0430, 0.2460] |
+| `step143000` | task span, 128/128 | 0.1809 | -0.0046 | 0.1112 | 0.1158 | [0.0222, 0.1884] |
 
-The 410M task-span result is positive at pair and target levels, but seed 6
-remains a stable negative outlier (`aligned-minus-same=-0.2138`). So the right
-410M interpretation is not "no naturalistic transfer"; it is:
+The 410M task-span result is positive at pair and target levels in both 64/64
+and 128/128 runs, but seed 6 remains a stable negative outlier
+(`aligned-minus-same=-0.2138` in the 64/64 run and `-0.1987` in the 128/128
+run). So the right 410M interpretation is not "no naturalistic transfer"; it is:
 
 ```text
 410M naturalistic transfer is present under role-specific alignment, but more
@@ -266,6 +270,8 @@ Main limitations:
   `results/phase1_pythia160m_naturalistic_span_candidate_pool_seed9_all_layers_step0_n128/`.
 - Pythia-160M task-span alignment result:
   `results/phase1_pythia160m_naturalistic_span_task_alignment_seed9_all_layers/`.
+- Pythia-160M task-span alignment 128/128 replication:
+  `results/phase1_pythia160m_naturalistic_span_task_alignment_seed9_all_layers_n128/`.
 - Pythia-160M task-span alignment `step0` control:
   `results/phase1_pythia160m_naturalistic_span_task_alignment_seed9_all_layers_step0/`.
 - Pythia-410M all-seed result:
@@ -274,6 +280,8 @@ Main limitations:
   `results/phase1_pythia410m_naturalistic_span_candidate_pool_seed9_all_layers_n128/`.
 - Pythia-410M task-span alignment result:
   `results/phase1_pythia410m_naturalistic_span_task_alignment_seed9_all_layers/`.
+- Pythia-410M task-span alignment 128/128 replication:
+  `results/phase1_pythia410m_naturalistic_span_task_alignment_seed9_all_layers_n128/`.
 - Pythia-410M task-span alignment `step0` control:
   `results/phase1_pythia410m_naturalistic_span_task_alignment_seed9_all_layers_step0/`.
 - Initial design memo: `doc/naturalistic_local_copy_probe_design.md`.

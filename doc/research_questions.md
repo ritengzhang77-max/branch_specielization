@@ -284,7 +284,9 @@ Initial real-transformer follow-up:
   role-specific. The same task-span alignment rescued 410M:
   aligned-minus-same rose to `0.1544`, target CI `[0.0430, 0.2460]`, with 8/9
   target positives and a null `step0` control, although seed 6 remained a
-  negative outlier.
+  negative outlier. Larger 128/128 task-span replications remained positive for
+  both 160M (`aligned-minus-same=0.4773`, target CI `[0.2829, 0.6852]`) and 410M
+  (`aligned-minus-same=0.1158`, target CI `[0.0222, 0.1884]`).
 - A stricter natural-repeat follow-up scanned unmodified WikiText windows for
   exact repeated 4-token n-grams. Pythia-160M all-layer candidate pools across 9
   seeds showed trained own-head causal importance (`own_top_excess=0.1588`,

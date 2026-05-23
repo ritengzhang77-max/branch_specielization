@@ -165,7 +165,9 @@ Summary:
   using repeated-span probe attention vectors for matching raised
   aligned-minus-same to `0.5645` with target-level bootstrap CI
   `[0.3653, 0.8068]` and 9/9 target positives. The matched `step0`
-  task-alignment control was null (`aligned-minus-same=0.0003`).
+  task-alignment control was null (`aligned-minus-same=0.0003`). A 128/128
+  replication remained strongly positive (`aligned-minus-same=0.4773`, target
+  CI `[0.2829, 0.6852]`).
 - Pythia-410M, all 9 seeds, all-layer candidate pool: own top excess `0.2416`;
   aligned-minus-same `0.0455`; target-level bootstrap CI
   `[-0.0190, 0.0894]`; aligned-minus-same positive for 8/9 target seeds.
@@ -175,7 +177,9 @@ Summary:
 - A task-specific alignment follow-up on Pythia-410M rescued the generic weak
   result: aligned-minus-same rose to `0.1544` with target-level bootstrap CI
   `[0.0430, 0.2460]` and 8/9 target positives. The matched `step0`
-  task-alignment control was null (`aligned-minus-same=-0.0003`).
+  task-alignment control was null (`aligned-minus-same=-0.0003`). A 128/128
+  replication remained positive (`aligned-minus-same=0.1158`, target CI
+  `[0.0222, 0.1884]`).
 
 Interpretation: the naturalistic result is positive for 160M and weak /
 heterogeneous for 410M under generic Phase 0 alignment. Task-specific alignment
