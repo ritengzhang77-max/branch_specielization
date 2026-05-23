@@ -520,6 +520,11 @@ These three numbers (S, C, M) are what the project should report for each archit
 - Checkpoint loading is also implemented. `--load-final-checkpoints` skips
   training, restores `model_seed{seed}.pt`, and runs the usual analysis/swap
   pipeline; a debug load smoke reproduced the saved metrics exactly.
+- A checkpoint parameter diagnostic supports the swap interpretation: in
+  successful saved two-layer checkpoints, layer-1 output experts are much more
+  similar than layer-1 value experts (`o` cosine `0.8295` vs `v` cosine
+  `0.2884` over seeds 1/2/4/5), matching why `swap_o` is tolerated while
+  `swap_v` is destructive.
 
 ### C. Resources concretely available (with HF / GitHub paths)
 - Pythia seeds: `EleutherAI/pythia-{14m,70m,160m,410m}-seed{1..9}`, plus `pythia-160m-weight-seed{1-3}` and `pythia-160m-data-seed{1-3}`. 154 checkpoints per model (steps 0, 1, 2, 4, 8, …, 143000). GitHub: `EleutherAI/pythia`.

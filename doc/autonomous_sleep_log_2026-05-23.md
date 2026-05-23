@@ -1618,3 +1618,38 @@ Interpretation:
 the checkpoint loader supports the intended no-retrain swap workflow, and the
 validated loaded checkpoint preserves the same value-side codebook pattern.
 ```
+
+## Progress: SwitchHead Parameter Diagnostics
+
+Added:
+
+```text
+scripts/switchhead_checkpoint_parameter_diagnostics.py
+```
+
+This loads saved checkpoints and compares expert 0 vs expert 1 parameters for
+`v`, `o`, `sel_v`, and `sel_o`.
+
+Runs:
+
+```text
+results/phase3_toy_switchhead_seed3_parameter_diagnostics/
+results/phase3_toy_switchhead_seed1245_parameter_diagnostics/
+```
+
+Main seed 1/2/4/5 summary:
+
+```text
+layer-0 o cosine = 0.2628
+layer-0 v cosine = 0.0659
+layer-1 o cosine = 0.8295
+layer-1 v cosine = 0.2884
+```
+
+Interpretation:
+
+```text
+layer-1 output projection experts are much more similar than layer-1 value
+projection experts, matching the swap result where layer-1 swap_o is tolerated
+but layer-1 swap_v is destructive.
+```

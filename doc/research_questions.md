@@ -284,6 +284,11 @@ SwitchHead feasibility update:
   restores saved `model_seed{seed}.pt` files and runs the usual analysis/swap
   path without retraining; the debug load smoke exactly reproduced the saved
   metrics.
+- A checkpoint parameter diagnostic supports the swap interpretation. In
+  successful saved two-layer checkpoints, layer-1 output experts are much more
+  similar than layer-1 value experts (`o` cosine `0.8295` vs `v` cosine
+  `0.2884` over seeds 1/2/4/5), matching the tolerated `swap_o` and destructive
+  `swap_v` pattern.
 
 ### Phase 3: Architectural Intervention
 

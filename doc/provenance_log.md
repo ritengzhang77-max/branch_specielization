@@ -2194,3 +2194,24 @@ computations to consolidate.
 - Interpretation update: the checkpoint loader supports the intended no-retrain
   swap workflow, and the loaded validated checkpoint preserves the same
   value-side codebook pattern.
+
+## 2026-05-23 - SwitchHead checkpoint parameter diagnostics
+
+- Added `scripts/switchhead_checkpoint_parameter_diagnostics.py`.
+- The script loads saved checkpoints and computes expert-0 vs expert-1 cosine
+  similarity and relative L2 distance for `v`, `o`, `sel_v`, and `sel_o`, per
+  layer and head.
+- Ran on the validated seed-3 retry checkpoint:
+  `results/phase3_toy_switchhead_seed3_parameter_diagnostics/`.
+- Ran on the successful seeds 1, 2, 4, and 5 from the two-layer checkpoint set:
+  `results/phase3_toy_switchhead_seed1245_parameter_diagnostics/`.
+- Main seed-1/2/4/5 summary:
+  - layer-0 `o` cosine `0.2628`, relative L2 `1.2160`;
+  - layer-0 `v` cosine `0.0659`, relative L2 `1.3665`;
+  - layer-1 `o` cosine `0.8295`, relative L2 `0.5868`;
+  - layer-1 `v` cosine `0.2884`, relative L2 `1.1936`.
+- Interpretation update: layer-1 output projection experts are much more similar
+  than layer-1 value projection experts, matching the swap result where layer-1
+  `swap_o` is tolerated but layer-1 `swap_v` is destructive. Layer-0 output
+  experts are less similar, consistent with layer-0 output swaps hurting local
+  performance.
