@@ -893,3 +893,22 @@ SwitchHead solves the task, but the attention experts are shared across roles
 rather than cleanly modular. This extends the negative spontaneous-modularity
 result from hand-built routers to a real routed-attention module.
 ```
+
+Ran the 4-expert `moe_k=2` variant:
+
+| Metric | Value |
+|---|---:|
+| Local accuracy | 1.0000 |
+| Induction accuracy | 1.0000 |
+| Gate same top expert | 0.80 |
+| Causal same top expert | 1.00 |
+| Routed expert match | 0.00 |
+| Gate distance | 0.0083 |
+| Causal expert distance | 0.0486 |
+| Top expert loss delta | about 0.024 |
+
+Interpretation:
+
+```text
+more active SwitchHead experts created redundancy, not role-specific modularity.
+```

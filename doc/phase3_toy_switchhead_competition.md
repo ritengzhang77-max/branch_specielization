@@ -91,6 +91,8 @@ logit-difference smoke test verified that expert ablation changes model outputs.
 
 ## Results
 
+### Two Experts, One Active Expert
+
 Aggregate over 5 seeds:
 
 | Metric | Value |
@@ -123,6 +125,45 @@ local:     E0 0.5125, E1 0.4875
 induction: E0 0.4959, E1 0.5041
 ```
 
+### Four Experts, Two Active Experts
+
+I also ran the immediate capacity variant recommended below:
+
+```text
+n_experts = 4
+moe_k = 2
+steps = 2000
+seeds = 1, 2, 3, 4, 5
+```
+
+Result:
+
+| Metric | Value |
+|---|---:|
+| Local accuracy | 1.0000 |
+| Induction accuracy | 1.0000 |
+| Gate same top expert | 0.80 |
+| Causal same top expert | 1.00 |
+| Routed expert match | 0.00 |
+| Gate distribution distance | 0.0083 |
+| Causal expert distribution distance | 0.0486 |
+| Local top expert loss delta | 0.0236 |
+| Induction top expert loss delta | 0.0238 |
+
+Per-seed causal top expert:
+
+| Seed | Local top | Induction top | Same top? | Causal distance | Gate distance |
+|---:|---|---|---:|---:|---:|
+| 1 | L0E2 | L0E2 | 1 | 0.0768 | 0.0082 |
+| 2 | L0E3 | L0E3 | 1 | 0.0608 | 0.0091 |
+| 3 | L0E1 | L0E1 | 1 | 0.0587 | 0.0063 |
+| 4 | L0E0 | L0E0 | 1 | 0.0252 | 0.0100 |
+| 5 | L0E2 | L0E2 | 1 | 0.0215 | 0.0076 |
+
+This variant is even less modular by top-expert identity. It also changes the
+causal pattern: single-expert ablations are tiny because two experts are active,
+so the computation is more redundant across active experts.
+
 ## Interpretation
 
 This is a negative result for spontaneous SwitchHead expert-level modularity in
@@ -148,6 +189,15 @@ The strongest evidence is not just the top-expert count. It is the combination:
 - gate distribution distance is only `0.0032`;
 - causal expert distribution distance is only `0.0087`;
 - both expert ablations strongly damage both roles.
+
+The 4-expert `moe_k=2` variant reinforces the same conclusion in a different
+failure mode:
+
+- causal same top expert is 5/5;
+- routed expert match is 0/5;
+- gate distance remains tiny (`0.0083`);
+- single-expert causal deltas become tiny, indicating redundancy across active
+  experts rather than role separation.
 
 So the best interpretation is:
 
@@ -175,9 +225,9 @@ only reliable mechanism observed so far.
 
 ## Caveats
 
-- This is a very small SwitchHead model, not the paper-scale language model.
-- Only one configuration was tested: one layer, two heads, two experts,
-  `moe_k=1`.
+- These are very small SwitchHead models, not the paper-scale language model.
+- Only two spontaneous configurations were tested: `n_experts=2, moe_k=1` and
+  `n_experts=4, moe_k=2`.
 - Expert ablation zeros both value and output expert rows. This is a coarse
   causal intervention but appropriate for a first pilot.
 - The gate metric uses normalized sigmoid selection scores for interpretability;
@@ -191,10 +241,11 @@ SwitchHead-specific tests are:
 
 1. Add a weak role-informative auxiliary selection loss, analogous to the
    weak-token-router toy.
-2. Run `n_experts=4` and `moe_k=2` to test whether more active experts increase
-   or reduce cohabitation.
-3. Add checkpointed trajectories to ask whether gate/expert-selection separation
+2. Add checkpointed trajectories to ask whether gate/expert-selection separation
    ever precedes causal expert separation in this module.
+3. If weak selection pressure works, sweep its weight to test whether
+   selection compliance precedes causal expert modularity as in the branch-router
+   toy.
 
 ## Artifacts
 
@@ -202,5 +253,7 @@ SwitchHead-specific tests are:
   `scripts/toy_switchhead_competition.py`
 - Result directory:
   `results/phase3_toy_switchhead_competition_seed5_steps2000/`
+- Four-expert result directory:
+  `results/phase3_toy_switchhead_competition_seed5_e4k2_steps2000/`
 - Feasibility memo:
   `doc/switchhead_followup_feasibility.md`

@@ -188,6 +188,9 @@ SwitchHead feasibility update:
   but did not show meaningful role-aligned expert modularity: gate same-top
   expert was 1.00, causal same-top expert was 0.80, and causal expert
   distribution distance was only 0.0087.
+- A 4-expert `moe_k=2` variant also solved the task but remained non-modular:
+  causal same-top expert was 1.00 and single-expert ablation effects were tiny,
+  suggesting redundancy across active experts rather than role separation.
 
 ### Phase 3: Architectural Intervention
 

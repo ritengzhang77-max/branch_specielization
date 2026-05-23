@@ -1738,3 +1738,16 @@ computations to consolidate.
 - Wrote `doc/phase3_toy_switchhead_competition.md`.
 - Interpretation: this SwitchHead pilot solves the task but does not
   spontaneously separate local and induction into different experts.
+- Ran a 4-expert, `moe_k=2` variant:
+  `results/phase3_toy_switchhead_competition_seed5_e4k2_steps2000/`.
+- Result:
+  - local accuracy: `1.0000`;
+  - induction accuracy: `1.0000`;
+  - gate same top expert: `0.80`;
+  - causal same top expert: `1.00`;
+  - routed expert match: `0.00`;
+  - gate distribution distance: `0.0083`;
+  - causal expert distribution distance: `0.0486`;
+  - local/induction top expert loss deltas: about `0.024`.
+- Interpretation update: adding more active experts produced redundancy rather
+  than role separation.

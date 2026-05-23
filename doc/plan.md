@@ -249,6 +249,12 @@ These three numbers (S, C, M) are what the project should report for each archit
   distribution distance was 0.0087. This suggests that attention-expert routing,
   like branch towers and generic learned routers, can solve the task while
   sharing experts across roles.
+- A 4-expert SwitchHead variant with `moe_k=2` also solved the task, but was no
+  more modular: causal same-top-expert rate was 1.00, routed expert match was
+  0.00, gate distance was 0.0083, and single-expert ablation effects were tiny
+  (`~0.024`) because active experts were redundant. This shifts the next
+  SwitchHead question toward weak role-informative expert-selection pressure or
+  checkpointed trajectories, not more spontaneous expert-capacity variants.
 - A small real-transformer follow-up on Pythia-14M checkpoints found an
   analogous probe-before-causality pattern for repeat-match heads. Across seeds
   1-3, selected layer-0/1 repeat-match specialization rose by step 4000

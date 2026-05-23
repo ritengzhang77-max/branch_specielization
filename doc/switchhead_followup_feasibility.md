@@ -188,4 +188,16 @@ SwitchHead solves the task, but its experts remain shared across roles in this
 pilot. This is not spontaneous role-aligned functional modularity.
 ```
 
+The immediate `n_experts=4`, `moe_k=2` variant also solved both roles but made
+the same-top pattern stronger:
+
+```text
+causal same top expert: 1.00
+routed expert match: 0.00
+causal expert distribution distance: 0.0486
+single-expert loss deltas: about 0.024
+```
+
+This looks like redundant shared active experts, not role-specific experts.
+
 See `doc/phase3_toy_switchhead_competition.md`.
