@@ -55,13 +55,15 @@ Scoring:
 
 Pythia-160M all-layer exact-repeat results:
 
-| Condition | Seeds | Own top excess | Same-index transfer | Aligned transfer | Aligned - same | Target CI for aligned - same |
-|---|---:|---:|---:|---:|---:|---:|
-| `step0` | 9 | -0.0001 | 0.0015 | 0.0011 | -0.0004 | [-0.0030, 0.0019] |
-| `step143000` 3-seed pilot | 3 | 0.0956 | 0.0079 | 0.0400 | 0.0321 | [-0.0074, 0.0633] |
-| `step143000` all seeds | 9 | 0.1588 | 0.0464 | 0.0448 | -0.0016 | [-0.0548, 0.0360] |
+| Condition | Alignment source | Seeds | Own top excess | Same-index transfer | Aligned transfer | Aligned - same | Target CI for aligned - same |
+|---|---|---:|---:|---:|---:|---:|---:|
+| `step0` | Phase 0 generic | 9 | -0.0001 | 0.0015 | 0.0011 | -0.0004 | [-0.0030, 0.0019] |
+| `step0` | task repeat | 9 | -0.0001 | 0.0015 | -0.0018 | -0.0033 | [-0.0060, -0.0006] |
+| `step143000` 3-seed pilot | Phase 0 generic | 3 | 0.0956 | 0.0079 | 0.0400 | 0.0321 | [-0.0074, 0.0633] |
+| `step143000` all seeds | Phase 0 generic | 9 | 0.1588 | 0.0464 | 0.0448 | -0.0016 | [-0.0548, 0.0360] |
+| `step143000` all seeds | task repeat | 9 | 0.1588 | 0.0464 | 0.2361 | 0.1897 | [0.0737, 0.3140] |
 
-All-seed final checkpoint details:
+All-seed final checkpoint details under generic Phase 0 alignment:
 
 - own top excess was positive for 9/9 target seeds;
 - target-level own top excess CI: `[0.0806, 0.2718]`;
@@ -75,6 +77,24 @@ The matched `step0` control was null:
 - own top excess: `-0.0001`;
 - aligned-minus-same: `-0.0004`;
 - target-level CIs crossed zero for both own excess and aligned-minus-same.
+
+Task-repeat alignment changes the transfer result:
+
+- it aligns heads using their attention vectors on the natural-repeat probe
+  positions rather than generic Phase 0 texts;
+- evaluation remains held out: the alignment uses the 64 probe windows, while
+  causal loss is measured on 64 separate evaluation windows;
+- aligned transfer rises from `0.0448` to `0.2361`;
+- aligned-minus-same rises from `-0.0016` to `0.1897`;
+- aligned-minus-same is positive for 8/9 targets;
+- pair-level aligned-better count is 66/72;
+- target-level aligned-minus-same CI is `[0.0737, 0.3140]`.
+
+The matched `step0` task-repeat alignment control is not positive:
+
+- own top excess: `-0.0001`;
+- aligned-minus-same: `-0.0033`;
+- target-level aligned-minus-same CI: `[-0.0060, -0.0006]`.
 
 ## Interpretation
 
@@ -92,13 +112,13 @@ Cross-seed role alignment improves transfer over same-index heads on naturally
 occurring exact repeats.
 ```
 
-Not supported under this exact-repeat setup. Aligned transfer and same-index
-transfer are effectively tied in mean.
+Supported only when the alignment basis is role-specific. Generic Phase 0
+attention-score matching does not recover the transfer advantage, but
+task-repeat attention matching does.
 
-This is a useful neutral/negative result, not a failure of the project. It says
-the stricter natural-repeat task is causally real but does not currently expose
-the same cross-layer role-relabeling advantage seen in synthetic local-copy or
-inserted WikiText repeated spans.
+This is a useful methodological result. It says the stricter natural-repeat task
+is causally real, and cross-seed transfer exists, but the matching representation
+must be close to the role being transferred.
 
 Likely reasons:
 
@@ -107,10 +127,10 @@ Likely reasons:
   role;
 - the 4-token span is short, so there are only 3 scored next-token positions per
   example;
-- the generic Phase 0 raw-score alignment may not be specific enough for this
-  weaker role;
+- the generic Phase 0 raw-score alignment is not specific enough for this weaker
+  role;
 - same-index heads may already capture enough of this broad natural-repeat
-  behavior, eliminating the aligned-transfer advantage.
+  behavior to obscure the advantage unless the matching basis is role-specific.
 
 ## Trustworthiness
 
@@ -119,14 +139,17 @@ Stronger parts:
 - the script uses unmodified corpus windows;
 - examples are inspectable in `example_rows.csv`;
 - own-head causality is positive for 9/9 final-checkpoint seeds;
-- the matched `step0` control is null.
+- both `step0` controls are null with respect to positive transfer;
+- the task-specific alignment result uses held-out evaluation windows.
 
 Weaker parts:
 
 - exact 4-token repeats are short and semantically mixed;
 - WikiText-2 yields only a small exact-repeat candidate pool;
-- aligned-minus-same has high variance and target-level CI crosses zero;
-- this should not be used as a positive cross-seed alignment claim.
+- generic-alignment aligned-minus-same has high variance and target-level CI
+  crosses zero;
+- the task-specific alignment result is stronger but more role-informed, so it
+  should be reported as a method-dependent positive result.
 
 ## Next Experiments
 
@@ -134,10 +157,10 @@ Weaker parts:
    repeated spans of length 5-8 without replacement.
 2. Filter repeated spans by lower baseline predictability, so the model must rely
    more on copying rather than ordinary language-model context.
-3. Try alignment vectors built from the natural-repeat probe itself instead of
-   the generic Phase 0 probe corpus.
-4. Compare same-index vs aligned transfer separately for name/title repeats,
+3. Compare same-index vs aligned transfer separately for name/title repeats,
    numeric repeats, and ordinary phrase repeats.
+4. Test whether task-specific alignment also improves the inserted-span WikiText
+   result and the synthetic local-copy result.
 
 ## Files
 
@@ -150,3 +173,7 @@ Weaker parts:
   `results/phase1_pythia160m_natural_repeat_ngram_candidate_pool_seed9/`.
 - Pythia-160M all-seed `step0` control:
   `results/phase1_pythia160m_natural_repeat_ngram_candidate_pool_seed9_step0/`.
+- Pythia-160M all-seed task-repeat alignment result:
+  `results/phase1_pythia160m_natural_repeat_ngram_task_alignment_seed9/`.
+- Pythia-160M all-seed task-repeat alignment `step0` control:
+  `results/phase1_pythia160m_natural_repeat_ngram_task_alignment_seed9_step0/`.

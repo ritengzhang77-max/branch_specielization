@@ -75,6 +75,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--alignment-num-texts", type=int, default=8)
     parser.add_argument("--alignment-max-length", type=int, default=64)
     parser.add_argument("--alignment-batch-size", type=int, default=2)
+    parser.add_argument(
+        "--alignment-source",
+        default="phase0",
+        choices=["phase0", "task_repeat"],
+        help="Use generic Phase 0 texts or task repeated-position attention vectors for cross-seed matching.",
+    )
     parser.add_argument("--random-permutations", type=int, default=100)
     parser.add_argument("--device", default="auto", choices=["auto", "cpu", "cuda"])
     parser.add_argument("--dtype", default="float32", choices=["float32", "float16", "bfloat16"])
@@ -295,6 +301,43 @@ def extract_natural_repeat_scores(
     return [scores / total_examples for scores in totals]
 
 
+def extract_natural_repeat_alignment_vectors(
+    model,
+    input_ids: torch.Tensor,
+    metadata: list[dict[str, int]],
+    batch_size: int,
+    device: torch.device,
+) -> list[np.ndarray]:
+    chunks_by_layer: list[list[np.ndarray]] | None = None
+    for start in range(0, input_ids.shape[0], batch_size):
+        ids = input_ids[start : start + batch_size].to(device)
+        batch_metadata = metadata[start : start + ids.shape[0]]
+        mask = torch.ones_like(ids)
+        with torch.inference_mode():
+            outputs = model(
+                input_ids=ids,
+                attention_mask=mask,
+                output_attentions=True,
+                use_cache=False,
+                return_dict=True,
+            )
+        query_positions, key_positions = position_tensors(batch_metadata, device)
+        batch_chunks = []
+        for attention in outputs.attentions:
+            attention = attention.detach().float()
+            per_example = []
+            for example_idx, (queries, keys) in enumerate(zip(query_positions, key_positions)):
+                per_example.append(attention[example_idx, :, queries, keys].cpu().numpy())
+            batch_chunks.append(np.concatenate(per_example, axis=1))
+        if chunks_by_layer is None:
+            chunks_by_layer = [[] for _ in batch_chunks]
+        for layer_idx, chunk in enumerate(batch_chunks):
+            chunks_by_layer[layer_idx].append(chunk)
+    if chunks_by_layer is None:
+        raise RuntimeError("No natural-repeat alignment batches were evaluated.")
+    return [np.concatenate(layer_chunks, axis=1) for layer_chunks in chunks_by_layer]
+
+
 def natural_repeat_loss_and_logit(
     logits: torch.Tensor,
     input_ids: torch.Tensor,
@@ -434,16 +477,25 @@ def main() -> None:
                 )
             )
 
-        seed_vectors[seed] = extract_attention_vectors(
-            model=model,
-            tokenizer=tokenizer,
-            texts=alignment_texts,
-            max_length=args.alignment_max_length,
-            batch_size=args.alignment_batch_size,
-            device=device,
-            attention_representation="raw_scores",
-            entry_mask="causal",
-        )
+        if args.alignment_source == "task_repeat":
+            seed_vectors[seed] = extract_natural_repeat_alignment_vectors(
+                model=model,
+                input_ids=probe_ids,
+                metadata=probe_metadata,
+                batch_size=args.alignment_batch_size,
+                device=device,
+            )
+        else:
+            seed_vectors[seed] = extract_attention_vectors(
+                model=model,
+                tokenizer=tokenizer,
+                texts=alignment_texts,
+                max_length=args.alignment_max_length,
+                batch_size=args.alignment_batch_size,
+                device=device,
+                attention_representation="raw_scores",
+                entry_mask="causal",
+            )
         del model
         if device.type == "cuda":
             torch.cuda.empty_cache()

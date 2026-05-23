@@ -345,10 +345,14 @@ These three numbers (S, C, M) are what the project should report for each archit
   exact repeated 4-token n-grams. Pythia-160M all-layer candidate pools across 9
   seeds showed trained causal repeat heads (`own_top_excess=0.1588`, target CI
   `[0.0806, 0.2718]`, 9/9 positive), with a null `step0` control. However,
-  cross-seed aligned transfer did not beat same-index transfer
+  generic Phase 0 aligned transfer did not beat same-index transfer
   (`aligned=0.0448`, same-index `0.0464`, aligned-minus-same `-0.0016`, target
-  CI `[-0.0548, 0.0360]`). This means unmodified natural repeats are causally
-  real but do not currently support the role-relabeling claim.
+  CI `[-0.0548, 0.0360]`). A task-repeat alignment basis reversed this result:
+  aligned transfer rose to `0.2361`, aligned-minus-same to `0.1897`, target CI
+  `[0.0737, 0.3140]`, with 8/9 target positives and 66/72 aligned-better pairs;
+  the matched `step0` task-alignment control was null. This means unmodified
+  natural repeats are causally real and can support role-relabeling, but only
+  when the matching representation is specific to the repeated-span role.
 
 ### C. Resources concretely available (with HF / GitHub paths)
 - Pythia seeds: `EleutherAI/pythia-{14m,70m,160m,410m}-seed{1..9}`, plus `pythia-160m-weight-seed{1-3}` and `pythia-160m-data-seed{1-3}`. 154 checkpoints per model (steps 0, 1, 2, 4, 8, …, 143000). GitHub: `EleutherAI/pythia`.

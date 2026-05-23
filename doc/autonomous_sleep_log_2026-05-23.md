@@ -243,6 +243,41 @@ Pythia-160M all-seed `step0` control:
 - target CI for aligned-minus-same: `[-0.0030, 0.0019]`.
 
 Interpretation: trained 160M heads causally support naturally occurring exact
-repeats, and this is absent at initialization. However, cross-seed aligned
-transfer does not beat same-index transfer in mean. This is a stricter
-neutral/negative cross-seed transfer result.
+repeats, and this is absent at initialization. Generic Phase 0 alignment does
+not beat same-index transfer in mean.
+
+## Progress: Natural-Repeat Task-Specific Alignment
+
+Added `--alignment-source task_repeat` to
+`scripts/pythia_natural_repeat_ngram_candidate_pool_alignment.py`. This aligns
+heads using attention vectors on the repeated n-gram probe positions instead of
+using generic Phase 0 texts. The alignment still uses probe windows only; causal
+loss is evaluated on held-out evaluation windows.
+
+Pythia-160M all-seed final checkpoint:
+
+- result directory:
+  `results/phase1_pythia160m_natural_repeat_ngram_task_alignment_seed9/`;
+- own top excess: `0.1588`;
+- same-index transfer: `0.0464`;
+- task-repeat aligned transfer: `0.2361`;
+- aligned-minus-same: `0.1897`;
+- pair CI: `[0.0908, 0.2843]`;
+- target CI: `[0.0737, 0.3140]`;
+- target positives: 8/9;
+- aligned better count: 66/72.
+
+Matched `step0` task-alignment control:
+
+- result directory:
+  `results/phase1_pythia160m_natural_repeat_ngram_task_alignment_seed9_step0/`;
+- own top excess: `-0.0001`;
+- same-index transfer: `0.0015`;
+- task-repeat aligned transfer: `-0.0018`;
+- aligned-minus-same: `-0.0033`;
+- target CI: `[-0.0060, -0.0006]`.
+
+Updated interpretation: the stricter natural-repeat task is not truly
+alignment-neutral. It is neutral under generic Phase 0 matching, but positive
+under role-specific task-repeat matching. This makes alignment basis a key
+methodological variable.

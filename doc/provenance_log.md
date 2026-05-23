@@ -1269,7 +1269,26 @@ functional modularity?
   - aligned-minus-same: `-0.0004`;
   - target CI for aligned-minus-same: `[-0.0030, 0.0019]`.
 - Interpretation: naturally occurring exact repeats show trained own-head causal
-  importance, absent at initialization, but do not show an aligned-transfer
-  advantage over same-index transfer. This is a stricter neutral/negative
-  cross-seed alignment check.
+  importance, absent at initialization, but generic Phase 0 alignment does not
+  show an aligned-transfer advantage over same-index transfer.
+- Added `--alignment-source task_repeat` to
+  `scripts/pythia_natural_repeat_ngram_candidate_pool_alignment.py`.
+- Reran Pythia-160M all-seed final checkpoint with task-specific alignment:
+  `results/phase1_pythia160m_natural_repeat_ngram_task_alignment_seed9/`.
+  - own top excess: `0.1588`;
+  - same-index transfer: `0.0464`;
+  - task-repeat aligned transfer: `0.2361`;
+  - aligned-minus-same: `0.1897`;
+  - pair CI: `[0.0908, 0.2843]`, pair sign `p=7.3e-14`;
+  - target CI: `[0.0737, 0.3140]`, target sign `p=0.0391`;
+  - aligned-minus-same positive for 8/9 targets;
+  - aligned better in 66/72 source-target pairs.
+- Reran matched `step0` task-specific alignment control:
+  `results/phase1_pythia160m_natural_repeat_ngram_task_alignment_seed9_step0/`.
+  - own top excess: `-0.0001`;
+  - task-repeat aligned-minus-same: `-0.0033`;
+  - target CI: `[-0.0060, -0.0006]`.
+- Revised interpretation: the stricter natural-repeat task supports cross-seed
+  role transfer only when the alignment basis is role-specific. Generic
+  attention-score matching can miss a real but weak functional role.
 - Full memo: `doc/phase1_natural_repeat_ngram_candidate_pool.md`.
