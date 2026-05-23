@@ -215,6 +215,11 @@ SwitchHead feasibility update:
   routed expert match reached 5/5 at checkpoint 500. This is the clearest local
   evidence so far for `structural routing cue -> gate specialization -> causal
   functional modularity`.
+- A fixed-window weight sweep at end step 450 found that weights `0.02`, `0.03`,
+  `0.04`, and `0.045` all solved the task but remained only `4/5` on routed
+  expert match; `0.05` was the first tested weight with reliable 5/5 causal
+  expert modularity. This narrows the claim: the structural cue must be strong
+  enough as well as present long enough.
 
 ### Phase 3: Architectural Intervention
 

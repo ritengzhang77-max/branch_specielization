@@ -1077,3 +1077,35 @@ Wrote:
 ```text
 doc/phase3_toy_switchhead_checkpoint_trajectory.md
 ```
+
+## Progress: SwitchHead Selector-Weight Sweep
+
+Fixed the selector-pressure window at 450 steps and swept the auxiliary
+selector-loss weight.
+
+Summary:
+
+| Weight | Gate same top | Causal same top | Routed match | Gate distance | Causal distance |
+|---:|---:|---:|---:|---:|---:|
+| 0.00 | 1.00 | 0.80 | 0.20 | 0.0032 | 0.0087 |
+| 0.02 | 0.40 | 0.20 | 0.80 | 0.0443 | 0.1060 |
+| 0.03 | 0.20 | 0.20 | 0.80 | 0.1068 | 0.1946 |
+| 0.04 | 0.40 | 0.20 | 0.80 | 0.2571 | 0.2888 |
+| 0.045 | 0.20 | 0.20 | 0.80 | 0.3483 | 0.3460 |
+| 0.05 | 0.00 | 0.00 | 1.00 | 0.4476 | 0.4240 |
+
+Interpretation:
+
+```text
+at the 450-step window, 0.05 is the first tested selector weight that produces
+reliable 5/5 causal expert modularity.
+```
+
+All weights solve the task, so the threshold is about the learned causal
+decomposition, not task competence.
+
+Wrote:
+
+```text
+doc/phase3_toy_switchhead_weight_sweep.md
+```

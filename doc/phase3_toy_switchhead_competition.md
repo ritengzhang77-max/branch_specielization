@@ -323,6 +323,11 @@ ordering: reliable gate separation appeared by checkpoint 425, while reliable
 causal expert separation appeared by checkpoint 500. See
 `doc/phase3_toy_switchhead_checkpoint_trajectory.md`.
 
+At the same 450-step window, a selector-weight sweep found that weights `0.02`,
+`0.03`, `0.04`, and `0.045` all solved the task but remained only `4/5` on
+routed expert match. The first tested reliable 5/5 weight was `0.05`. See
+`doc/phase3_toy_switchhead_weight_sweep.md`.
+
 So the best interpretation is:
 
 ```text
@@ -402,5 +407,7 @@ SwitchHead-specific tests are:
   `doc/phase3_toy_switchhead_selector_window_sweep.md`
 - Checkpoint trajectory memo:
   `doc/phase3_toy_switchhead_checkpoint_trajectory.md`
+- Selector-weight sweep memo:
+  `doc/phase3_toy_switchhead_weight_sweep.md`
 - Feasibility memo:
   `doc/switchhead_followup_feasibility.md`

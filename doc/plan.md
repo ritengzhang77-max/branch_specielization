@@ -467,7 +467,11 @@ These three numbers (S, C, M) are what the project should report for each archit
   precede causal functional modularity. A direct checkpoint trajectory with
   selector pressure ending after step 450 confirmed that ordering within a single
   training run: reliable gate separation appeared by checkpoint 425, while
-  reliable causal expert separation appeared by checkpoint 500.
+  reliable causal expert separation appeared by checkpoint 500. A fixed-window
+  weight sweep found that weights `0.02` through `0.045` still solved the task
+  but were only `4/5` modular, while `0.05` was reliable in 5/5 seeds. This
+  narrows the induced-modularity claim to cues that cross both a duration and
+  strength threshold.
 
 ### C. Resources concretely available (with HF / GitHub paths)
 - Pythia seeds: `EleutherAI/pythia-{14m,70m,160m,410m}-seed{1..9}`, plus `pythia-160m-weight-seed{1-3}` and `pythia-160m-data-seed{1-3}`. 154 checkpoints per model (steps 0, 1, 2, 4, 8, …, 143000). GitHub: `EleutherAI/pythia`.

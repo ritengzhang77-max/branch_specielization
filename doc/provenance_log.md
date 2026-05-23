@@ -1826,3 +1826,28 @@ computations to consolidate.
 - Wrote `doc/phase3_toy_switchhead_checkpoint_trajectory.md`.
 - Interpretation update: direct within-run evidence supports the ordering
   `gate specialization -> causal functional modularity`.
+
+## 2026-05-23 - SwitchHead selector-weight sweep
+
+- Ran a fixed-window selector-weight sweep with
+  `expert_supervision_end_step=450`.
+- Tested weights `0.02`, `0.03`, `0.04`, `0.045`, with the earlier no-supervision
+  and `0.05` runs as baselines.
+- Result:
+  - weight `0.00`: routed expert match `0.20`, gate distance `0.0032`, causal
+    distance `0.0087`;
+  - weight `0.02`: routed expert match `0.80`, gate distance `0.0443`, causal
+    distance `0.1060`;
+  - weight `0.03`: routed expert match `0.80`, gate distance `0.1068`, causal
+    distance `0.1946`;
+  - weight `0.04`: routed expert match `0.80`, gate distance `0.2571`, causal
+    distance `0.2888`;
+  - weight `0.045`: routed expert match `0.80`, gate distance `0.3483`, causal
+    distance `0.3460`;
+  - weight `0.05`: routed expert match `1.00`, gate distance `0.4476`, causal
+    distance `0.4240`.
+- Wrote `doc/phase3_toy_switchhead_weight_sweep.md`.
+- Interpretation update: at the shortest reliable 450-step window, the first
+  tested selector weight that reliably induces 5/5 causal expert modularity is
+  `0.05`. Smaller weights still influence routing but do not cross the
+  reliability threshold in this seed set.
