@@ -232,12 +232,20 @@ Current toy-pilot status as of 2026-05-22:
   had routed role match 0.80 and branch distance 0.3337. End step 1200 had
   routed role match 1.00 and branch distance 0.7652, below the always-on weak
   label branch distance of 0.9773.
+- Checkpointed training trajectories showed why end 400 failed. By step 400 the
+  model had solved both roles and the router gate was role-aligned, but causal
+  branch ablation still had routed role match 0.00 and branch distance 0.1525.
+  With continued weak labels, causal routed role match reached 1.00 by step 600
+  and branch distance reached 0.4996 by step 800. Removing labels at step 800
+  preserved a weakened split, while removing at step 1200 preserved a stronger
+  split.
 
 The next Phase 3 question is therefore:
 
 ```text
-When during training do gate separation and causal branch separation appear, and
-how much do they decay after role-informative routing pressure is removed?
+Does the gate-before-causality lag also appear in less hand-designed routed
+attention settings or in small real transformer tasks with role probes and
+causal patching?
 ```
 
 ### Phase 4: Mechanistic Interpretation

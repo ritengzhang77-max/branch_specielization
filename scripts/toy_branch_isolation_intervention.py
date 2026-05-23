@@ -31,6 +31,7 @@ import json
 from collections import Counter, defaultdict
 from dataclasses import asdict, dataclass
 from pathlib import Path
+from typing import Callable
 
 import numpy as np
 import torch
@@ -64,6 +65,47 @@ TASK_VARIANTS = {"standard", "bidirectional_lookup"}
 
 @dataclass
 class ModelSummary:
+    config: str
+    seed: int
+    branch_head_dims_json: str
+    eval_loss: float
+    local_loss: float
+    induction_loss: float
+    local_accuracy: float
+    induction_accuracy: float
+    local_branch0_loss_delta: float
+    local_branch1_loss_delta: float
+    induction_branch0_loss_delta: float
+    induction_branch1_loss_delta: float
+    local_branch0_specialization: float
+    local_branch1_specialization: float
+    induction_branch0_specialization: float
+    induction_branch1_specialization: float
+    local_top_branch: int
+    induction_top_branch: int
+    same_top_branch: bool
+    routed_role_match: bool
+    branch_distribution_distance: float
+    local_gate_branch0_mean: float
+    local_gate_branch1_mean: float
+    induction_gate_branch0_mean: float
+    induction_gate_branch1_mean: float
+    local_gate_entropy_mean: float
+    induction_gate_entropy_mean: float
+    global_gate_entropy_mean: float
+    global_gate_branch0_mean: float
+    global_gate_branch1_mean: float
+    global_gate_balance_error_mean: float
+    gate_distribution_distance: float
+    gate_routed_role_match: bool
+    gate_target_nll_mean: float
+
+
+@dataclass
+class TrajectorySummary:
+    step: int
+    next_router_supervision_weight: float
+    train_loss: float
     config: str
     seed: int
     branch_head_dims_json: str
@@ -164,6 +206,16 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--router-balance-weight", type=float, default=0.0)
     parser.add_argument("--local-weight", type=float, default=0.25)
     parser.add_argument("--induction-weight", type=float, default=1.0)
+    parser.add_argument(
+        "--trajectory-eval-steps",
+        nargs="*",
+        type=int,
+        default=[],
+        help=(
+            "Optional optimizer-update counts at which to evaluate the model "
+            "during training. Include 0 to evaluate the initialized model."
+        ),
+    )
     parser.add_argument("--device", default="auto", choices=["auto", "cpu", "cuda"])
     parser.add_argument("--output-dir", type=Path, default=Path("results/phase3_toy_branch_isolation"))
     return parser.parse_args()
@@ -379,12 +431,27 @@ def effective_router_supervision_weight(args: argparse.Namespace, step: int) -> 
     return 0.0
 
 
+def normalize_trajectory_steps(args: argparse.Namespace) -> list[int]:
+    steps = sorted(set(args.trajectory_eval_steps))
+    for step in steps:
+        if step < 0 or step > args.steps:
+            raise ValueError(f"trajectory eval step {step} is outside [0, {args.steps}]")
+    return steps
+
+
+def next_router_supervision_weight(args: argparse.Namespace, completed_steps: int) -> float:
+    if completed_steps >= args.steps:
+        return 0.0
+    return effective_router_supervision_weight(args, completed_steps)
+
+
 def train_model(
     model: TwoBranchTransformer,
     train_rng: np.random.Generator,
     args: argparse.Namespace,
     layout: dict[str, torch.Tensor | int],
     device: torch.device,
+    trajectory_callback: Callable[[int, float], None] | None = None,
 ) -> float:
     model.train()
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
@@ -412,8 +479,12 @@ def train_model(
         torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
         optimizer.step()
         last_loss = float(loss.detach().cpu())
-        if (step + 1) % max(args.steps // 4, 1) == 0:
-            print(f"  step={step + 1} train_loss={last_loss:.4f}", flush=True)
+        completed_steps = step + 1
+        if trajectory_callback is not None:
+            trajectory_callback(completed_steps, last_loss)
+            model.train()
+        if completed_steps % max(args.steps // 4, 1) == 0:
+            print(f"  step={completed_steps} train_loss={last_loss:.4f}", flush=True)
     return last_loss
 
 
@@ -522,6 +593,105 @@ def write_csv(path: Path, rows: list[object]) -> None:
             writer.writerow(asdict(row))
 
 
+def evaluate_model_state(
+    config: str,
+    seed: int,
+    model: TwoBranchTransformer,
+    eval_ids: torch.Tensor,
+    layout: dict[str, torch.Tensor | int],
+    args: argparse.Namespace,
+    device: torch.device,
+) -> tuple[ModelSummary, list[BranchScore]]:
+    baseline = evaluate(
+        model,
+        eval_ids,
+        layout,
+        args.local_weight,
+        args.induction_weight,
+        args.batch_size,
+        device,
+    )
+    route_metrics = collect_route_metrics(model, eval_ids, layout, args.batch_size, device)
+    ablations = [
+        evaluate(
+            model,
+            eval_ids,
+            layout,
+            args.local_weight,
+            args.induction_weight,
+            args.batch_size,
+            device,
+            ablate_branch=branch,
+        )
+        for branch in range(2)
+    ]
+    local_scores = np.asarray(
+        [max(metrics["local_loss"] - baseline["local_loss"], 0.0) for metrics in ablations],
+        dtype=np.float64,
+    )
+    induction_scores = np.asarray(
+        [max(metrics["induction_loss"] - baseline["induction_loss"], 0.0) for metrics in ablations],
+        dtype=np.float64,
+    )
+    local_dist = branch_distribution(local_scores)
+    induction_dist = branch_distribution(induction_scores)
+    local_top = int(np.argmax(local_scores))
+    induction_top = int(np.argmax(induction_scores))
+
+    branch_rows = []
+    for branch in range(2):
+        branch_rows.append(
+            BranchScore(
+                config=config,
+                seed=seed,
+                branch=branch,
+                branch_head_dims_json=json.dumps(args.branch_head_dims),
+                local_loss_delta=float(local_scores[branch]),
+                induction_loss_delta=float(induction_scores[branch]),
+                local_specialization=float(local_dist[branch]),
+                induction_specialization=float(induction_dist[branch]),
+            )
+        )
+
+    summary = ModelSummary(
+        config=config,
+        seed=seed,
+        branch_head_dims_json=json.dumps(args.branch_head_dims),
+        eval_loss=baseline["loss"],
+        local_loss=baseline["local_loss"],
+        induction_loss=baseline["induction_loss"],
+        local_accuracy=baseline["local_accuracy"],
+        induction_accuracy=baseline["induction_accuracy"],
+        local_branch0_loss_delta=float(local_scores[0]),
+        local_branch1_loss_delta=float(local_scores[1]),
+        induction_branch0_loss_delta=float(induction_scores[0]),
+        induction_branch1_loss_delta=float(induction_scores[1]),
+        local_branch0_specialization=float(local_dist[0]),
+        local_branch1_specialization=float(local_dist[1]),
+        induction_branch0_specialization=float(induction_dist[0]),
+        induction_branch1_specialization=float(induction_dist[1]),
+        local_top_branch=local_top,
+        induction_top_branch=induction_top,
+        same_top_branch=local_top == induction_top,
+        routed_role_match=local_top == 0 and induction_top == 1,
+        branch_distribution_distance=distribution_distance(local_dist, induction_dist),
+        local_gate_branch0_mean=float(route_metrics["local_gate_branch0"]),
+        local_gate_branch1_mean=float(route_metrics["local_gate_branch1"]),
+        induction_gate_branch0_mean=float(route_metrics["induction_gate_branch0"]),
+        induction_gate_branch1_mean=float(route_metrics["induction_gate_branch1"]),
+        local_gate_entropy_mean=float(route_metrics["local_gate_entropy"]),
+        induction_gate_entropy_mean=float(route_metrics["induction_gate_entropy"]),
+        global_gate_entropy_mean=float(route_metrics["global_gate_entropy"]),
+        global_gate_branch0_mean=float(route_metrics["global_gate_branch0"]),
+        global_gate_branch1_mean=float(route_metrics["global_gate_branch1"]),
+        global_gate_balance_error_mean=float(route_metrics["global_gate_balance_error"]),
+        gate_distribution_distance=float(route_metrics["gate_distribution_distance"]),
+        gate_routed_role_match=bool(route_metrics["gate_routed_role_match"]),
+        gate_target_nll_mean=float(route_metrics["gate_target_nll"]),
+    )
+    return summary, branch_rows
+
+
 def summarize_config(config: str, model_rows: list[ModelSummary]) -> dict[str, object]:
     rows = [row for row in model_rows if row.config == config]
     local_top = Counter(row.local_top_branch for row in rows)
@@ -621,11 +791,14 @@ def main() -> None:
     args = parse_args()
     device = resolve_device(args.device)
     layout = build_layout(args)
+    trajectory_steps = normalize_trajectory_steps(args)
+    trajectory_step_set = set(trajectory_steps)
     args.output_dir.mkdir(parents=True, exist_ok=True)
     eval_ids = make_task_dataset(np.random.default_rng(12345), args.eval_examples, args)
 
     model_rows: list[ModelSummary] = []
     branch_rows: list[BranchScore] = []
+    trajectory_rows: list[TrajectorySummary] = []
 
     for config in args.configs:
         print(
@@ -650,95 +823,51 @@ def main() -> None:
                 induction_positions=layout["induction_positions"],
                 router_temperature=args.router_temperature,
             ).to(device)
-            train_model(model, np.random.default_rng(seed), args, layout, device)
-            baseline = evaluate(
-                model,
-                eval_ids,
-                layout,
-                args.local_weight,
-                args.induction_weight,
-                args.batch_size,
-                device,
-            )
-            route_metrics = collect_route_metrics(model, eval_ids, layout, args.batch_size, device)
-            ablations = [
-                evaluate(
+
+            def record_trajectory(step: int, train_loss: float) -> None:
+                if step not in trajectory_step_set:
+                    return
+                print(f"  trajectory_eval step={step}", flush=True)
+                summary, _ = evaluate_model_state(
+                    config,
+                    seed,
                     model,
                     eval_ids,
                     layout,
-                    args.local_weight,
-                    args.induction_weight,
-                    args.batch_size,
+                    args,
                     device,
-                    ablate_branch=branch,
                 )
-                for branch in range(2)
-            ]
-            local_scores = np.asarray(
-                [max(metrics["local_loss"] - baseline["local_loss"], 0.0) for metrics in ablations],
-                dtype=np.float64,
-            )
-            induction_scores = np.asarray(
-                [max(metrics["induction_loss"] - baseline["induction_loss"], 0.0) for metrics in ablations],
-                dtype=np.float64,
-            )
-            local_dist = branch_distribution(local_scores)
-            induction_dist = branch_distribution(induction_scores)
-            local_top = int(np.argmax(local_scores))
-            induction_top = int(np.argmax(induction_scores))
-
-            for branch in range(2):
-                branch_rows.append(
-                    BranchScore(
-                        config=config,
-                        seed=seed,
-                        branch=branch,
-                        branch_head_dims_json=json.dumps(args.branch_head_dims),
-                        local_loss_delta=float(local_scores[branch]),
-                        induction_loss_delta=float(induction_scores[branch]),
-                        local_specialization=float(local_dist[branch]),
-                        induction_specialization=float(induction_dist[branch]),
+                trajectory_rows.append(
+                    TrajectorySummary(
+                        step=step,
+                        next_router_supervision_weight=next_router_supervision_weight(args, step),
+                        train_loss=train_loss,
+                        **asdict(summary),
                     )
                 )
 
-            model_rows.append(
-                ModelSummary(
-                    config=config,
-                    seed=seed,
-                    branch_head_dims_json=json.dumps(args.branch_head_dims),
-                    eval_loss=baseline["loss"],
-                    local_loss=baseline["local_loss"],
-                    induction_loss=baseline["induction_loss"],
-                    local_accuracy=baseline["local_accuracy"],
-                    induction_accuracy=baseline["induction_accuracy"],
-                    local_branch0_loss_delta=float(local_scores[0]),
-                    local_branch1_loss_delta=float(local_scores[1]),
-                    induction_branch0_loss_delta=float(induction_scores[0]),
-                    induction_branch1_loss_delta=float(induction_scores[1]),
-                    local_branch0_specialization=float(local_dist[0]),
-                    local_branch1_specialization=float(local_dist[1]),
-                    induction_branch0_specialization=float(induction_dist[0]),
-                    induction_branch1_specialization=float(induction_dist[1]),
-                    local_top_branch=local_top,
-                    induction_top_branch=induction_top,
-                    same_top_branch=local_top == induction_top,
-                    routed_role_match=local_top == 0 and induction_top == 1,
-                    branch_distribution_distance=distribution_distance(local_dist, induction_dist),
-                    local_gate_branch0_mean=float(route_metrics["local_gate_branch0"]),
-                    local_gate_branch1_mean=float(route_metrics["local_gate_branch1"]),
-                    induction_gate_branch0_mean=float(route_metrics["induction_gate_branch0"]),
-                    induction_gate_branch1_mean=float(route_metrics["induction_gate_branch1"]),
-                    local_gate_entropy_mean=float(route_metrics["local_gate_entropy"]),
-                    induction_gate_entropy_mean=float(route_metrics["induction_gate_entropy"]),
-                    global_gate_entropy_mean=float(route_metrics["global_gate_entropy"]),
-                    global_gate_branch0_mean=float(route_metrics["global_gate_branch0"]),
-                    global_gate_branch1_mean=float(route_metrics["global_gate_branch1"]),
-                    global_gate_balance_error_mean=float(route_metrics["global_gate_balance_error"]),
-                    gate_distribution_distance=float(route_metrics["gate_distribution_distance"]),
-                    gate_routed_role_match=bool(route_metrics["gate_routed_role_match"]),
-                    gate_target_nll_mean=float(route_metrics["gate_target_nll"]),
-                )
+            if 0 in trajectory_step_set:
+                record_trajectory(0, float("nan"))
+
+            train_model(
+                model,
+                np.random.default_rng(seed),
+                args,
+                layout,
+                device,
+                trajectory_callback=record_trajectory if trajectory_steps else None,
             )
+            summary, current_branch_rows = evaluate_model_state(
+                config,
+                seed,
+                model,
+                eval_ids,
+                layout,
+                args,
+                device,
+            )
+            model_rows.append(summary)
+            branch_rows.extend(current_branch_rows)
 
             del model
             if device.type == "cuda":
@@ -747,6 +876,7 @@ def main() -> None:
     summary_by_config = {config: summarize_config(config, model_rows) for config in args.configs}
     write_csv(args.output_dir / "model_summary.csv", model_rows)
     write_csv(args.output_dir / "branch_scores.csv", branch_rows)
+    write_csv(args.output_dir / "trajectory_summary.csv", trajectory_rows)
     write_config_summary(args.output_dir / "config_summary.csv", summary_by_config)
     payload = {
         "args": vars(args) | {"output_dir": str(args.output_dir)},

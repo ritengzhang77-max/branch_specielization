@@ -14,3 +14,7 @@ compiled PDF, copied data, and provenance notes when available.
   checkpoint. The main result is that brief early role labels did not persist,
   while labels through 75% of training produced full top-branch role separation
   after label removal, but weaker causal separation than always-on labels.
+- `2026-05-22-1745-router-trajectory/`: router trajectory checkpoint. The main
+  result is a gate-before-causality lag: role-aligned gates appeared by step
+  400, but causal branch modularity appeared only after continued weak labels to
+  about step 600.

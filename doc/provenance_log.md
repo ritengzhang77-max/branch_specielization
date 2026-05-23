@@ -718,3 +718,38 @@ functional modularity?
 - Recorded the result in `doc/phase3_toy_annealed_router.md`.
 - Created checkpoint deck:
   `presentations/2026-05-22-1709-annealed-router/annealed_router_checkpoint.pdf`.
+
+## 2026-05-22 Phase 3 Router Trajectory Checkpoint
+
+- Extended `scripts/toy_branch_isolation_intervention.py` with
+  `--trajectory-eval-steps`.
+- The script now writes `trajectory_summary.csv` when intermediate optimizer
+  update counts are requested.
+- Added `scripts/analyze_router_trajectory_experiment.py`.
+- Ran 5-seed trajectory sweeps for:
+  - unlabeled entropy 0.05 plus balance 1.0;
+  - weak labels through step 400;
+  - weak labels through step 800;
+  - weak labels through step 1200;
+  - always-on weak labels.
+- Evaluated at steps:
+  `0, 50, 100, 200, 400, 401, 600, 800, 801, 1000, 1200, 1201, 1400, 1600`.
+- Main mechanism result:
+  - at step 400, task accuracy was near one and gate routed match was 1.00, but
+    causal routed role match was 0.00 and branch distance was 0.1525;
+  - with continued labels, causal routed role match reached 1.00 by step 600
+    and branch distance reached 0.4996 by step 800;
+  - removing labels at step 400 prevented causal consolidation;
+  - removing labels at step 800 preserved the top-branch split in 4/5 seeds but
+    branch distance decayed to 0.3337 by step 1600;
+  - removing labels at step 1200 preserved routed role match 1.00 but branch
+    distance decayed from 0.8701 to 0.7652;
+  - always-on labels kept increasing branch distance to 0.9773.
+- Key interpretation:
+  - gate alignment is an intermediate state, not sufficient evidence of
+    functional branch modularity;
+  - causal branch modularity consolidates later under sustained role-aligned
+    routing pressure.
+- Recorded the result in `doc/phase3_toy_router_trajectory.md`.
+- Created checkpoint deck:
+  `presentations/2026-05-22-1745-router-trajectory/router_trajectory_checkpoint.pdf`.
