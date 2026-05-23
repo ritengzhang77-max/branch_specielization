@@ -110,21 +110,28 @@ Interpretation:
 - The pairwise aligned-better count saturates early (`66/72` from `step4000`
   onward), while the causal effect size keeps increasing.
 
-## Pythia-70M Model-Size Check
+## Model-Size Checks
 
-I also ran final-checkpoint Pythia-70M checks with the same candidate-pool
-framework.
+I also ran final-checkpoint Pythia-70M and Pythia-410M checks with the same
+candidate-pool framework.
 
 | Model / candidate pool | Own top excess | Same-index transfer | Aligned transfer | Aligned - same | Aligned better |
 |---|---:|---:|---:|---:|---:|
 | 70M layers 1-3, top 2 | 0.0508 | 0.1463 | 0.1115 | -0.0348 | 35/72 |
 | 70M all layers 0-5, top 2 | 0.2692 | 0.1043 | 0.1854 | 0.0810 | 41/72 |
 | 160M layers 2-4, top 2 | 2.2896 | 0.4876 | 2.2714 | 1.7838 | 66/72 |
+| 410M layers 2-6, top 2 | 4.1723 | 0.2562 | 1.9116 | 1.6554 | 49/72 |
 
 The 70M result is weak even when all layers are allowed. This should be treated
 as a capacity/model-size caveat rather than a failure of alignment: the selected
 70M heads are only weakly causal for the synthetic local-copy task, so there is
 little functional module to transfer.
+
+The 410M result restores a strong positive effect: aligned-minus-same is
+`1.6554`, target-level aligned-minus-same is positive for `9/9` target seeds,
+and the pair-level aligned-better count is `49/72` (`p ~= 0.0029`, two-sided
+sign test). Pair-level consistency is lower than 160M, but the mean functional
+transfer effect remains large.
 
 ## Interpretation
 
@@ -159,5 +166,7 @@ was evidence that fixed structural slots are too brittle.
   `results/phase1_pythia70m_local_copy_candidate_pool_layers1_3_top2/`.
 - Pythia-70M all-layer check:
   `results/phase1_pythia70m_local_copy_candidate_pool_all_layers_top2/`.
+- Pythia-410M layers 2-6 check:
+  `results/phase1_pythia410m_local_copy_candidate_pool_layers2_6_top2/`.
 - Prior layer-selection memo:
   `doc/phase1_pythia160m_local_copy_layer_selection.md`.

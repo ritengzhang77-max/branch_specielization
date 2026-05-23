@@ -306,6 +306,13 @@ These three numbers (S, C, M) are what the project should report for each archit
   aligned-minus-same to `0.0810`. This is best interpreted as a capacity/task
   caveat: the 70M heads are only weakly causal for this synthetic local-copy
   behavior, so there is little functional role for alignment to transfer.
+- A Pythia-410M check restored a strong positive result. Using candidate layers
+  2-6 and top 2 local-copy heads, own-top excess was `4.1723`, aligned transfer
+  was `1.9116` versus same-index transfer `0.2562`, and aligned-minus-same was
+  `1.6554`. Aligned transfer was better in `49/72` ordered pairs and
+  target-level aligned-minus-same was positive for all 9 seeds. This suggests
+  the local-copy candidate-pool result is not unique to 160M, but the synthetic
+  behavior may require enough model capacity to become a robust causal role.
 
 ### C. Resources concretely available (with HF / GitHub paths)
 - Pythia seeds: `EleutherAI/pythia-{14m,70m,160m,410m}-seed{1..9}`, plus `pythia-160m-weight-seed{1-3}` and `pythia-160m-data-seed{1-3}`. 154 checkpoints per model (steps 0, 1, 2, 4, 8, …, 143000). GitHub: `EleutherAI/pythia`.

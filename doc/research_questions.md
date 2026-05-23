@@ -346,13 +346,17 @@ Second-role result:
   own-top excess `0.2692` and aligned-minus-same `0.0810`. The likely issue is
   that 70M does not robustly implement the synthetic local-copy behavior, so
   functional transfer has little causal substrate.
+- A Pythia-410M final-checkpoint check is strong/positive. Candidate layers 2-6
+  gave own-top excess `4.1723`, same-index transfer `0.2562`, aligned transfer
+  `1.9116`, aligned-minus-same `1.6554`, and aligned better `49/72` ordered
+  pairs. Target-level aligned-minus-same was positive for all 9 seeds.
 
 The next Phase 1 question is now:
 
 ```text
-Does the 160M local-copy candidate-pool result persist in larger Pythia models
-or in a naturalistic local-copy/induction probe, where the behavior is more
-robustly learned?
+Can the cross-layer candidate-pool method be made robust enough for a paper
+claim by adding naturalistic local-copy/induction probes and confidence
+intervals across model sizes?
 ```
 
 ### Phase 4: Mechanistic Interpretation

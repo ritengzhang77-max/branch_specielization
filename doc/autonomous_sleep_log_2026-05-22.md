@@ -230,3 +230,21 @@ or negative result would also be informative.
 - Interpretation: 70M does not robustly instantiate the synthetic local-copy
   causal role. This is a capacity/task caveat rather than strong evidence
   against the alignment method.
+
+## Later Sleep-Block Checkpoint: Pythia-410M Model-Size Check
+
+- Ran Pythia-410M final-checkpoint candidate-pool check:
+  - candidate layers: 2-6;
+  - selected heads per seed: top 2 by local-copy probe score;
+  - target seeds: all 9;
+  - ordered source-target transfer pairs: 72.
+- Result:
+  - own top excess over random: `4.1723`;
+  - same-index transfer: `0.2562`;
+  - cross-layer aligned transfer: `1.9116`;
+  - aligned-minus-same: `1.6554`;
+  - aligned better count: `49/72`.
+- Per-target aligned-minus-same was positive for all 9 seeds, though seed 3 was
+  essentially neutral (`0.0004`).
+- Interpretation: the strong local-copy candidate-pool result is not unique to
+  Pythia-160M. The model-size story is now: 70M weak, 160M strong, 410M strong.

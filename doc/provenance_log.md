@@ -1050,3 +1050,26 @@ functional modularity?
 - Interpretation: unlike Pythia-160M, Pythia-70M does not robustly implement the
   synthetic local-copy causal role. This should be treated as a capacity/task
   caveat rather than a contradiction of the 160M cross-layer alignment result.
+
+## 2026-05-22 - Pythia-410M local-copy candidate-pool check
+
+- Ran Pythia-410M final-checkpoint candidate-pool check with all 9 seeds.
+- Candidate pool:
+  - layers: 2-6;
+  - selected heads: top 2 local-copy probe heads per seed;
+  - alignment: Hungarian matching over the full cross-layer raw-score candidate
+    pool;
+  - transfer pairs: 72 ordered source-target pairs.
+- Result directory:
+  `results/phase1_pythia410m_local_copy_candidate_pool_layers2_6_top2/`.
+- Transfer summary:
+  - own top excess over random: `4.1723`;
+  - same-index transfer: `0.2562`;
+  - cross-layer aligned transfer: `1.9116`;
+  - aligned-minus-same: `1.6554`;
+  - aligned better count: `49/72`.
+- Per-target aligned-minus-same was positive for all 9 target seeds, though seed
+  3 was essentially neutral (`0.0004`).
+- Interpretation: the local-copy candidate-pool result generalizes upward to
+  410M. Combined with the 70M weak result, this suggests a capacity threshold for
+  robust synthetic local-copy causal roles.
