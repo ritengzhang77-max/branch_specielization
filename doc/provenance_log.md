@@ -2180,3 +2180,17 @@ computations to consolidate.
   `results/debug_switchhead_checkpoint_load_weights_only/`.
 - The loaded smoke reproduced the saved four-step debug metrics exactly, with no
   PyTorch pickle warning.
+- Used the checkpoint loader for an end-to-end loaded swap run on the validated
+  seed-3 retry checkpoint:
+  `results/phase3_toy_switchhead_2layer_seed3_loaded_swap_groups/`.
+- Loaded seed-3 swap result:
+  - baseline local/induction accuracy `1.0000/1.0000`;
+  - layer-1 `swap_v`: `0.4812/0.5081`;
+  - layer-1 `swap_o`: `1.0000/1.0000`;
+  - layer-1 `swap_v_and_value_selector`: `1.0000/1.0000`;
+  - all-layer `swap_v`: `0.4517/0.4995`;
+  - all-layer `swap_o`: `0.6890/0.9946`;
+  - all-layer `swap_all`: `1.0000/1.0000`.
+- Interpretation update: the checkpoint loader supports the intended no-retrain
+  swap workflow, and the loaded validated checkpoint preserves the same
+  value-side codebook pattern.
