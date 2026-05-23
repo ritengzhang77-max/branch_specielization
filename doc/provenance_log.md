@@ -1671,3 +1671,24 @@ computations to consolidate.
 - Interpretation: role-aligned routing gates precede causal branch modularity by
   roughly 150 optimizer steps in this setup, and separation strength continues
   growing after the top-branch split appears.
+
+## 2026-05-23 - Pythia-160M ordinary natural-repeat checkpoint trajectory
+
+- Added `scripts/analyze_natural_repeat_checkpoint_trajectory.py`.
+- Ran Pythia-160M seeds 1-9 on the WikiText-103 ordinary-phrase exact 8-gram
+  task-repeat alignment setup at `step4000`, `step16000`, and `step64000`.
+- Combined these with the existing matched `step0` control and final
+  `step143000` run in:
+  `results/phase1_pythia160m_wikitext103_ordinary_repeat_trajectory/`.
+- Wrote `doc/phase1_pythia160m_ordinary_repeat_checkpoint_trajectory.md`.
+- Main trajectory:
+  - step0: probe `0.0077`, own excess `0.0009`, aligned-minus-same `0.0012`;
+  - step4000: probe `0.1115`, own excess `0.0205`, aligned-minus-same `0.0154`;
+  - step16000: probe `0.1481`, own excess `0.1756`, aligned-minus-same `0.0460`;
+  - step64000: probe `0.1576`, own excess `0.1693`,
+    aligned-minus-same `0.1174`, target CI `[0.0387, 0.2099]`;
+  - step143000: probe `0.1623`, own excess `0.3133`,
+    aligned-minus-same `0.2252`, target CI `[0.1096, 0.3776]`.
+- Interpretation: ordinary natural-repeat specialization appears early,
+  own-head causal importance becomes clear by step16000, and robust target-level
+  aligned transfer appears later, by step64000.

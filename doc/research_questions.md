@@ -281,6 +281,10 @@ Initial real-transformer follow-up:
 - This does not show branch modularity in Pythia, but it supports the broader
   measurement warning: probe-defined specialization can precede causal
   importance, so specialization and causal tests must be reported separately.
+- A Pythia-160M ordinary-phrase natural-repeat trajectory sharpened this warning
+  on unmodified WikiText-103 examples. Probe specialization appeared by
+  step4000, own-head causal importance was clear by step16000, and target-level
+  aligned cross-seed transfer became robust by step64000.
 - A standard-dataset naturalistic follow-up replaced synthetic `[x, SEP, x]`
   local-copy triples with WikiText repeated spans of the form
   `prefix + span + distractor + span`. Pythia-160M all-layer candidate pools

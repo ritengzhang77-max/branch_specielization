@@ -14,6 +14,17 @@ right relabeling representation depends on the role strength.
 This is a functional specialization and cross-seed role-stability claim. It is
 not yet a functional modularity claim.
 
+Checkpoint timing refines this claim:
+
+```text
+probe-defined role specialization, own-head causal importance, and cross-seed
+transferable role identity can emerge at different times.
+```
+
+On the ordinary-phrase WikiText-103 exact 8-gram task, probe specialization is
+already visible by step4000, own-head causal importance is clear by step16000,
+and target-level aligned transfer becomes robust by step64000.
+
 ## Measurement Stack
 
 The paper should report a two-stage alignment metric.

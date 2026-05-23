@@ -800,3 +800,27 @@ Interpretation:
 role-aligned routing gates precede causal branch modularity, and causal
 separation strength keeps growing after the top-branch split appears.
 ```
+
+## Progress: Pythia-160M Ordinary Natural-Repeat Trajectory
+
+Ran the WikiText-103 ordinary-phrase exact 8-gram task-repeat alignment setup at
+three additional Pythia-160M checkpoints: `step4000`, `step16000`, and
+`step64000`. Combined them with the existing `step0` and final checkpoint runs.
+
+Trajectory:
+
+| Checkpoint | Probe spec. | Own top - random | Aligned - same | Target CI |
+|---|---:|---:|---:|---:|
+| step0 | 0.0077 | 0.0009 | 0.0012 | [-0.0005, 0.0028] |
+| step4000 | 0.1115 | 0.0205 | 0.0154 | [-0.0152, 0.0448] |
+| step16000 | 0.1481 | 0.1756 | 0.0460 | [-0.0446, 0.1336] |
+| step64000 | 0.1576 | 0.1693 | 0.1174 | [0.0387, 0.2099] |
+| step143000 | 0.1623 | 0.3133 | 0.2252 | [0.1096, 0.3776] |
+
+Interpretation:
+
+```text
+natural ordinary-repeat probes appear before robust causal cross-seed transfer;
+own causal importance is visible by step16000, but aligned transfer becomes
+target-level robust only by step64000.
+```

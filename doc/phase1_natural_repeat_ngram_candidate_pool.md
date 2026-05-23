@@ -214,6 +214,21 @@ Interpretation: filtering to ordinary phrases does not eliminate the 160M
 natural-repeat result. The result remains role-specific: generic Phase 0
 alignment is neutral, while task-repeat alignment gives clear held-out transfer.
 
+Checkpoint trajectory:
+
+| Checkpoint | Probe spec. | Own top - random | Aligned - same | Target CI for aligned - same |
+|---|---:|---:|---:|---:|
+| step0 | 0.0077 | 0.0009 | 0.0012 | [-0.0005, 0.0028] |
+| step4000 | 0.1115 | 0.0205 | 0.0154 | [-0.0152, 0.0448] |
+| step16000 | 0.1481 | 0.1756 | 0.0460 | [-0.0446, 0.1336] |
+| step64000 | 0.1576 | 0.1693 | 0.1174 | [0.0387, 0.2099] |
+| step143000 | 0.1623 | 0.3133 | 0.2252 | [0.1096, 0.3776] |
+
+Interpretation: ordinary natural-repeat probes emerge by step4000, own-head
+causality is clear by step16000, and robust target-level aligned transfer
+appears by step64000 and strengthens at the final checkpoint. See
+`doc/phase1_pythia160m_ordinary_repeat_checkpoint_trajectory.md`.
+
 Pythia-410M WikiText-103 ordinary-phrase exact 8-gram setup:
 
 - token stream length: `1000066`;

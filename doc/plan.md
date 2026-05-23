@@ -411,6 +411,16 @@ These three numbers (S, C, M) are what the project should report for each archit
   at this scale (`0.0012`, target CI `[-0.0005, 0.0028]`). This weakens the
   concern that the natural-repeat signal is only due to numbers, titles, proper
   names, or tokenizer-artifact spans.
+- A checkpoint trajectory on the same Pythia-160M ordinary-phrase exact 8-gram
+  task shows that natural roles develop more slowly than synthetic copy roles.
+  Probe specialization was already visible by step4000 (`0.1115` vs `0.0077`
+  at step0), own-head causal excess became target-level positive by step16000
+  (`0.1756`, own-excess CI `[0.0601, 0.3205]`), and aligned-minus-same became
+  target-level positive by step64000 (`0.1174`, target CI
+  `[0.0387, 0.2099]`) before strengthening at the final checkpoint (`0.2252`,
+  target CI `[0.1096, 0.3776]`). This supports the measurement warning that
+  probe specialization, own causal importance, and cross-seed transfer can
+  emerge at different times.
 - The matched 410M ordinary-phrase exact 8-gram run gives the first clean
   target-level positive 410M exact-repeat transfer result. From 1000066 tokens,
   the filter found 140 candidates, enough for 64/64 without replacement.
