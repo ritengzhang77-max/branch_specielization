@@ -1119,6 +1119,18 @@ functional modularity?
   fixed layers 2-6 candidate window. The result peaks at `step16000` and becomes
   less pairwise consistent by final checkpoint.
 
+## 2026-05-22 - Naturalistic local-copy probe design
+
+- Wrote `doc/naturalistic_local_copy_probe_design.md`.
+- The memo proposes a repeated-natural-span task:
+  `prefix + span + distractor + span`, scored on next-token prediction in the
+  second span occurrence.
+- It specifies metrics, initial Pythia-160M settings, decision rules, and an
+  implementation plan.
+- Reason for writing a design memo before running: the naturalistic branch needs
+  corpus/provenance choices, and a tiny ad hoc corpus would risk creating a
+  misleading negative or positive result.
+
 ## 2026-05-22 - Sleep checkpoint summary
 
 - Wrote `doc/autonomous_sleep_checkpoint_summary_2026-05-22.md`.

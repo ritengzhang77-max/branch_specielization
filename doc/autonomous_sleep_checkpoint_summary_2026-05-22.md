@@ -148,3 +148,5 @@ not only arbitrary [x, SEP, x] triples?
 
 This is the right next step because it tests whether the current result is a
 general attention-head role or an artifact of the synthetic local-copy task.
+
+Design memo: `doc/naturalistic_local_copy_probe_design.md`.
