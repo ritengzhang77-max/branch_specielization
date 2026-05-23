@@ -886,4 +886,6 @@ functional modularity?
 - Attempted the next chunk, target seeds 4-6, but current GPU jobs were
   interrupted during probing before target rows completed. The script has
   partial-output writes and `--target-seeds` chunking for the next attempt.
+- Added `scripts/analyze_local_copy_chunks.py` to merge completed local-copy
+  target chunks as they become available.
 - Recorded the pilot in `doc/phase1_pythia160m_local_copy_pilot.md`.

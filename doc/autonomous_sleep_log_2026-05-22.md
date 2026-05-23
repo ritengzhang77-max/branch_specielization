@@ -71,3 +71,5 @@ or negative result would also be informative.
   role, but target seeds 4-9 are still incomplete.
 - Retried target seeds 4-6, but the job was interrupted during probing before
   target rows were written.
+- Added `scripts/analyze_local_copy_chunks.py` so completed target chunks can be
+  merged as they become available.

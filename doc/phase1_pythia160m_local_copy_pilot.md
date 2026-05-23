@@ -129,6 +129,11 @@ With chunking, target seeds 1-3 completed. A target seeds 4-6 retry was
 interrupted during probing before target rows were produced. This is a local
 infrastructure issue, not a model result for target seeds 4-9.
 
+The completed chunks can be merged incrementally with
+`scripts/analyze_local_copy_chunks.py`. At the current checkpoint, the combined
+directory contains only the target seeds 1-3 chunk and therefore reproduces the
+same partial result.
+
 ## Files
 
 - Script: `scripts/pythia_local_copy_alignment.py`.
@@ -136,6 +141,9 @@ infrastructure issue, not a model result for target seeds 4-9.
 - 160M two-seed pilot results: `results/debug_pythia160m_local_copy_alignment/`.
 - 160M all-source target 1-3 results:
   `results/phase1_pythia160m_local_copy_alignment_seed9_layer3_targets1_3/`.
+- Incremental combined results:
+  `results/phase1_pythia160m_local_copy_alignment_seed9_layer3_combined/`.
+- Chunk combiner: `scripts/analyze_local_copy_chunks.py`.
 - Sleep-run log: `doc/autonomous_sleep_log_2026-05-22.md`.
 
 ## Current Interpretation
