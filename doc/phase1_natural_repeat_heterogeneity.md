@@ -99,6 +99,7 @@ Result:
 
 | Alignment source | Own top excess | Same-index | Aligned | Aligned - same | Target CI |
 |---|---:|---:|---:|---:|---:|
+| Phase 0 generic | 0.0559 | 0.0102 | 0.0124 | 0.0022 | [-0.0191, 0.0182] |
 | task repeat | 0.0559 | 0.0102 | 0.0429 | 0.0327 | [0.0027, 0.0599] |
 | task repeat `step0` | 0.0010 | -0.0008 | 0.0002 | 0.0009 | [-0.0003, 0.0022] |
 

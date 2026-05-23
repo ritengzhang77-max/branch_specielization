@@ -706,7 +706,17 @@ Matched `step0` task-repeat control:
 - aligned-minus-same: `0.0009`;
 - target CI: `[-0.0003, 0.0022]`.
 
+Generic Phase 0 comparison:
+
+- result directory:
+  `results/phase1_pythia410m_wikitext103_natural_repeat_8gram_ordinary_phase0_alignment_seed9_n64/`;
+- generic aligned transfer: `0.0124`;
+- aligned-minus-same: `0.0022`;
+- pair CI: `[-0.0164, 0.0169]`;
+- target CI: `[-0.0191, 0.0182]`.
+
 Interpretation: filtering to ordinary phrases makes the 410M exact-repeat result
 cleaner than the mixed 8-gram run: the target-level CI is now positive. The
 effect is still small relative to 160M, so this supports "filtered natural
 repeat transfer exists in 410M" but not a strong monotonic scaling claim.
+Generic Phase 0 matching remains neutral.

@@ -1605,6 +1605,12 @@ functional modularity?
   - own top excess: `0.0010`;
   - aligned-minus-same: `0.0009`;
   - target CI: `[-0.0003, 0.0022]`.
+- Ran Pythia-410M generic Phase 0 comparison:
+  `results/phase1_pythia410m_wikitext103_natural_repeat_8gram_ordinary_phase0_alignment_seed9_n64/`.
+  - generic aligned transfer: `0.0124`;
+  - aligned-minus-same: `0.0022`;
+  - pair CI: `[-0.0164, 0.0169]`;
+  - target CI: `[-0.0191, 0.0182]`.
 - Interpretation update: category filtering gives the first clean target-level
   positive 410M exact-repeat transfer result, though the effect remains small
-  compared with 160M.
+  compared with 160M. Generic Phase 0 alignment remains neutral.

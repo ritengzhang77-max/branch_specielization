@@ -225,6 +225,7 @@ Results:
 | Condition | Alignment source | Seeds | Own top excess | Same-index transfer | Aligned transfer | Aligned - same | Target CI for aligned - same |
 |---|---|---:|---:|---:|---:|---:|---:|
 | `step0` | task repeat | 9 | 0.0010 | -0.0008 | 0.0002 | 0.0009 | [-0.0003, 0.0022] |
+| `step143000` | Phase 0 generic | 9 | 0.0559 | 0.0102 | 0.0124 | 0.0022 | [-0.0191, 0.0182] |
 | `step143000` | task repeat | 9 | 0.0559 | 0.0102 | 0.0429 | 0.0327 | [0.0027, 0.0599] |
 
 Additional 410M task-repeat details:
@@ -236,10 +237,8 @@ Additional 410M task-repeat details:
 
 Interpretation: filtering to ordinary phrases makes the 410M exact-repeat
 result cleaner than the mixed 8-gram run. The effect is still much smaller than
-160M, but the target-level CI is now positive. I did not rerun the expensive
-410M ordinary-phrase generic Phase 0 comparison; the full mixed 410M exact
-8-gram generic comparison was neutral, and the 160M ordinary-phrase generic
-comparison was also neutral.
+160M, but the target-level CI is now positive. Generic Phase 0 alignment remains
+neutral, so the filtered 410M result also depends on role-specific matching.
 
 ## Interpretation
 
@@ -351,6 +350,8 @@ Weaker parts:
 - Pythia-410M WikiText-103 ordinary-phrase exact 8-gram task-repeat `step0`
   control:
   `results/phase1_pythia410m_wikitext103_natural_repeat_8gram_ordinary_task_alignment_seed9_n64_step0/`.
+- Pythia-410M WikiText-103 ordinary-phrase exact 8-gram Phase 0 alignment:
+  `results/phase1_pythia410m_wikitext103_natural_repeat_8gram_ordinary_phase0_alignment_seed9_n64/`.
 - Natural-repeat heterogeneity memo:
   `doc/phase1_natural_repeat_heterogeneity.md`.
 - Category helper:

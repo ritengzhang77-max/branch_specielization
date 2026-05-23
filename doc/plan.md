@@ -411,8 +411,10 @@ These three numbers (S, C, M) are what the project should report for each archit
   Own-top excess was `0.0559` with target CI `[0.0189, 0.0949]`; task-repeat
   aligned-minus-same was `0.0327` with target CI `[0.0027, 0.0599]`, 8/9 target
   positives, and a null matched `step0` control (`0.0009`, target CI
-  `[-0.0003, 0.0022]`). This suggests category filtering can rescue the 410M
-  exact-repeat result, but the effect size is still far smaller than 160M's.
+  `[-0.0003, 0.0022]`). The matching generic Phase 0 run remained neutral
+  (`aligned-minus-same=0.0022`, target CI `[-0.0191, 0.0182]`). This suggests
+  category filtering can rescue the 410M exact-repeat result, but the effect
+  size is still far smaller than 160M's and remains alignment-basis dependent.
 
 ### C. Resources concretely available (with HF / GitHub paths)
 - Pythia seeds: `EleutherAI/pythia-{14m,70m,160m,410m}-seed{1..9}`, plus `pythia-160m-weight-seed{1-3}` and `pythia-160m-data-seed{1-3}`. 154 checkpoints per model (steps 0, 1, 2, 4, 8, …, 143000). GitHub: `EleutherAI/pythia`.
