@@ -318,11 +318,12 @@ These three numbers (S, C, M) are what the project should report for each archit
   (`[-0.1332, 0.2989]`) but is clearly positive for 160M (`[1.3341, 2.3715]`)
   and 410M (`[1.0261, 2.2362]`).
 - The 410M selected-checkpoint trajectory adds an important nuance. Candidate
-  pool transfer is already very strong at `step4000`
-  (`aligned-minus-same=1.2062`, 72/72 pairs), peaks at `step16000`
-  (`aligned-minus-same=3.4057`, 71/72 pairs), then remains positive but less
-  clean at final (`aligned-minus-same=1.6554`, 49/72 pairs). Unlike 160M, the
-  410M trajectory is not monotonic under the fixed layers 2-6 candidate window.
+  pool transfer is absent at `step0` (`aligned-minus-same=-0.0007`), already
+  very strong at `step4000` (`aligned-minus-same=1.2062`, 72/72 pairs), peaks
+  at `step16000` (`aligned-minus-same=3.4057`, 71/72 pairs), then remains
+  positive but less clean at final (`aligned-minus-same=1.6554`, 49/72 pairs).
+  Unlike 160M, the 410M trajectory is not monotonic under the fixed layers 2-6
+  candidate window.
 
 ### C. Resources concretely available (with HF / GitHub paths)
 - Pythia seeds: `EleutherAI/pythia-{14m,70m,160m,410m}-seed{1..9}`, plus `pythia-160m-weight-seed{1-3}` and `pythia-160m-data-seed{1-3}`. 154 checkpoints per model (steps 0, 1, 2, 4, 8, …, 143000). GitHub: `EleutherAI/pythia`.

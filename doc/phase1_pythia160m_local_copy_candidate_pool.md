@@ -137,14 +137,15 @@ The Pythia-410M selected-checkpoint trajectory is not monotonic:
 
 | Checkpoint | Own top excess | Same-index transfer | Aligned transfer | Aligned - same | Aligned better |
 |---|---:|---:|---:|---:|---:|
+| step0 | -0.0009 | 0.0004 | -0.0002 | -0.0007 | 23/72 |
 | step4000 | 1.3363 | 0.0624 | 1.2686 | 1.2062 | 72/72 |
 | step16000 | 4.1083 | 0.1679 | 3.5737 | 3.4057 | 71/72 |
 | step143000 | 4.1723 | 0.2562 | 1.9116 | 1.6554 | 49/72 |
 
-The local-copy role is already strong by `step4000`, peaks by this metric at
-`step16000`, and remains positive but less clean by the final checkpoint. This
-may indicate later redistribution of the synthetic local-copy behavior or a
-candidate-window mismatch at final.
+The effect is absent at initialization, already strong by `step4000`, peaks by
+this metric at `step16000`, and remains positive but less clean by the final
+checkpoint. This may indicate later redistribution of the synthetic local-copy
+behavior or a candidate-window mismatch at final.
 
 Significance summaries:
 

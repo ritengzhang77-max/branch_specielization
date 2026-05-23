@@ -114,12 +114,14 @@ the alignment method.
 
 | Checkpoint | Own top excess | Aligned - same | Aligned better |
 |---|---:|---:|---:|
+| step0 | -0.0009 | -0.0007 | 23/72 |
 | step4000 | 1.3363 | 1.2062 | 72/72 |
 | step16000 | 4.1083 | 3.4057 | 71/72 |
 | step143000 | 4.1723 | 1.6554 | 49/72 |
 
-The 410M result is strong but nonmonotonic under the current layers 2-6
-candidate window; the best transfer point is `step16000`, not final.
+The 410M result is absent at initialization and strong but nonmonotonic under
+the current layers 2-6 candidate window; the best transfer point is `step16000`,
+not final.
 
 ## Files Added In This Sleep Block
 

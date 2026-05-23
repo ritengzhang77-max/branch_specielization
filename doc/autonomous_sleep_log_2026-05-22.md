@@ -265,8 +265,14 @@ or negative result would also be informative.
 
 ## Later Sleep-Block Checkpoint: Pythia-410M Trajectory
 
-- Ran Pythia-410M candidate-pool checks at `step4000` and `step16000` and
-  combined them with the final-checkpoint result.
+- Ran Pythia-410M candidate-pool checks at `step0`, `step4000`, and `step16000`
+  and combined them with the final-checkpoint result.
+- `step0`:
+  - own top excess over random: `-0.0009`;
+  - same-index transfer: `0.0004`;
+  - aligned transfer: `-0.0002`;
+  - aligned-minus-same: `-0.0007`;
+  - aligned better count: `23/72`.
 - `step4000`:
   - own top excess over random: `1.3363`;
   - same-index transfer: `0.0624`;
@@ -283,6 +289,7 @@ or negative result would also be informative.
   - own top excess over random: `4.1723`;
   - aligned-minus-same: `1.6554`;
   - aligned better count: `49/72`.
-- Interpretation: 410M local-copy candidate-pool transfer is already strong by
-  `step4000`, peaks by this metric at `step16000`, and remains positive but
-  less clean at final. This is nonmonotonic unlike the 160M trajectory.
+- Interpretation: 410M local-copy candidate-pool transfer is absent at
+  initialization, already strong by `step4000`, peaks by this metric at
+  `step16000`, and remains positive but less clean at final. This is
+  nonmonotonic unlike the 160M trajectory.
