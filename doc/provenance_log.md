@@ -1233,3 +1233,43 @@ functional modularity?
   positive sign pattern persists, but the larger-sample effect size is smaller
   and bootstrap intervals cross zero. This should not be treated as a strong
   positive replication of the 160M naturalistic result.
+
+## 2026-05-23 - Naturally occurring repeat-ngram probe
+
+- Added `scripts/pythia_natural_repeat_ngram_candidate_pool_alignment.py`.
+- This stricter naturalistic probe scans unmodified WikiText windows for exact
+  repeated n-grams instead of inserting a second span.
+- Default construction:
+  - 96-token windows;
+  - exact repeated 4-token n-gram;
+  - stride 8;
+  - at least 8 intervening tokens beyond the repeated span;
+  - skip EOS-containing windows;
+  - require first repeated token to start on a whitespace/newline boundary.
+- Smoke result:
+  `results/debug_pythia14m_natural_repeat_ngram_candidate_pool/`.
+- Pythia-160M 3-seed pilot:
+  `results/phase1_pythia160m_natural_repeat_ngram_candidate_pool_seed3/`.
+  - own top excess: `0.0956`;
+  - aligned-minus-same: `0.0321`;
+  - target CI for aligned-minus-same: `[-0.0074, 0.0633]`.
+- Pythia-160M all-seed final checkpoint:
+  `results/phase1_pythia160m_natural_repeat_ngram_candidate_pool_seed9/`.
+  - own top excess: `0.1588`;
+  - own top excess target CI: `[0.0806, 0.2718]`;
+  - own top excess positive for 9/9 targets;
+  - same-index transfer: `0.0464`;
+  - aligned transfer: `0.0448`;
+  - aligned-minus-same: `-0.0016`;
+  - target CI for aligned-minus-same: `[-0.0548, 0.0360]`;
+  - target positives: 6/9.
+- Pythia-160M all-seed `step0` control:
+  `results/phase1_pythia160m_natural_repeat_ngram_candidate_pool_seed9_step0/`.
+  - own top excess: `-0.0001`;
+  - aligned-minus-same: `-0.0004`;
+  - target CI for aligned-minus-same: `[-0.0030, 0.0019]`.
+- Interpretation: naturally occurring exact repeats show trained own-head causal
+  importance, absent at initialization, but do not show an aligned-transfer
+  advantage over same-index transfer. This is a stricter neutral/negative
+  cross-seed alignment check.
+- Full memo: `doc/phase1_natural_repeat_ngram_candidate_pool.md`.

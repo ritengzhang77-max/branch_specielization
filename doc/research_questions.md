@@ -277,6 +277,15 @@ Initial real-transformer follow-up:
   This means the synthetic result is not purely an arbitrary-token artifact, but
   the naturalistic validation is small and should be treated as supporting
   evidence, not the primary effect.
+- A stricter natural-repeat follow-up scanned unmodified WikiText windows for
+  exact repeated 4-token n-grams. Pythia-160M all-layer candidate pools across 9
+  seeds showed trained own-head causal importance (`own_top_excess=0.1588`,
+  target CI `[0.0806, 0.2718]`, 9/9 positive) and a null `step0` control
+  (`own_top_excess=-0.0001`). But aligned transfer did not beat same-index
+  transfer (`aligned=0.0448`, same-index `0.0464`, aligned-minus-same `-0.0016`,
+  target CI `[-0.0548, 0.0360]`). This is a useful neutral/negative result:
+  naturally occurring exact repeats expose trained causal repeat heads, but not
+  a cross-seed role-relabeling advantage under the current alignment.
 - A Pythia-160M follow-up over seeds 1-3 added checkpoint-specific raw-score
   alignment and source-head transfer. Repeat-match specialization rose by
   `step4000` (`0.4794`), while causal own-top excess over random controls was

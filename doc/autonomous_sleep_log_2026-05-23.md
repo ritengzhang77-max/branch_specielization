@@ -191,3 +191,58 @@ Interpretation: the 410M naturalistic result is weaker than the 160M result and
 weaker after doubling examples. The sign pattern is positive, but CIs cross zero
 and the seed-6 failure is stable. This should be presented as weak /
 heterogeneous, not as a clean 410M naturalistic confirmation.
+
+## Progress: Naturally Occurring Repeat-Ngram Probe
+
+Implemented `scripts/pythia_natural_repeat_ngram_candidate_pool_alignment.py`.
+Unlike the inserted-span probe, this script uses unmodified WikiText windows and
+finds exact repeated n-grams already present in the corpus.
+
+Default task:
+
+- 96-token windows;
+- exact repeated 4-token n-gram;
+- window stride 8;
+- minimum gap 8;
+- no EOS in the window;
+- repeated n-gram starts on a whitespace/newline token boundary.
+
+Smoke:
+
+- result directory:
+  `results/debug_pythia14m_natural_repeat_ngram_candidate_pool/`;
+- completed after one loader bug fix.
+
+Pythia-160M 3-seed pilot:
+
+- result directory:
+  `results/phase1_pythia160m_natural_repeat_ngram_candidate_pool_seed3/`;
+- own top excess: `0.0956`;
+- aligned-minus-same: `0.0321`;
+- target CI for aligned-minus-same: `[-0.0074, 0.0633]`.
+
+Pythia-160M all-seed final checkpoint:
+
+- result directory:
+  `results/phase1_pythia160m_natural_repeat_ngram_candidate_pool_seed9/`;
+- own top excess: `0.1588`;
+- own top excess target CI: `[0.0806, 0.2718]`;
+- own top excess positives: 9/9;
+- same-index transfer: `0.0464`;
+- aligned transfer: `0.0448`;
+- aligned-minus-same: `-0.0016`;
+- target CI for aligned-minus-same: `[-0.0548, 0.0360]`;
+- target positives for aligned-minus-same: 6/9.
+
+Pythia-160M all-seed `step0` control:
+
+- result directory:
+  `results/phase1_pythia160m_natural_repeat_ngram_candidate_pool_seed9_step0/`;
+- own top excess: `-0.0001`;
+- aligned-minus-same: `-0.0004`;
+- target CI for aligned-minus-same: `[-0.0030, 0.0019]`.
+
+Interpretation: trained 160M heads causally support naturally occurring exact
+repeats, and this is absent at initialization. However, cross-seed aligned
+transfer does not beat same-index transfer in mean. This is a stricter
+neutral/negative cross-seed transfer result.

@@ -341,6 +341,14 @@ These three numbers (S, C, M) are what the project should report for each archit
   outlier. This reduces the risk that the synthetic result is purely artificial,
   but the naturalistic effect is much smaller and should be framed as supporting
   evidence rather than the main evidence.
+- A stricter natural-repeat follow-up scanned unmodified WikiText windows for
+  exact repeated 4-token n-grams. Pythia-160M all-layer candidate pools across 9
+  seeds showed trained causal repeat heads (`own_top_excess=0.1588`, target CI
+  `[0.0806, 0.2718]`, 9/9 positive), with a null `step0` control. However,
+  cross-seed aligned transfer did not beat same-index transfer
+  (`aligned=0.0448`, same-index `0.0464`, aligned-minus-same `-0.0016`, target
+  CI `[-0.0548, 0.0360]`). This means unmodified natural repeats are causally
+  real but do not currently support the role-relabeling claim.
 
 ### C. Resources concretely available (with HF / GitHub paths)
 - Pythia seeds: `EleutherAI/pythia-{14m,70m,160m,410m}-seed{1..9}`, plus `pythia-160m-weight-seed{1-3}` and `pythia-160m-data-seed{1-3}`. 154 checkpoints per model (steps 0, 1, 2, 4, 8, …, 143000). GitHub: `EleutherAI/pythia`.
