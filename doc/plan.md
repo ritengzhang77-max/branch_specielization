@@ -477,7 +477,10 @@ These three numbers (S, C, M) are what the project should report for each archit
   control showed the roles can follow the requested expert labels: local ->
   expert 1 and induction -> expert 0 was reliable in 5/5 seeds at end step 800.
   The reversed target was only 4/5 reliable at end step 450, so threshold values
-  are optimization- and label-assignment-sensitive rather than universal.
+  are optimization- and label-assignment-sensitive rather than universal. A
+  two-layer SwitchHead follow-up preserved the pattern: extra depth did not
+  create spontaneous modularity, while induced modularity was reliable and
+  localized causally to layer 1.
 
 ### C. Resources concretely available (with HF / GitHub paths)
 - Pythia seeds: `EleutherAI/pythia-{14m,70m,160m,410m}-seed{1..9}`, plus `pythia-160m-weight-seed{1-3}` and `pythia-160m-data-seed{1-3}`. 154 checkpoints per model (steps 0, 1, 2, 4, 8, …, 143000). GitHub: `EleutherAI/pythia`.

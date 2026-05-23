@@ -229,6 +229,12 @@ SwitchHead feasibility update:
   expert 0, the 800-step run was reliable in 5/5 seeds with the causal roles
   reversed. The 450-step reversed run was only 4/5, so the exact threshold is
   label/optimization sensitive.
+- A two-layer SwitchHead follow-up showed that depth does not rescue spontaneous
+  modularity: the spontaneous model solved the task but had gate same-top `1.00`
+  and routed expert match `0.20`. The induced two-layer condition restored 5/5
+  role modularity, with local top `L1E0` and induction top `L1E1` in 5/5 seeds.
+  This suggests induced causal modularity can localize to a later layer even when
+  gate pressure is applied across layers.
 
 ### Phase 3: Architectural Intervention
 

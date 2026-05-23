@@ -338,6 +338,12 @@ induction -> expert 0. The reversed assignment was only `4/5` reliable at end
 step 450, but was `5/5` reliable at end step 800 with the causal roles reversed.
 See `doc/phase3_toy_switchhead_label_control.md`.
 
+A two-layer SwitchHead follow-up showed that depth does not rescue spontaneous
+modularity: the spontaneous two-layer model solved the task but had gate same-top
+`1.00` and routed match `0.20`. The induced two-layer condition restored 5/5
+role modularity, with the top causal modules localized in layer 1. See
+`doc/phase3_toy_switchhead_two_layer.md`.
+
 So the best interpretation is:
 
 ```text
@@ -423,5 +429,7 @@ SwitchHead-specific tests are:
   `doc/phase3_toy_switchhead_strength_duration_tradeoff.md`
 - Expert-label control memo:
   `doc/phase3_toy_switchhead_label_control.md`
+- Two-layer SwitchHead memo:
+  `doc/phase3_toy_switchhead_two_layer.md`
 - Feasibility memo:
   `doc/switchhead_followup_feasibility.md`

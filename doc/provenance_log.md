@@ -1890,3 +1890,38 @@ computations to consolidate.
   SwitchHead spontaneous negative result, induced positive result,
   gate-before-causality trajectory, strength-duration threshold, and
   reversed-label control.
+
+## 2026-05-23 - Two-layer SwitchHead follow-up
+
+- Fixed `scripts/toy_switchhead_competition.py` so `expert_scores.csv` reports
+  gate metrics per layer rather than duplicating an across-layer average.
+- Reran authoritative two-layer SwitchHead conditions:
+  - spontaneous:
+    `results/phase3_toy_switchhead_2layer_spontaneous_seed5_steps2000_v2/`;
+  - induced:
+    `results/phase3_toy_switchhead_2layer_induced_w005_end800_seed5_steps2000_v2/`.
+- Spontaneous result:
+  - local accuracy `1.0000`;
+  - induction accuracy `1.0000`;
+  - gate same-top expert `1.00`;
+  - causal same-top expert `0.80`;
+  - routed expert match `0.20`;
+  - gate distance `0.0017`;
+  - causal distance `0.1617`.
+- Induced result:
+  - local accuracy `1.0000`;
+  - induction accuracy `1.0000`;
+  - gate same-top expert `0.00`;
+  - causal same-top expert `0.00`;
+  - routed expert match `1.00`;
+  - gate distance `0.7066`;
+  - causal distance `0.6148`.
+- Layer localization:
+  - spontaneous local top was `L1E0` in 5/5 seeds; induction top was `L1E0` in
+    4/5 seeds;
+  - induced local top was `L1E0` in 5/5 seeds; induction top was `L1E1` in 5/5
+    seeds.
+- Wrote `doc/phase3_toy_switchhead_two_layer.md`.
+- Interpretation update: extra SwitchHead depth does not create spontaneous role
+  modularity, but induced causal expert modularity survives and localizes to the
+  later layer.

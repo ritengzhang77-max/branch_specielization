@@ -323,19 +323,25 @@ def collect_gate_metrics(
 ) -> tuple[np.ndarray, np.ndarray]:
     local_positions = layout["local_positions"].to(device)
     induction_positions = layout["induction_positions"].to(device)
-    local_totals = []
-    induction_totals = []
+    local_totals = [[] for _ in range(args.n_layers)]
+    induction_totals = [[] for _ in range(args.n_layers)]
     model.eval()
     # Use no_grad rather than inference_mode so SwitchHead RoPE caches remain
     # valid if training resumes after trajectory evaluation.
     with torch.no_grad():
         for ids in iter_batches(input_ids, args.batch_size):
             ids = ids.to(device)
-            for dist in model.collect_gate_distributions(ids):
+            for layer_idx, dist in enumerate(model.collect_gate_distributions(ids)):
                 # dist: batch, seq, heads, experts
-                local_totals.append(dist[:, local_positions].mean(dim=(0, 1, 2)).detach().cpu().numpy())
-                induction_totals.append(dist[:, induction_positions].mean(dim=(0, 1, 2)).detach().cpu().numpy())
-    return np.mean(local_totals, axis=0), np.mean(induction_totals, axis=0)
+                local_totals[layer_idx].append(
+                    dist[:, local_positions].mean(dim=(0, 1, 2)).detach().cpu().numpy()
+                )
+                induction_totals[layer_idx].append(
+                    dist[:, induction_positions].mean(dim=(0, 1, 2)).detach().cpu().numpy()
+                )
+    gate_local = np.stack([np.mean(layer_totals, axis=0) for layer_totals in local_totals], axis=0)
+    gate_induction = np.stack([np.mean(layer_totals, axis=0) for layer_totals in induction_totals], axis=0)
+    return gate_local, gate_induction
 
 
 def distribution_distance(a: np.ndarray, b: np.ndarray) -> float:
@@ -368,7 +374,9 @@ def analyze_model(
     induction_top = np.unravel_index(induction_top_flat, induction_spec.shape)
     expert_dist = distribution_distance(local_spec.flatten(), induction_spec.flatten())
 
-    gate_local, gate_induction = collect_gate_metrics(model, eval_ids, layout, args, device)
+    gate_local_by_layer, gate_induction_by_layer = collect_gate_metrics(model, eval_ids, layout, args, device)
+    gate_local = gate_local_by_layer.mean(axis=0)
+    gate_induction = gate_induction_by_layer.mean(axis=0)
     gate_local_top = int(np.argmax(gate_local))
     gate_induction_top = int(np.argmax(gate_induction))
     gate_dist = distribution_distance(gate_local, gate_induction)
@@ -387,8 +395,8 @@ def analyze_model(
                     induction_loss_delta=float(induction_deltas[layer_idx, expert_idx]),
                     local_specialization=float(local_spec[layer_idx, expert_idx]),
                     induction_specialization=float(induction_spec[layer_idx, expert_idx]),
-                    gate_local_mean=float(gate_local[expert_idx]),
-                    gate_induction_mean=float(gate_induction[expert_idx]),
+                    gate_local_mean=float(gate_local_by_layer[layer_idx, expert_idx]),
+                    gate_induction_mean=float(gate_induction_by_layer[layer_idx, expert_idx]),
                 )
             )
 

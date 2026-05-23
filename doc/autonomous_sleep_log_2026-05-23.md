@@ -1205,3 +1205,45 @@ trajectory: gate split before causal split
 tradeoff: strength-duration threshold
 label control: roles can follow reversed expert labels
 ```
+
+## Progress: Two-Layer SwitchHead
+
+Fixed a multi-layer gate reporting issue in
+`scripts/toy_switchhead_competition.py`: per-expert gate metrics are now reported
+per layer instead of duplicating an across-layer average.
+
+Ran two authoritative v2 two-layer conditions:
+
+```text
+results/phase3_toy_switchhead_2layer_spontaneous_seed5_steps2000_v2/
+results/phase3_toy_switchhead_2layer_induced_w005_end800_seed5_steps2000_v2/
+```
+
+Summary:
+
+| Condition | Gate same top | Causal same top | Routed match | Gate distance | Causal distance |
+|---|---:|---:|---:|---:|---:|
+| spontaneous | 1.00 | 0.80 | 0.20 | 0.0017 | 0.1617 |
+| induced | 0.00 | 0.00 | 1.00 | 0.7066 | 0.6148 |
+
+Layer localization:
+
+```text
+spontaneous local top:     L1E0 in 5/5 seeds
+spontaneous induction top: L1E0 in 4/5 seeds
+induced local top:         L1E0 in 5/5 seeds
+induced induction top:     L1E1 in 5/5 seeds
+```
+
+Interpretation:
+
+```text
+extra SwitchHead depth does not create spontaneous role modularity, but induced
+modularity survives and localizes causally to the later layer.
+```
+
+Wrote:
+
+```text
+doc/phase3_toy_switchhead_two_layer.md
+```
