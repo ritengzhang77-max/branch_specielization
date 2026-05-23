@@ -299,7 +299,7 @@ Does alignment-based causal transfer generalize beyond repeat-match heads to a
 second head-role task?
 ```
 
-Initial second-role pilot:
+Second-role result:
 
 - A local-copy / previous-token task was implemented using `[x, SEP, x]`
   triples. The probe is attention from `SEP` back to the previous `x`; the
@@ -312,12 +312,25 @@ Initial second-role pilot:
   random was `2.8567`, same-index source transfer was `0.1901`, aligned source
   transfer was `1.5894`, aligned-minus-same was `1.3993`, and aligned transfer
   was better in `17/24` ordered source-target pairs.
-- This is not yet an all-target result because target seeds 4-9 remain
-  incomplete under current GPU contention. The script now supports partial
-  outputs and target-seed chunking.
-- Tentative update: local-copy may be a second positive causal alignment-transfer
-  role, but the project should wait for target chunks 4-6 and 7-9 before making
-  the all-seed claim.
+- The full all-target chunked run is now complete across all 9 source seeds and
+  all 9 target seeds. Over 72 ordered source-target pairs, aligned source
+  transfer was `1.0137` versus `0.3142` for same-index transfer; aligned-minus
+  same was `0.6995`, and aligned transfer was better in `40/72` pairs.
+- The effect is target-conditional rather than uniform. Target seeds 1-3 had
+  aligned-minus-same `1.3993`, target seeds 4-6 had `-0.0116`, and target seeds
+  7-9 had `0.7107`.
+- Target own-head causal excess strongly tracked aligned-minus-same transfer
+  across target seeds (`r ~= 0.97`). This makes the next question sharper:
+  probe-defined structural/role specialization can transfer functionally when
+  the target seed actually uses that probed head causally, but a high probe score
+  alone is not sufficient.
+
+The next Phase 1 question is now:
+
+```text
+Can we predict functional alignment-transfer success from the probe-causal gap,
+and can a better local-copy head-selection rule reduce the weak target seeds?
+```
 
 ### Phase 4: Mechanistic Interpretation
 

@@ -889,3 +889,58 @@ functional modularity?
 - Added `scripts/analyze_local_copy_chunks.py` to merge completed local-copy
   target chunks as they become available.
 - Recorded the pilot in `doc/phase1_pythia160m_local_copy_pilot.md`.
+
+## 2026-05-22 22:05 PDT - Local-copy target seeds 4-6 completed
+
+- Completed the Pythia-160M final-checkpoint local-copy target chunk for target
+  seeds 4-6 under the same settings as the target seeds 1-3 chunk.
+- Result directory:
+  `results/phase1_pythia160m_local_copy_alignment_seed9_layer3_targets4_6/`.
+- Transfer summary over 24 ordered source-target pairs:
+  - same-index source transfer: `0.1700`;
+  - aligned source transfer: `0.1584`;
+  - aligned-minus-same: `-0.0116`;
+  - aligned better count: `11/24`.
+- Seed summary:
+  - selected specialization mean: `0.3254`;
+  - own top excess over random: `0.0420`.
+- This is a mixed/negative chunk for local-copy causal transfer: probe
+  specialization remains visible, but the target's own selected heads are barely
+  causal above random for seeds 4-6.
+- Re-ran `scripts/analyze_local_copy_chunks.py`; with target chunks 1-3 and 4-6
+  merged, the combined result over target seeds 1-6 has aligned-minus-same
+  `0.6939` over 48 ordered source-target pairs.
+
+## 2026-05-22 22:15 PDT - Local-copy all-target result completed
+
+- Completed the final Pythia-160M final-checkpoint local-copy target chunk for
+  target seeds 7-9 under the same settings.
+- Result directory:
+  `results/phase1_pythia160m_local_copy_alignment_seed9_layer3_targets7_9/`.
+- Target seeds 7-9 transfer summary over 24 ordered source-target pairs:
+  - same-index source transfer: `0.5826`;
+  - aligned source transfer: `1.2933`;
+  - aligned-minus-same: `0.7107`;
+  - aligned better count: `12/24`.
+- Re-ran `scripts/analyze_local_copy_chunks.py` with all target chunks present.
+- Combined all-target result directory:
+  `results/phase1_pythia160m_local_copy_alignment_seed9_layer3_combined/`.
+- Full all-target transfer summary over 72 ordered source-target pairs:
+  - selected local-copy specialization: `0.3262`;
+  - own top excess over random: `1.6072`;
+  - same-index source transfer: `0.3142`;
+  - aligned source transfer: `1.0137`;
+  - aligned-minus-same: `0.6995`;
+  - aligned better count: `40/72`.
+- Target-level heterogeneity:
+  - target seeds 1-3: aligned-minus-same `1.3993`;
+  - target seeds 4-6: aligned-minus-same `-0.0116`;
+  - target seeds 7-9: aligned-minus-same `0.7107`.
+- Follow-up diagnostic: target own-head causal excess and aligned-minus-same
+  transfer correlate strongly across target seeds (`r=0.9664`; target sign count
+  `7/9`, two-sided sign `p=0.1797`). This supports a conditional result:
+  raw-score alignment transfers local-copy function when the target seed
+  actually uses the selected probe head causally, but probe specialization alone
+  is not sufficient.
+- Updated `scripts/analyze_local_copy_chunks.py` to write
+  `target_diagnostic_summary.csv` into the combined result directory.

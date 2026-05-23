@@ -73,3 +73,54 @@ or negative result would also be informative.
   target rows were written.
 - Added `scripts/analyze_local_copy_chunks.py` so completed target chunks can be
   merged as they become available.
+
+## 2026-05-22 21:45-22:05 PDT
+
+- Committed and pushed the local-copy chunk combiner checkpoint:
+  `336bab2 Add local-copy chunk combiner`.
+- Retried the Pythia-160M local-copy chunk for target seeds 4-6 on GPU 3.
+- The chunk completed over 24 ordered source-target pairs:
+  - own top excess over random: `0.0420`;
+  - same-index source transfer: `0.1700`;
+  - aligned source transfer: `0.1584`;
+  - aligned-minus-same: `-0.0116`;
+  - aligned better count: `11/24`.
+- Interpretation: target seeds 4-6 are not like target seeds 1-3. The selected
+  layer-3 local-copy heads have similar probe specialization, but weak own-seed
+  causal importance, so aligned transfer also has little effect.
+- Re-ran the chunk combiner. Across target seeds 1-6:
+  - own top excess over random: `1.4493`;
+  - same-index source transfer: `0.1800`;
+  - aligned source transfer: `0.8739`;
+  - aligned-minus-same: `0.6939`;
+  - aligned better count: `28/48`.
+- Started the final local-copy target chunk for target seeds 7-9.
+
+## 2026-05-22 22:05-22:15 PDT
+
+- Completed the final Pythia-160M local-copy target chunk for target seeds 7-9.
+- Result over 24 ordered source-target pairs:
+  - own top excess over random: `1.9231`;
+  - same-index source transfer: `0.5826`;
+  - aligned source transfer: `1.2933`;
+  - aligned-minus-same: `0.7107`;
+  - aligned better count: `12/24`.
+- Re-ran the chunk combiner with all target chunks present. Full all-target
+  local-copy result over 72 ordered source-target pairs:
+  - selected specialization mean: `0.3262`;
+  - own top excess over random: `1.6072`;
+  - same-index source transfer: `0.3142`;
+  - aligned source transfer: `1.0137`;
+  - aligned-minus-same: `0.6995`;
+  - aligned better count: `40/72`.
+- Target-level heterogeneity is the key result:
+  - target seeds 1-3: aligned-minus-same `1.3993`;
+  - target seeds 4-6: aligned-minus-same `-0.0116`;
+  - target seeds 7-9: aligned-minus-same `0.7107`.
+- Target own-head causal excess strongly tracks alignment-transfer benefit
+  across target seeds (`r=0.9664`; target sign count `7/9`, two-sided sign
+  `p=0.1797`). This suggests that local-copy is a positive but conditional
+  second role: alignment transfers the role when the target seed actually uses
+  the probed head causally.
+- Updated `scripts/analyze_local_copy_chunks.py` to write
+  `target_diagnostic_summary.csv` for this target-level heterogeneity check.

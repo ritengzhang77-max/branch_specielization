@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import math
 from collections import defaultdict
 from pathlib import Path
 
@@ -140,6 +141,36 @@ def transfer_summary(ablation_rows: list[dict[str, object]]) -> list[dict[str, o
     ]
 
 
+def target_diagnostic_summary(seed_rows: list[dict[str, object]]) -> list[dict[str, object]]:
+    if not seed_rows:
+        return []
+    own = np.asarray([float(row["own_top_excess_over_random"]) for row in seed_rows], dtype=np.float64)
+    diff = np.asarray(
+        [float(row["aligned_minus_same_index_loss_delta_mean"]) for row in seed_rows],
+        dtype=np.float64,
+    )
+    if len(seed_rows) > 1 and float(np.std(own)) > 0 and float(np.std(diff)) > 0:
+        corr = float(np.corrcoef(own, diff)[0, 1])
+    else:
+        corr = float("nan")
+    positive = int(np.sum(diff > 0))
+    n = len(seed_rows)
+    smaller_tail = min(positive, n - positive)
+    sign_p = min(1.0, 2.0 * sum(math.comb(n, i) for i in range(smaller_tail + 1)) / (2**n))
+    return [
+        {
+            "revision": seed_rows[0]["revision"],
+            "revision_index": seed_rows[0]["revision_index"],
+            "n_target_seeds": n,
+            "own_excess_aligned_minus_same_corr": corr,
+            "aligned_minus_same_target_mean": float(diff.mean()),
+            "aligned_minus_same_target_std": float(diff.std()),
+            "aligned_minus_same_positive_targets": positive,
+            "target_sign_p_two_sided": sign_p,
+        }
+    ]
+
+
 def main() -> None:
     args = parse_args()
     args.output_dir.mkdir(parents=True, exist_ok=True)
@@ -152,6 +183,7 @@ def main() -> None:
     condition_rows = condition_summary(ablation_rows)
     revision_rows = revision_summary(seed_rows)
     transfer_rows = transfer_summary(ablation_rows)
+    diagnostic_rows = target_diagnostic_summary(seed_rows)
 
     write_csv(args.output_dir / "ablation_results.csv", ablation_rows)
     write_csv(args.output_dir / "revision_seed_summary.csv", seed_rows)
@@ -160,12 +192,14 @@ def main() -> None:
     write_csv(args.output_dir / "condition_summary.csv", condition_rows)
     write_csv(args.output_dir / "revision_summary.csv", revision_rows)
     write_csv(args.output_dir / "transfer_pair_summary.csv", transfer_rows)
+    write_csv(args.output_dir / "target_diagnostic_summary.csv", diagnostic_rows)
     payload = {
         "input_dirs": [str(path) for path in args.input_dirs],
         "existing_inputs": [str(path) for path in existing_inputs],
         "output_dir": str(args.output_dir),
         "revision_summary": revision_rows,
         "transfer_pair_summary": transfer_rows,
+        "target_diagnostic_summary": diagnostic_rows,
     }
     (args.output_dir / "summary.json").write_text(json.dumps(payload, indent=2) + "\n")
     print(json.dumps(payload, indent=2), flush=True)

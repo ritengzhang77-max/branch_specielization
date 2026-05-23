@@ -262,16 +262,18 @@ These three numbers (S, C, M) are what the project should report for each archit
   `0.2541`, 59/72 pairs). The 3-seed "probe before causal transfer" story was
   too sharp for Pythia-160M: aligned causal transfer is already detectable by
   step4000, but it strengthens substantially through training.
-- A second-role pilot tested local-copy / previous-token behavior with
-  `[x, SEP, x]` triples. A Pythia-160M two-seed final-checkpoint pilot on layer
-  3 found strong within-seed causality (`own_top_excess_over_random=2.1609`) but
-  weak cross-seed transfer (`same_index=0.0033`, `aligned=0.1033`, aligned
-  better in 1/2 ordered pairs). A larger chunk with all 9 source seeds and
-  target seeds 1-3 then showed strong aligned transfer (`aligned=1.5894` vs
-  `same_index=0.1901`, aligned better in 17/24 ordered pairs). This suggests
-  local-copy may be a second positive causal alignment-transfer role, but the
-  all-target result remains incomplete because target chunks 4-6 and 7-9 were
-  blocked by current machine/GPU contention.
+- A second-role test examined local-copy / previous-token behavior with
+  `[x, SEP, x]` triples. The full Pythia-160M all-source/all-target final
+  checkpoint result across all 9 seeds is positive in mean transfer but much
+  more heterogeneous than repeat-match: selected local-copy specialization was
+  `0.3262`, own-top excess over random was `1.6072`, aligned source transfer was
+  `1.0137` versus `0.3142` for same-index transfer, and aligned transfer was
+  better in `40/72` ordered pairs. The key qualifier is target heterogeneity.
+  Target seeds 1-3 had aligned-minus-same `1.3993`; target seeds 4-6 had
+  `-0.0116`; target seeds 7-9 had `0.7107`. Target own-head causal excess
+  correlated strongly with aligned-minus-same transfer (`r ~= 0.97`), suggesting
+  that probe-defined specialization only transfers functionally when the target
+  seed actually uses the selected local-copy head causally.
 
 ### C. Resources concretely available (with HF / GitHub paths)
 - Pythia seeds: `EleutherAI/pythia-{14m,70m,160m,410m}-seed{1..9}`, plus `pythia-160m-weight-seed{1-3}` and `pythia-160m-data-seed{1-3}`. 154 checkpoints per model (steps 0, 1, 2, 4, 8, …, 143000). GitHub: `EleutherAI/pythia`.
