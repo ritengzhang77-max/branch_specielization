@@ -47,6 +47,10 @@ class ModelSummary:
     gate_local_top_expert: int
     gate_induction_top_expert: int
     gate_same_top_expert: bool
+    value_gate_distribution_distance: float
+    value_gate_local_top_expert: int
+    value_gate_induction_top_expert: int
+    value_gate_same_top_expert: bool
     local_top_loss_delta: float
     induction_top_loss_delta: float
     n_layers: int
@@ -68,6 +72,8 @@ class ExpertScore:
     induction_specialization: float
     gate_local_mean: float
     gate_induction_mean: float
+    value_gate_local_mean: float
+    value_gate_induction_mean: float
 
 
 def parse_args() -> argparse.Namespace:
@@ -92,6 +98,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--dropout", type=float, default=0.0)
     parser.add_argument("--expert-dropout", type=float, default=0.0)
     parser.add_argument("--expert-supervision-weight", type=float, default=0.0)
+    parser.add_argument(
+        "--expert-supervision-selector",
+        default="output",
+        choices=["output", "value", "both"],
+        help="Which SwitchHead selector receives the auxiliary expert-selection loss.",
+    )
     parser.add_argument("--local-target-expert", type=int, default=0)
     parser.add_argument("--induction-target-expert", type=int, default=1)
     parser.add_argument(
@@ -186,8 +198,20 @@ class SwitchHeadBlock(nn.Module):
         return x + self.mlp(self.ln2(x))
 
     def output_gate_distribution(self, x: torch.Tensor) -> torch.Tensor:
+        return self.selector_distribution(x, "output")
+
+    def value_gate_distribution(self, x: torch.Tensor) -> torch.Tensor:
+        return self.selector_distribution(x, "value")
+
+    def selector_distribution(self, x: torch.Tensor, selector: str) -> torch.Tensor:
+        if selector == "output":
+            weights = self.attn.sel_o
+        elif selector == "value":
+            weights = self.attn.sel_v
+        else:
+            raise ValueError(f"Unknown selector: {selector}")
         xn = self.ln1(x)
-        raw = F.linear(xn, self.attn.sel_o).float()
+        raw = F.linear(xn, weights).float()
         raw = raw.view(*raw.shape[:-1], self.attn.n_heads, self.attn.n_experts)
         probs = torch.sigmoid(raw)
         return probs / probs.sum(dim=-1, keepdim=True).clamp_min(1e-12)
@@ -214,10 +238,18 @@ class TinySwitchHeadTransformer(nn.Module):
         return self.unembed(self.final_ln(x))
 
     def collect_gate_distributions(self, input_ids: torch.Tensor) -> list[torch.Tensor]:
+        return self.collect_selector_distributions(input_ids, "output")
+
+    def collect_selector_distributions(self, input_ids: torch.Tensor, selector: str) -> list[torch.Tensor]:
         x = self.embed_input(input_ids)
         dists = []
         for block in self.blocks:
-            dists.append(block.output_gate_distribution(x))
+            if selector == "output":
+                dists.append(block.output_gate_distribution(x))
+            elif selector == "value":
+                dists.append(block.value_gate_distribution(x))
+            else:
+                raise ValueError(f"Unknown selector: {selector}")
             x = block(x)
         return dists
 
@@ -287,14 +319,16 @@ def expert_selection_supervision_loss(
     local_positions = layout["local_positions"].to(input_ids.device)
     induction_positions = layout["induction_positions"].to(input_ids.device)
     supervised_layers = resolve_supervised_layers(model.args)
+    selectors = resolve_supervised_selectors(model.args)
     losses = []
-    for layer_idx, dist in enumerate(model.collect_gate_distributions(input_ids)):
-        if layer_idx not in supervised_layers:
-            continue
-        # dist: batch, seq, heads, experts, normalized over experts.
-        local_prob = dist[:, local_positions, :, local_target].clamp_min(1e-12)
-        induction_prob = dist[:, induction_positions, :, induction_target].clamp_min(1e-12)
-        losses.append(-0.5 * (local_prob.log().mean() + induction_prob.log().mean()))
+    for selector in selectors:
+        for layer_idx, dist in enumerate(model.collect_selector_distributions(input_ids, selector)):
+            if layer_idx not in supervised_layers:
+                continue
+            # dist: batch, seq, heads, experts, normalized over experts.
+            local_prob = dist[:, local_positions, :, local_target].clamp_min(1e-12)
+            induction_prob = dist[:, induction_positions, :, induction_target].clamp_min(1e-12)
+            losses.append(-0.5 * (local_prob.log().mean() + induction_prob.log().mean()))
     if not losses:
         raise ValueError("No layers selected for expert supervision.")
     return torch.stack(losses).mean()
@@ -307,6 +341,14 @@ def resolve_supervised_layers(args: argparse.Namespace) -> set[int]:
     if any(layer < 0 or layer >= args.n_layers for layer in layers):
         raise ValueError("--expert-supervision-layers values must be in [0, n_layers).")
     return layers
+
+
+def resolve_supervised_selectors(args: argparse.Namespace) -> list[str]:
+    if args.expert_supervision_selector == "both":
+        return ["output", "value"]
+    if args.expert_supervision_selector in {"output", "value"}:
+        return [args.expert_supervision_selector]
+    raise ValueError("--expert-supervision-selector must be output, value, or both.")
 
 
 def evaluate(
@@ -341,6 +383,7 @@ def collect_gate_metrics(
     layout: dict[str, torch.Tensor | int],
     args: argparse.Namespace,
     device: torch.device,
+    selector: str = "output",
 ) -> tuple[np.ndarray, np.ndarray]:
     local_positions = layout["local_positions"].to(device)
     induction_positions = layout["induction_positions"].to(device)
@@ -352,7 +395,7 @@ def collect_gate_metrics(
     with torch.no_grad():
         for ids in iter_batches(input_ids, args.batch_size):
             ids = ids.to(device)
-            for layer_idx, dist in enumerate(model.collect_gate_distributions(ids)):
+            for layer_idx, dist in enumerate(model.collect_selector_distributions(ids, selector)):
                 # dist: batch, seq, heads, experts
                 local_totals[layer_idx].append(
                     dist[:, local_positions].mean(dim=(0, 1, 2)).detach().cpu().numpy()
@@ -395,12 +438,22 @@ def analyze_model(
     induction_top = np.unravel_index(induction_top_flat, induction_spec.shape)
     expert_dist = distribution_distance(local_spec.flatten(), induction_spec.flatten())
 
-    gate_local_by_layer, gate_induction_by_layer = collect_gate_metrics(model, eval_ids, layout, args, device)
+    gate_local_by_layer, gate_induction_by_layer = collect_gate_metrics(
+        model, eval_ids, layout, args, device, selector="output"
+    )
     gate_local = gate_local_by_layer.mean(axis=0)
     gate_induction = gate_induction_by_layer.mean(axis=0)
     gate_local_top = int(np.argmax(gate_local))
     gate_induction_top = int(np.argmax(gate_induction))
     gate_dist = distribution_distance(gate_local, gate_induction)
+    value_gate_local_by_layer, value_gate_induction_by_layer = collect_gate_metrics(
+        model, eval_ids, layout, args, device, selector="value"
+    )
+    value_gate_local = value_gate_local_by_layer.mean(axis=0)
+    value_gate_induction = value_gate_induction_by_layer.mean(axis=0)
+    value_gate_local_top = int(np.argmax(value_gate_local))
+    value_gate_induction_top = int(np.argmax(value_gate_induction))
+    value_gate_dist = distribution_distance(value_gate_local, value_gate_induction)
 
     expert_scores = []
     for layer_idx in range(args.n_layers):
@@ -418,6 +471,8 @@ def analyze_model(
                     induction_specialization=float(induction_spec[layer_idx, expert_idx]),
                     gate_local_mean=float(gate_local_by_layer[layer_idx, expert_idx]),
                     gate_induction_mean=float(gate_induction_by_layer[layer_idx, expert_idx]),
+                    value_gate_local_mean=float(value_gate_local_by_layer[layer_idx, expert_idx]),
+                    value_gate_induction_mean=float(value_gate_induction_by_layer[layer_idx, expert_idx]),
                 )
             )
 
@@ -443,6 +498,10 @@ def analyze_model(
         gate_local_top_expert=gate_local_top,
         gate_induction_top_expert=gate_induction_top,
         gate_same_top_expert=gate_local_top == gate_induction_top,
+        value_gate_distribution_distance=value_gate_dist,
+        value_gate_local_top_expert=value_gate_local_top,
+        value_gate_induction_top_expert=value_gate_induction_top,
+        value_gate_same_top_expert=value_gate_local_top == value_gate_induction_top,
         local_top_loss_delta=float(local_deltas[local_top]),
         induction_top_loss_delta=float(induction_deltas[induction_top]),
         n_layers=args.n_layers,
@@ -473,6 +532,10 @@ def summarize(rows: list[ModelSummary]) -> dict[str, object]:
         "expert_distribution_distance_mean": float(np.mean([row.expert_distribution_distance for row in rows])),
         "gate_distribution_distance_mean": float(np.mean([row.gate_distribution_distance for row in rows])),
         "gate_same_top_expert_rate": float(np.mean([row.gate_same_top_expert for row in rows])),
+        "value_gate_distribution_distance_mean": float(
+            np.mean([row.value_gate_distribution_distance for row in rows])
+        ),
+        "value_gate_same_top_expert_rate": float(np.mean([row.value_gate_same_top_expert for row in rows])),
         "local_top_loss_delta_mean": float(np.mean([row.local_top_loss_delta for row in rows])),
         "induction_top_loss_delta_mean": float(np.mean([row.induction_top_loss_delta for row in rows])),
     }
@@ -487,6 +550,7 @@ def main() -> None:
     if not 0 <= args.induction_target_expert < args.n_experts:
         raise ValueError("--induction-target-expert must be in [0, n_experts).")
     resolve_supervised_layers(args)
+    resolve_supervised_selectors(args)
     switchhead = import_switchhead(args.switchhead_path)
     device = resolve_device(args.device)
     layout = build_layout(args)

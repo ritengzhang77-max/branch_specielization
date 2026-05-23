@@ -1290,3 +1290,34 @@ SwitchHead findings. The current mechanistic summary is now:
 role-informed cues must be strong enough, last long enough, and reach the layer
 where the causal role module forms.
 ```
+
+## Progress: SwitchHead Selector-Type Control
+
+Added selector-specific supervision:
+
+```text
+--expert-supervision-selector output|value|both
+```
+
+and value-selector metrics to the SwitchHead toy script.
+
+One-layer selector control:
+
+| Selector supervised | Local acc. | Routed match | Output gate dist. | Value gate dist. | Causal dist. |
+|---|---:|---:|---:|---:|---:|
+| output only | 1.0000 | 1.00 | 0.9645 | 0.0134 | 0.5663 |
+| value only | 0.9752 | 0.00 | 0.0049 | 0.9299 | 0.0667 |
+| both | 0.9506 | 1.00 | 0.6978 | 0.7860 | 0.6327 |
+
+Interpretation:
+
+```text
+output selector pressure is cleanly sufficient. Value selector pressure alone
+splits value routing but does not induce causal role modularity.
+```
+
+Wrote:
+
+```text
+doc/phase3_toy_switchhead_selector_type.md
+```

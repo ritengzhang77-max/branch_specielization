@@ -1948,3 +1948,30 @@ computations to consolidate.
   but both-layer pressure is the robust condition in this setup.
 - Updated `doc/phase3_structural_to_functional_synthesis.md` with the two-layer
   and layer-specific SwitchHead results.
+
+## 2026-05-23 - SwitchHead selector-type control
+
+- Added `--expert-supervision-selector output|value|both` to
+  `scripts/toy_switchhead_competition.py`.
+- Added value-selector metrics to `model_summary.csv` and `expert_scores.csv`.
+- Ran one-layer selector controls at weight `0.05`, end step `800`:
+  - output only:
+    `results/phase3_toy_switchhead_selector_output_w005_end800_seed5_steps2000/`;
+  - value only:
+    `results/phase3_toy_switchhead_selector_value_w005_end800_seed5_steps2000/`;
+  - both:
+    `results/phase3_toy_switchhead_selector_both_w005_end800_seed5_steps2000/`.
+- Results:
+  - output only: local acc `1.0000`, induction acc `1.0000`, routed match
+    `1.00`, output gate distance `0.9645`, value gate distance `0.0134`, causal
+    distance `0.5663`;
+  - value only: local acc `0.9752`, induction acc `1.0000`, routed match `0.00`,
+    output gate distance `0.0049`, value gate distance `0.9299`, causal distance
+    `0.0667`;
+  - both: local acc `0.9506`, induction acc `1.0000`, routed match `1.00`,
+    output gate distance `0.6978`, value gate distance `0.7860`, causal distance
+    `0.6327`.
+- Wrote `doc/phase3_toy_switchhead_selector_type.md`.
+- Interpretation update: output selector pressure is the clean sufficient path.
+  Value selector pressure alone can split value routing but does not produce
+  causal role modularity; adding it to output pressure can hurt optimization.

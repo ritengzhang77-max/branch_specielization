@@ -240,6 +240,12 @@ SwitchHead feasibility update:
   `0.40`; supervising layer 1 only improved to `0.80`; supervising both layers
   reached `1.00`. This reinforces the need for layer-wise gate and causal
   metrics in larger routed-attention models.
+- Selector-type controls showed that output selection is the clean sufficient
+  cue. Output-only supervision reached routed match `1.00` while value gates
+  stayed mostly unsplit; value-only supervision split value gates but had routed
+  match `0.00` and same causal top expert in 5/5 seeds. This distinguishes
+  routing that writes to the residual stream from routing that selects value
+  projections.
 
 ### Phase 3: Architectural Intervention
 

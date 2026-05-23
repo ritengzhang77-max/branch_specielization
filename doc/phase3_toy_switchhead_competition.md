@@ -349,6 +349,11 @@ layer: supervising layer 0 only was not enough, layer 1 only was partial, and
 both-layer supervision was reliable. See
 `doc/phase3_toy_switchhead_layer_specific_supervision.md`.
 
+A selector-type control separated SwitchHead's output and value selectors. Output
+selector supervision alone was sufficient for 5/5 causal role modularity; value
+selector supervision alone strongly split value gates but produced no causal role
+modularity. See `doc/phase3_toy_switchhead_selector_type.md`.
+
 So the best interpretation is:
 
 ```text
@@ -438,5 +443,7 @@ SwitchHead-specific tests are:
   `doc/phase3_toy_switchhead_two_layer.md`
 - Layer-specific supervision memo:
   `doc/phase3_toy_switchhead_layer_specific_supervision.md`
+- Selector-type control memo:
+  `doc/phase3_toy_switchhead_selector_type.md`
 - Feasibility memo:
   `doc/switchhead_followup_feasibility.md`

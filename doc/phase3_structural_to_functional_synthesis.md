@@ -59,6 +59,7 @@ strong enough, and present long enough to reshape branch or expert computations.
 | SwitchHead reversed-label control | Reversed targets local -> expert 1 and induction -> expert 0 were reliable in 5/5 seeds at end step 800. | The induced roles follow the cue labels under sufficient duration, rather than exposing a fixed expert identity. |
 | Two-layer SwitchHead | Extra depth solved smoothly but did not create spontaneous modularity (`gate same-top=1.00`, routed match `0.20`); induced two-layer training reached routed match `1.00`. | The one-layer result survives depth; induced causal expert modularity localizes to layer 1. |
 | Layer-specific SwitchHead supervision | Layer-0-only supervision split gates but had routed match `0.40`; layer-1-only reached `0.80`; both layers reached `1.00`. | The cue must reach the causal layer; upstream gate splitting alone is not enough. |
+| SwitchHead selector-type control | Output-only supervision reached routed match `1.00`; value-only supervision split value gates but had routed match `0.00`; both split causally but hurt local accuracy. | The output selector, which writes back to the residual stream, is the clean sufficient cue. |
 | Pythia repeat/copy follow-up | Pythia heads show cross-seed functional role stability after alignment, and causal transfer strengthens through training. | Real transformers support the role-stability part, but do not by themselves establish branch modularity. |
 
 ## Current Answer
@@ -119,7 +120,9 @@ The branch computations need time under role-aligned routing before causal
 modularity consolidates. The SwitchHead strength-duration sweep further suggests
 that the relevant quantity is not simply whether a cue exists, but whether it
 crosses a duration/strength threshold and reaches the layer where the causal
-role module forms.
+role module forms. In SwitchHead specifically, the selector-type control suggests
+that the output selector is the clean path because it controls which expert
+writes the role-specific result back to the residual stream.
 
 ## Metrics That Matter Most
 
@@ -169,6 +172,9 @@ This framing makes positive and negative results both useful:
   less hand-designed routed-attention module.
 - layer-localization result: in two-layer SwitchHead, the causal split localizes
   to the later layer, and supervising only the upstream layer is not enough.
+- selector-type result: in SwitchHead, value routing alone can split internal
+  expert reads without producing causal role modularity; output routing is the
+  clean sufficient cue.
 
 ## Next Narrow Experiment
 
@@ -181,6 +187,7 @@ trajectory showing gate-before-causality;
 strength-duration threshold;
 reversed-label control.
 two-layer localization and layer-specific supervision controls.
+selector-type control separating output and value routing.
 ```
 
 The next narrow experiment should test whether the induced expert modules are
@@ -192,10 +199,10 @@ expert outputs/gates across local and induction positions to test whether the
 roles transfer with the routed expert or depend on residual-stream context.
 ```
 
-If that path is too implementation-heavy, the next-best move is to separate
-SwitchHead's output selector from its value selector:
+If that path is too implementation-heavy, the next-best move is to repeat the
+selector-type control in the two-layer setting:
 
 ```text
-supervise output selection only vs value selection only vs both, then ask which
-selector actually controls the causal expert split.
+test whether value-only pressure also fails in two-layer SwitchHead, and whether
+output-only pressure on layer 1 remains the cleanest sufficient intervention.
 ```
