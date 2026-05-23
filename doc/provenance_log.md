@@ -890,7 +890,7 @@ functional modularity?
   target chunks as they become available.
 - Recorded the pilot in `doc/phase1_pythia160m_local_copy_pilot.md`.
 
-## 2026-05-22 22:05 PDT - Local-copy target seeds 4-6 completed
+## 2026-05-22 - Local-copy target seeds 4-6 completed
 
 - Completed the Pythia-160M final-checkpoint local-copy target chunk for target
   seeds 4-6 under the same settings as the target seeds 1-3 chunk.
@@ -911,7 +911,7 @@ functional modularity?
   merged, the combined result over target seeds 1-6 has aligned-minus-same
   `0.6939` over 48 ordered source-target pairs.
 
-## 2026-05-22 22:15 PDT - Local-copy all-target result completed
+## 2026-05-22 - Local-copy all-target result completed
 
 - Completed the final Pythia-160M final-checkpoint local-copy target chunk for
   target seeds 7-9 under the same settings.
@@ -945,7 +945,7 @@ functional modularity?
 - Updated `scripts/analyze_local_copy_chunks.py` to write
   `target_diagnostic_summary.csv` into the combined result directory.
 
-## 2026-05-22 22:50 PDT - Local-copy layer-selection follow-up
+## 2026-05-22 - Local-copy layer-selection follow-up
 
 - Added `scripts/pythia_local_copy_layer_causal_sweep.py`.
 - Ran all-layer local-copy causal sweeps with the same synthetic task and
@@ -981,7 +981,7 @@ functional modularity?
 - Wrote the follow-up memo:
   `doc/phase1_pythia160m_local_copy_layer_selection.md`.
 
-## 2026-05-22 23:05 PDT - Cross-layer candidate-pool local-copy transfer
+## 2026-05-22 - Cross-layer candidate-pool local-copy transfer
 
 - Added `scripts/pythia_local_copy_candidate_pool_alignment.py`.
 - Ran candidate-pool transfer on Pythia-160M final checkpoint:
@@ -1010,7 +1010,7 @@ functional modularity?
 - Wrote the candidate-pool memo:
   `doc/phase1_pythia160m_local_copy_candidate_pool.md`.
 
-## 2026-05-22 23:30 PDT - Candidate-pool local-copy checkpoint trajectory
+## 2026-05-22 - Candidate-pool local-copy checkpoint trajectory
 
 - Ran the cross-layer candidate-pool local-copy experiment at additional
   Pythia-160M checkpoints: `step0`, `step4000`, and `step16000`.
@@ -1029,3 +1029,24 @@ functional modularity?
 - Interpretation: local-copy candidate-pool transfer is not an initialization
   artifact. It is already detectable by `step4000` and grows in causal magnitude
   through training.
+
+## 2026-05-22 - Pythia-70M local-copy candidate-pool check
+
+- Ran Pythia-70M final-checkpoint candidate-pool checks with all 9 seeds.
+- Layers 1-3 candidate pool:
+  `results/phase1_pythia70m_local_copy_candidate_pool_layers1_3_top2/`.
+  - own top excess over random: `0.0508`;
+  - same-index transfer: `0.1463`;
+  - aligned transfer: `0.1115`;
+  - aligned-minus-same: `-0.0348`;
+  - aligned better count: `35/72`.
+- All-layer candidate pool:
+  `results/phase1_pythia70m_local_copy_candidate_pool_all_layers_top2/`.
+  - own top excess over random: `0.2692`;
+  - same-index transfer: `0.1043`;
+  - aligned transfer: `0.1854`;
+  - aligned-minus-same: `0.0810`;
+  - aligned better count: `41/72`.
+- Interpretation: unlike Pythia-160M, Pythia-70M does not robustly implement the
+  synthetic local-copy causal role. This should be treated as a capacity/task
+  caveat rather than a contradiction of the 160M cross-layer alignment result.

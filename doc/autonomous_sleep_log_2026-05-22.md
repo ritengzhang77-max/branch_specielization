@@ -74,7 +74,7 @@ or negative result would also be informative.
 - Added `scripts/analyze_local_copy_chunks.py` so completed target chunks can be
   merged as they become available.
 
-## 2026-05-22 21:45-22:05 PDT
+## Later Sleep-Block Checkpoint: Local-Copy Targets 4-6
 
 - Committed and pushed the local-copy chunk combiner checkpoint:
   `336bab2 Add local-copy chunk combiner`.
@@ -96,7 +96,7 @@ or negative result would also be informative.
   - aligned better count: `28/48`.
 - Started the final local-copy target chunk for target seeds 7-9.
 
-## 2026-05-22 22:05-22:15 PDT
+## Later Sleep-Block Checkpoint: Local-Copy All-Target Result
 
 - Completed the final Pythia-160M local-copy target chunk for target seeds 7-9.
 - Result over 24 ordered source-target pairs:
@@ -125,7 +125,7 @@ or negative result would also be informative.
 - Updated `scripts/analyze_local_copy_chunks.py` to write
   `target_diagnostic_summary.csv` for this target-level heterogeneity check.
 
-## 2026-05-22 22:15-22:50 PDT
+## Later Sleep-Block Checkpoint: Layer-Selection Follow-Up
 
 - Added `scripts/pythia_local_copy_layer_causal_sweep.py` to test the top
   local-copy probe head in every layer against same-layer random controls.
@@ -154,7 +154,7 @@ or negative result would also be informative.
   is therefore too brittle; the next test should use a cross-layer candidate
   pool rather than a single chosen layer.
 
-## 2026-05-22 22:50-23:05 PDT
+## Later Sleep-Block Checkpoint: Cross-Layer Candidate Pool
 
 - Added `scripts/pythia_local_copy_candidate_pool_alignment.py`.
 - Ran a cross-layer candidate-pool local-copy transfer test:
@@ -179,7 +179,7 @@ or negative result would also be informative.
   seeds after cross-layer role relabeling. The earlier weak result was caused by
   fixed structural-slot assumptions, not absence of a reusable function.
 
-## 2026-05-22 23:05-23:30 PDT
+## Later Sleep-Block Checkpoint: Candidate-Pool Trajectory
 
 - Ran the same cross-layer candidate-pool local-copy experiment at earlier
   Pythia-160M checkpoints.
@@ -210,3 +210,23 @@ or negative result would also be informative.
 - Current interpretation: local-copy candidate-pool transfer is absent at
   initialization, detectable by `step4000`, and grows in causal magnitude
   through training.
+
+## Later Sleep-Block Checkpoint: Pythia-70M Model-Size Check
+
+- Ran Pythia-70M final-checkpoint candidate-pool checks to test model-size
+  generalization.
+- Layers 1-3, top 2:
+  - own top excess over random: `0.0508`;
+  - same-index transfer: `0.1463`;
+  - aligned transfer: `0.1115`;
+  - aligned-minus-same: `-0.0348`;
+  - aligned better count: `35/72`.
+- All layers 0-5, top 2:
+  - own top excess over random: `0.2692`;
+  - same-index transfer: `0.1043`;
+  - aligned transfer: `0.1854`;
+  - aligned-minus-same: `0.0810`;
+  - aligned better count: `41/72`.
+- Interpretation: 70M does not robustly instantiate the synthetic local-copy
+  causal role. This is a capacity/task caveat rather than strong evidence
+  against the alignment method.

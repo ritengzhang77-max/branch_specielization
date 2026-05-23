@@ -341,12 +341,18 @@ Second-role result:
   (`aligned-minus-same=-0.0004`), `step4000` is already positive (`0.4191`),
   `step16000` is stronger (`1.2037`), and the final checkpoint is strongest
   (`1.7838`).
+- A Pythia-70M final-checkpoint check is weak/negative. Layers 1-3 gave
+  own-top excess `0.0508` and aligned-minus-same `-0.0348`; all layers 0-5 gave
+  own-top excess `0.2692` and aligned-minus-same `0.0810`. The likely issue is
+  that 70M does not robustly implement the synthetic local-copy behavior, so
+  functional transfer has little causal substrate.
 
 The next Phase 1 question is now:
 
 ```text
-Does cross-layer candidate-pool functional transfer generalize beyond
-local-copy/repeat-match, or to larger model sizes?
+Does the 160M local-copy candidate-pool result persist in larger Pythia models
+or in a naturalistic local-copy/induction probe, where the behavior is more
+robustly learned?
 ```
 
 ### Phase 4: Mechanistic Interpretation

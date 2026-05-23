@@ -300,6 +300,12 @@ These three numbers (S, C, M) are what the project should report for each archit
   (`aligned-minus-same=1.7838`). This supports a training-development claim:
   cross-seed functional role alignment appears early and then grows in causal
   magnitude.
+- A Pythia-70M model-size check did not reproduce the 160M local-copy result.
+  With layers 1-3, own-top excess was only `0.0508` and aligned-minus-same was
+  `-0.0348`; with all layers 0-5, own-top excess rose only to `0.2692` and
+  aligned-minus-same to `0.0810`. This is best interpreted as a capacity/task
+  caveat: the 70M heads are only weakly causal for this synthetic local-copy
+  behavior, so there is little functional role for alignment to transfer.
 
 ### C. Resources concretely available (with HF / GitHub paths)
 - Pythia seeds: `EleutherAI/pythia-{14m,70m,160m,410m}-seed{1..9}`, plus `pythia-160m-weight-seed{1-3}` and `pythia-160m-data-seed{1-3}`. 154 checkpoints per model (steps 0, 1, 2, 4, 8, …, 143000). GitHub: `EleutherAI/pythia`.
