@@ -324,12 +324,18 @@ Second-role result:
   probe-defined structural/role specialization can transfer functionally when
   the target seed actually uses that probed head causally, but a high probe score
   alone is not sufficient.
+- A layer causal sweep showed that the weak layer-3 targets do have causal
+  local-copy heads elsewhere. The best causal local-copy layer is layer 3 for
+  seeds 1, 2, 3, 7, and 9; layer 2 for seed 4; and layer 4 for seeds 5, 6, and
+  8. A fixed layers 2+4 transfer rule improves the weak targets but is worse
+  than layer 3 globally (`aligned-minus-same=0.2441` vs `0.6995`), so the issue
+  is not solved by picking one alternative fixed layer set.
 
 The next Phase 1 question is now:
 
 ```text
-Can we predict functional alignment-transfer success from the probe-causal gap,
-and can a better local-copy head-selection rule reduce the weak target seeds?
+Can a cross-layer candidate-pool method identify causally active local-copy
+heads before testing cross-seed transfer?
 ```
 
 ### Phase 4: Mechanistic Interpretation

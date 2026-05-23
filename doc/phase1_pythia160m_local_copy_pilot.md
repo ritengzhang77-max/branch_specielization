@@ -275,14 +275,30 @@ This supports a more precise version of the alignment-transfer claim: structural
 alignment can reveal functionally reusable heads, but a probe-only specialization
 score is not enough to guarantee that the target seed uses that role causally.
 
+## Layer-Selection Follow-Up
+
+A follow-up layer sweep showed that the weak layer-3 targets do have causal
+local-copy heads, just in different layers:
+
+- seeds 1, 2, 3, 7, and 9: best causal local-copy head is in layer 3;
+- seed 4: best causal local-copy head is in layer 2;
+- seeds 5, 6, and 8: best causal local-copy head is in layer 4.
+
+The fixed layers 2+4 rule rescues own-head causality for the weak targets
+(`1.8528` own excess over random), but it is worse than layer 3 on the full
+all-target transfer comparison (`aligned-minus-same=0.2441` vs `0.6995` for
+layer 3). Details are in
+`doc/phase1_pythia160m_local_copy_layer_selection.md`.
+
 ## Recommended Next Step
 
-Turn the target heterogeneity into the next explicit test:
+Turn the target heterogeneity into a candidate-pool test:
 
 ```text
-Does the probe-causal gap explain when specialization transfers functionally?
+Can a cross-layer candidate-pool method identify causally active local-copy
+heads before testing cross-seed transfer?
 ```
 
-Concretely, run a layer sweep for local-copy or a second probe variant and check
-whether choosing heads by causal effect, not only attention-probe score, removes
-the weak target seeds 4, 5, 6, and 8.
+Concretely, compare top-by-probe, top-by-source-causality, and aligned transfer
+from top-N cross-layer candidate heads. The goal is to avoid silently treating a
+high attention-probe score as if it were already a causal module.

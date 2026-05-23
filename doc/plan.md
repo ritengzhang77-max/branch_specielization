@@ -274,6 +274,15 @@ These three numbers (S, C, M) are what the project should report for each archit
   correlated strongly with aligned-minus-same transfer (`r ~= 0.97`), suggesting
   that probe-defined specialization only transfers functionally when the target
   seed actually uses the selected local-copy head causally.
+- A layer-selection follow-up resolved the weak local-copy targets. All 9 seeds
+  have a causal local-copy head, but the best causal layer is seed-dependent:
+  layer 3 for seeds 1, 2, 3, 7, and 9; layer 2 for seed 4; and layer 4 for seeds
+  5, 6, and 8. A fixed layers 2+4 transfer run rescued own-head causality in the
+  previously weak targets (`own_top_excess=1.8528`) but was worse globally than
+  layer 3 (`aligned-minus-same=0.2441` vs `0.6995`). This sharpens the framing:
+  structural specialization can lead to functional specialization, but not at a
+  fixed raw layer/head slot across seeds; candidate selection must distinguish
+  probe behavior from causal role usage.
 
 ### C. Resources concretely available (with HF / GitHub paths)
 - Pythia seeds: `EleutherAI/pythia-{14m,70m,160m,410m}-seed{1..9}`, plus `pythia-160m-weight-seed{1-3}` and `pythia-160m-data-seed{1-3}`. 154 checkpoints per model (steps 0, 1, 2, 4, 8, …, 143000). GitHub: `EleutherAI/pythia`.

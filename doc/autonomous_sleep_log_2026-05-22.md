@@ -124,3 +124,32 @@ or negative result would also be informative.
   the probed head causally.
 - Updated `scripts/analyze_local_copy_chunks.py` to write
   `target_diagnostic_summary.csv` for this target-level heterogeneity check.
+
+## 2026-05-22 22:15-22:50 PDT
+
+- Added `scripts/pythia_local_copy_layer_causal_sweep.py` to test the top
+  local-copy probe head in every layer against same-layer random controls.
+- Ran the layer sweep first on weak layer-3 targets 4, 5, 6, and 8:
+  - seed 4 best causal head: L2H10, excess `1.4051`;
+  - seed 5 best causal head: L4H6, excess `2.0489`;
+  - seed 6 best causal head: L4H4, excess `1.8105`;
+  - seed 8 best causal head: L4H6, excess `1.8033`.
+- Ran a layers 2+4 cross-seed transfer test on weak targets 4, 5, 6, and 8.
+  It rescued own-head causality (`own_top_excess=1.8528`) and produced positive
+  but modest aligned transfer over same index (`aligned-minus-same=0.3222`,
+  aligned better `19/32`).
+- Ran the complementary layers 2+4 transfer chunk for targets 1, 2, 3, 7, and
+  9. It was much weaker than layer 3 on these targets
+  (`own_top_excess=0.1331`, `aligned-minus-same=0.1816`).
+- Combined the layers 2+4 chunks. Across all targets, layers 2+4 has
+  `aligned-minus-same=0.2441` over 72 ordered source-target pairs, worse than
+  the layer-3 all-target result (`0.6995`).
+- Ran the all-layer causal sweep for the remaining targets:
+  - seeds 1, 2, 3, 7, and 9 are genuinely layer-3 local-copy seeds.
+- Added `scripts/analyze_local_copy_layer_sweeps.py` and wrote the layer
+  selection memo:
+  `doc/phase1_pythia160m_local_copy_layer_selection.md`.
+- Current interpretation: local-copy functional specialization exists in all
+  seeds, but its structural layer is seed-dependent. Fixed-slot specialization
+  is therefore too brittle; the next test should use a cross-layer candidate
+  pool rather than a single chosen layer.

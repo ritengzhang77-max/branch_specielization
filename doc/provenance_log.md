@@ -944,3 +944,39 @@ functional modularity?
   is not sufficient.
 - Updated `scripts/analyze_local_copy_chunks.py` to write
   `target_diagnostic_summary.csv` into the combined result directory.
+
+## 2026-05-22 22:50 PDT - Local-copy layer-selection follow-up
+
+- Added `scripts/pythia_local_copy_layer_causal_sweep.py`.
+- Ran all-layer local-copy causal sweeps with the same synthetic task and
+  same-layer random-head controls.
+- Weak layer-3 targets were not missing local-copy function; they used different
+  layers:
+  - seed 4: best L2H10, excess `1.4051`, layer-3 excess `-0.3294`;
+  - seed 5: best L4H6, excess `2.0489`, layer-3 excess `0.1554`;
+  - seed 6: best L4H4, excess `1.8105`, layer-3 excess `-0.0029`;
+  - seed 8: best L4H6, excess `1.8033`, layer-3 excess `-0.1622`.
+- Remaining targets were genuinely layer-3 seeds:
+  - seed 1: L3H2, excess `1.9411`;
+  - seed 2: L3H4, excess `3.8196`;
+  - seed 3: L3H5, excess `2.6416`;
+  - seed 7: L3H5, excess `2.9073`;
+  - seed 9: L3H5, excess `2.4525`.
+- Added `scripts/analyze_local_copy_layer_sweeps.py` and combined the layer
+  sweeps in
+  `results/phase1_pythia160m_local_copy_layer_sweep_combined/`.
+- Ran cross-seed transfer with top local-copy heads from layers 2 and 4:
+  - weak targets 4, 5, 6, 8:
+    `own_top_excess=1.8528`, `aligned-minus-same=0.3222`, aligned better
+    `19/32`;
+  - other targets 1, 2, 3, 7, 9:
+    `own_top_excess=0.1331`, `aligned-minus-same=0.1816`, aligned better
+    `21/40`;
+  - combined all targets:
+    `own_top_excess=0.8974`, `aligned-minus-same=0.2441`, aligned better
+    `40/72`.
+- The fixed layers 2+4 rule is not globally better than the layer-3 result
+  (`aligned-minus-same=0.6995`). It fixes different seeds while harming the
+  original layer-3 seeds.
+- Wrote the follow-up memo:
+  `doc/phase1_pythia160m_local_copy_layer_selection.md`.
