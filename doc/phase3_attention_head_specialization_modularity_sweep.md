@@ -42,15 +42,16 @@ In this script, `top_specialization` is the normalized causal mass of the top
 head within its layer. A higher number means the role depends much more on one
 head than on peer heads in that layer.
 
-### Functional Modularity
+### Pairwise Functional Separability
 
-Modularity asks:
+The experiment in this memo does not measure full ontology-level modularity. It
+measures a narrower pairwise proxy:
 
 ```text
 For two roles r1 and r2, are p_r1 and p_r2 separated across heads?
 ```
 
-This sweep adds two explicit head-level modularity metrics over flattened
+This sweep adds two explicit head-level separability metrics over flattened
 `(layer, head)` slots:
 
 ```text
@@ -72,9 +73,14 @@ same_top_slot_rate = fraction of seeds where local and induction have the same
                      top causal head slot.
 ```
 
+This is useful as a first test, but it is not the final modularity definition.
+Full functional modularity would require a role ontology with many functions,
+subfunctions, and task variants, then ask whether related subfunctions cluster
+inside the same heads or head groups while unrelated functions separate.
+
 ### Why The Difference Matters
 
-Specialization and modularity are related but not equivalent.
+Specialization and pairwise separability are related but not equivalent.
 
 High specialization without modularity:
 
@@ -94,12 +100,17 @@ induction p(h) = [0.05, 0.05, 0.45, 0.45]
 
 Neither role is one-head-clean, but the two roles are separated.
 
-For this project:
+For this project, the terminology should be:
 
 ```text
-specialization = "does a role concentrate into a head?"
-modularity     = "do different roles separate across heads?"
+specialization          = "does a role concentrate into a head?"
+pairwise separability   = "do two measured roles separate across heads?"
+functional modularity   = "do many related roles/subroles form a stable,
+                           interpretable partition across heads?"
 ```
+
+So the local-vs-induction experiment can support or weaken a modularity story,
+but it cannot by itself prove full modularity.
 
 ## Experiment
 
@@ -155,7 +166,7 @@ All models learned the task well enough for the head-level analysis. Every
 config had minimum held-out local and induction accuracy above `0.99` across the
 10 seeds.
 
-| Config | Local acc. | Induction acc. | Local top spec. | Induction top spec. | Same top slot | TV distance | Local top dims | Induction top dims |
+| Config | Local acc. | Induction acc. | Local top spec. | Induction top spec. | Same top slot | Pairwise TV | Local top dims | Induction top dims |
 |---|---:|---:|---:|---:|---:|---:|---|---|
 | `uniform4` | 1.0000 | 0.9994 | 0.562 | 0.579 | 0.30 | 0.398 | `{"32": 10}` | `{"32": 10}` |
 | `hetero4` | 1.0000 | 1.0000 | 0.925 | 0.819 | 0.20 | 0.528 | `{"64": 10}` | `{"16": 5, "64": 5}` |
@@ -208,7 +219,14 @@ and 64-dim heads depending on seed and layout.
 
 ### Q2: Does heterogeneous head dimension create functional modularity?
 
-The evidence is positive but mixed.
+This experiment only answers a narrower question:
+
+```text
+Does heterogeneous head dimension increase pairwise causal separability between
+the local-copy role and the induction-copy role?
+```
+
+For that narrower question, the evidence is positive but mixed.
 
 The original one-64 `hetero4` layout improves role separation relative to
 `uniform4`:
@@ -218,8 +236,8 @@ uniform4 TV distance: 0.398, same top slot: 0.30
 hetero4  TV distance: 0.528, same top slot: 0.20
 ```
 
-This means local and induction are more separated in causal head dependence
-under `hetero4` than under the equal-four-head baseline.
+This means local and induction are more separated in causal head dependence under
+`hetero4` than under the equal-four-head baseline.
 
 But this is not a clean universal modularity result:
 
@@ -238,19 +256,25 @@ uniform2 TV distance: 0.511, same top slot: 0.20
 ```
 
 `uniform2` has no within-layer head-dimension heterogeneity, yet it gets
-role-separation comparable to `hetero4`. So the modularity claim cannot be:
+role-separation comparable to `hetero4`. So even the pairwise separability claim
+cannot be:
 
 ```text
-heterogeneity alone is necessary for local-vs-induction head modularity.
+heterogeneity alone is necessary for local-vs-induction head separability.
 ```
 
 The better current claim is:
 
 ```text
 heterogeneous head dimensions strongly stabilize which structural head slot
-carries a role; functional modularity can appear, but it is a separate outcome
-that also depends on capacity layout and task pressure.
+carries a role; pairwise functional separability can appear, but it is a
+separate outcome that also depends on capacity layout and task pressure.
 ```
+
+To claim full functional modularity, the project needs a broader role ontology:
+for example previous-token/local-copy variants, induction variants, key-value
+lookup variants, suppression/distractor roles, positional roles, and possibly
+syntax/name-mover-style probes in real models.
 
 ## Current Bottom Line
 
@@ -261,31 +285,36 @@ axis:
 structural head-dimension heterogeneity -> stable functional specialization slots
 ```
 
-The modularity axis is not yet fully proven:
+The modularity axis is not yet proven:
 
 ```text
 structural head-dimension heterogeneity -> functional modularity
 ```
 
-is only partially supported. The toy evidence says heterogeneity can improve
-local-vs-induction separation in some layouts, but a non-heterogeneous wide-head
-control can also separate the roles.
+is only weakly and indirectly supported. The toy evidence says heterogeneity can
+improve local-vs-induction pairwise separation in some layouts, but a
+non-heterogeneous wide-head control can also separate the two roles. This is not
+enough to claim ontology-level modularity.
 
 This is not a failure. It means the paper should keep the two questions separate:
 
 1. Does structure make role-to-head assignment stable?
 2. Does structure make different roles causally separable across heads?
+3. Do whole families of related roles/subroles form stable head groups?
 
 The answer so far is:
 
 ```text
 Q1: yes, strongly in toy ordinary-head models.
-Q2: sometimes, but not automatically and not uniquely because of heterogeneity.
+Q2: sometimes for local-vs-induction, but not automatically and not uniquely
+    because of heterogeneity.
+Q3: not answered yet.
 ```
 
 ## Next Step
 
-Stay with ordinary attention heads and strengthen the modularity test.
+Stay with ordinary attention heads and strengthen the modularity test by moving
+from pairwise separability to a small role ontology.
 
 Recommended next experiments:
 
@@ -298,9 +327,12 @@ Recommended next experiments:
 3. Run more task pairs, not just local-vs-induction:
    local copy vs key-value recall, previous-token vs induction, and local copy
    vs suppression-style distractor.
-4. Add harder competition where both roles must use similar token positions or
+4. Define a role/subrole ontology and evaluate clustering:
+   previous-token/local-copy variants, induction variants, key-value lookup
+   variants, positional/BOS-style probes, and distractor/suppression probes.
+5. Add harder competition where both roles must use similar token positions or
    the same query token, while still using ordinary attention heads.
-5. Validate the head-level metrics on real pretrained models by measuring local
+6. Validate the head-level metrics on real pretrained models by measuring local
    copy and induction-style roles in Pythia/MultiBERT heads.
 
 Do not switch the unit of analysis unless explicitly approved.

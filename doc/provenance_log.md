@@ -2259,9 +2259,11 @@ computations to consolidate.
   `[16,16,32,64] -> L1H3`, `[64,16,16,32] -> L1H0`,
   `[16,64,16,32] -> L1H1`, and `[16,32,64,16] -> L1H2`, each in `10/10`
   seeds.
-- Main modularity result: `hetero4` improved local-vs-induction role separation
-  over `uniform4` (`TV=0.528` vs `0.398`), but `uniform2` also had high
-  separation (`TV=0.511`). Interpretation update: heterogeneous head dimensions
-  strongly stabilize functional specialization slots, while functional
-  modularity is a separate outcome that appears in some layouts but is not
-  automatic or uniquely caused by heterogeneity.
+- Main pairwise-separability result: `hetero4` improved local-vs-induction role
+  separation over `uniform4` (`TV=0.528` vs `0.398`), but `uniform2` also had
+  high separation (`TV=0.511`). Interpretation update: heterogeneous head
+  dimensions strongly stabilize functional specialization slots, while
+  two-role separability is a separate outcome that appears in some layouts but
+  is not automatic or uniquely caused by heterogeneity. Full ontology-level
+  functional modularity remains untested until the project evaluates many
+  roles/subroles and asks whether related roles cluster together across heads.

@@ -100,7 +100,7 @@ doc/phase3_toy_induction_head_dim_intervention.md
 
 These are the strongest current results for the user's intended project.
 
-### Latest Evidence: Head-Level Specialization vs Modularity
+### Latest Evidence: Head-Level Specialization vs Pairwise Separability
 
 A larger ordinary-attention-head local-vs-induction sweep was run on
 2026-05-23:
@@ -135,7 +135,7 @@ structural head-dimension heterogeneity can create stable functional
 specialization slots in ordinary attention heads.
 ```
 
-The modularity result is mixed:
+The local-vs-induction pairwise separability result is mixed:
 
 ```text
 hetero4 improves local-vs-induction role separation over uniform4
@@ -143,13 +143,20 @@ hetero4 improves local-vs-induction role separation over uniform4
 (TV distance 0.511).
 ```
 
+This should not be described as full ontology-level modularity. It compares two
+roles, local copy and induction copy, across a small number of ordinary head
+slots. A full modularity claim needs many roles/subroles and a clustering or
+partition analysis over the resulting head-role matrix.
+
 This means the project should keep two questions separate:
 
 ```text
 Q1: Does structure make role-to-head assignment stable?  Current toy answer: yes.
-Q2: Does structure make different roles separate across heads? Current toy
-    answer: sometimes, but not automatically and not uniquely because of
-    heterogeneity.
+Q2: Does structure make two measured roles separate across heads? Current toy
+    answer: sometimes for local-vs-induction, but not automatically and not
+    uniquely because of heterogeneity.
+Q3: Does structure produce ontology-level functional modularity across many
+    related roles/subroles? Current answer: not tested yet.
 ```
 
 ## What Must Be Reframed
@@ -238,14 +245,17 @@ does moving the 64-dim head move the role?
 does heterogeneity reduce top-head variance across seeds?
 ```
 
-Modularity metrics:
+Pairwise separability metrics:
 
 ```text
-same_top_head lower is more modular
+same_top_head lower is more pairwise separated
 role_distribution_distance higher is more separated
 local top specialization high and induction top specialization high, with
-different top heads, is stronger modularity
+different top heads, is stronger pairwise separability
 ```
+
+Full functional modularity metrics require a broader role ontology and should
+test whether related subroles cluster together while unrelated roles separate.
 
 ### Decision Criteria
 
@@ -256,19 +266,28 @@ one role repeatedly follows the 64-dim head across seeds and layout
 permutations.
 ```
 
-Evidence for attention-head modularity:
+Evidence for local-vs-induction pairwise separability:
 
 ```text
 local and induction reliably choose different heads, with high
 role_distribution_distance and low same_top_head.
 ```
 
+Evidence for ontology-level functional modularity:
+
+```text
+many roles/subroles form stable, interpretable clusters over head slots, with
+related subroles sharing groups and unrelated roles separating.
+```
+
 Possible outcomes:
 
-1. Heterogeneity gives specialization but not modularity.
-2. Heterogeneity gives both specialization and modularity.
+1. Heterogeneity gives specialization but not pairwise separability.
+2. Heterogeneity gives both specialization and pairwise separability.
 3. Heterogeneity only gives capacity dominance.
-4. Uniform controls already modularize, weakening the heterogeneity claim.
+4. Uniform controls already separate the measured roles, weakening the
+   heterogeneity-specific separability claim.
+5. Broader role ontology does or does not support full functional modularity.
 
 All four outcomes are informative, but they must be reported as ordinary
 attention-head results.

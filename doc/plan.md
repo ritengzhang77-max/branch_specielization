@@ -181,12 +181,14 @@ These three numbers (S, C, M) are what the project should report for each archit
   specialization result: across four one-64 heterogeneous layouts, the local
   causal role followed the 64-dim head slot in `40/40` models. Moving the 64-dim
   head moved the local role (`L1H3`, `L1H0`, `L1H1`, `L1H2` respectively).
-- The same sweep gave mixed but useful modularity evidence. `hetero4` improved
-  local-vs-induction causal role separation over `uniform4` (`TV=0.528` vs
-  `0.398`), but `uniform2` also separated the roles well (`TV=0.511`). This
-  supports keeping two claims separate: structural heterogeneity strongly
-  stabilizes role-to-head assignment, while functional modularity is an
-  additional outcome that depends on layout and task pressure.
+- The same sweep gave mixed but useful pairwise-separability evidence.
+  `hetero4` improved local-vs-induction causal role separation over `uniform4`
+  (`TV=0.528` vs `0.398`), but `uniform2` also separated the roles well
+  (`TV=0.511`). This supports keeping three claims separate: structural
+  heterogeneity strongly stabilizes role-to-head assignment; two-role causal
+  separability can appear depending on layout and task pressure; full
+  ontology-level functional modularity remains untested until the project uses
+  many roles/subroles and a clustering/partition analysis.
 - Adding another high-capacity head, or adding separate branch towers without
   routing, does not automatically produce role-specific functional modularity.
 - Oracle routing can produce branch-level functional modularity.
