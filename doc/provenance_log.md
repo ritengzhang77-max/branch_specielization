@@ -1094,6 +1094,27 @@ functional modularity?
   - 410M: mean `1.6554`, bootstrap CI `[1.0527, 2.2303]`,
     sign `p=0.0029`.
 
+## 2026-05-22 - Pythia-410M candidate-pool trajectory
+
+- Ran Pythia-410M candidate-pool checks for `step4000` and `step16000` using
+  the same layers 2-6, top-2 setup as the final-checkpoint run.
+- Result directories:
+  - `results/phase1_pythia410m_local_copy_candidate_pool_layers2_6_top2_step4000/`;
+  - `results/phase1_pythia410m_local_copy_candidate_pool_layers2_6_top2_step16000/`;
+  - combined trajectory:
+    `results/phase1_pythia410m_local_copy_candidate_pool_trajectory/`.
+- Trajectory:
+  - `step4000`: own top excess `1.3363`, aligned-minus-same `1.2062`,
+    aligned better `72/72`;
+  - `step16000`: own top excess `4.1083`, aligned-minus-same `3.4057`,
+    aligned better `71/72`;
+  - `step143000`: own top excess `4.1723`, aligned-minus-same `1.6554`,
+    aligned better `49/72`.
+- Interpretation: 410M transfer is strongly positive at all selected trained
+  checkpoints, but it is not monotonic under the fixed layers 2-6 candidate
+  window. The result peaks at `step16000` and becomes less pairwise consistent
+  by final checkpoint.
+
 ## 2026-05-22 - Sleep checkpoint summary
 
 - Wrote `doc/autonomous_sleep_checkpoint_summary_2026-05-22.md`.

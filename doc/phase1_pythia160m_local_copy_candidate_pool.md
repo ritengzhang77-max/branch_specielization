@@ -133,6 +133,19 @@ and the pair-level aligned-better count is `49/72` (`p ~= 0.0029`, two-sided
 sign test). Pair-level consistency is lower than 160M, but the mean functional
 transfer effect remains large.
 
+The Pythia-410M selected-checkpoint trajectory is not monotonic:
+
+| Checkpoint | Own top excess | Same-index transfer | Aligned transfer | Aligned - same | Aligned better |
+|---|---:|---:|---:|---:|---:|
+| step4000 | 1.3363 | 0.0624 | 1.2686 | 1.2062 | 72/72 |
+| step16000 | 4.1083 | 0.1679 | 3.5737 | 3.4057 | 71/72 |
+| step143000 | 4.1723 | 0.2562 | 1.9116 | 1.6554 | 49/72 |
+
+The local-copy role is already strong by `step4000`, peaks by this metric at
+`step16000`, and remains positive but less clean by the final checkpoint. This
+may indicate later redistribution of the synthetic local-copy behavior or a
+candidate-window mismatch at final.
+
 Significance summaries:
 
 | Model | Pair mean CI | Pair sign p | Target mean CI | Target sign p |
@@ -180,5 +193,7 @@ was evidence that fixed structural slots are too brittle.
   `results/phase1_pythia70m_local_copy_candidate_pool_all_layers_top2/`.
 - Pythia-410M layers 2-6 check:
   `results/phase1_pythia410m_local_copy_candidate_pool_layers2_6_top2/`.
+- Pythia-410M trajectory:
+  `results/phase1_pythia410m_local_copy_candidate_pool_trajectory/`.
 - Prior layer-selection memo:
   `doc/phase1_pythia160m_local_copy_layer_selection.md`.

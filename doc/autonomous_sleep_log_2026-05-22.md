@@ -262,3 +262,27 @@ or negative result would also be informative.
   - 410M: `[1.0261, 2.2362]`, sign `p=0.0039`.
 - Interpretation: the model-size pattern is statistically cleaner after this
   check: 70M is inconclusive/weak, while 160M and 410M are robustly positive.
+
+## Later Sleep-Block Checkpoint: Pythia-410M Trajectory
+
+- Ran Pythia-410M candidate-pool checks at `step4000` and `step16000` and
+  combined them with the final-checkpoint result.
+- `step4000`:
+  - own top excess over random: `1.3363`;
+  - same-index transfer: `0.0624`;
+  - aligned transfer: `1.2686`;
+  - aligned-minus-same: `1.2062`;
+  - aligned better count: `72/72`.
+- `step16000`:
+  - own top excess over random: `4.1083`;
+  - same-index transfer: `0.1679`;
+  - aligned transfer: `3.5737`;
+  - aligned-minus-same: `3.4057`;
+  - aligned better count: `71/72`.
+- `step143000`:
+  - own top excess over random: `4.1723`;
+  - aligned-minus-same: `1.6554`;
+  - aligned better count: `49/72`.
+- Interpretation: 410M local-copy candidate-pool transfer is already strong by
+  `step4000`, peaks by this metric at `step16000`, and remains positive but
+  less clean at final. This is nonmonotonic unlike the 160M trajectory.

@@ -354,6 +354,11 @@ Second-role result:
   target-level aligned-minus-same CI crosses zero for 70M (`[-0.1332, 0.2989]`)
   but is positive for 160M (`[1.3341, 2.3715]`) and 410M
   (`[1.0261, 2.2362]`).
+- The 410M trajectory is nonmonotonic under the current candidate window:
+  `step4000` aligned-minus-same is `1.2062`, `step16000` is `3.4057`, and final
+  is `1.6554`. This suggests the next larger-model analysis should test whether
+  final-checkpoint role location shifts outside layers 2-6 or whether the
+  synthetic local-copy behavior is redistributed late in training.
 
 The next Phase 1 question is now:
 
