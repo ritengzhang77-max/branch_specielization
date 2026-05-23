@@ -1515,3 +1515,22 @@ functional modularity?
   to the earlier WikiText-2 exact 4-gram task, but 410M still remains much
   weaker and more heterogeneous than 160M. Generic Phase 0 alignment is neutral;
   task-repeat alignment is directionally positive with target-level uncertainty.
+
+## 2026-05-23 - Natural-repeat heterogeneity inspection
+
+- Wrote `doc/phase1_natural_repeat_heterogeneity.md`.
+- Main finding: the weak 410M exact-repeat result is partly driven by
+  same-index outliers and weak target own-head causality, not simply by
+  aligned heads failing.
+- Most important outlier:
+  - 410M exact 8-gram, target seed 6, source seed 3:
+    same-index transfer `0.8055`, task-repeat aligned transfer `0.0599`,
+    aligned-minus-same `-0.7456`;
+  - the same pattern appears in the exact 4-gram run:
+    same-index transfer `0.9588`, task-repeat aligned transfer `0.0577`,
+    aligned-minus-same `-0.9011`.
+- Target seed 4 has negative own-head excess on 410M exact 8-grams (`-0.0958`),
+  so there is little causal role for cross-seed transfer to recover.
+- Interpretation: report aligned transfer and same-index transfer separately.
+  Aligned-minus-same is useful, but can understate role transfer when a raw
+  same-index source seed is unusually good.

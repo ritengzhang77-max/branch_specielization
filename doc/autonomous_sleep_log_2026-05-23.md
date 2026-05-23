@@ -580,3 +580,26 @@ Interpretation: 410M improves when the exact-repeat task uses WikiText-103
 The right wording is not "larger model improves natural-repeat transfer"; it is
 "longer natural repeats reveal a small trained 410M signal, still
 heterogeneous and alignment-basis dependent."
+
+## Progress: Natural-Repeat Heterogeneity Inspection
+
+Wrote `doc/phase1_natural_repeat_heterogeneity.md`.
+
+Main diagnostic points:
+
+- 410M target seed 4 has negative own-head excess on exact 8-grams (`-0.0958`),
+  so there is little target role to transfer.
+- 410M target seed 6 has positive own-head excess (`0.0232`) but unusually
+  strong same-index transfer (`0.1177`), making aligned-minus-same negative
+  even though aligned transfer is positive (`0.0119`).
+- The biggest 410M exact 8-gram failure is target seed 6 from source seed 3:
+  same-index transfer `0.8055`, task-repeat aligned transfer `0.0599`,
+  aligned-minus-same `-0.7456`.
+- The same source-target outlier appears in the 410M exact 4-gram run:
+  same-index transfer `0.9588`, aligned transfer `0.0577`,
+  aligned-minus-same `-0.9011`.
+
+Interpretation: aligned-minus-same is a useful metric, but it is not a neutral
+truth oracle. A few raw same-index source heads can transfer unusually well and
+make aligned-minus-same understate role transfer. The paper should report
+aligned transfer, same-index transfer, and their difference together.

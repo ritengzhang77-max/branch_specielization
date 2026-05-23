@@ -117,3 +117,5 @@ That distinction should be explicit in any paper draft.
   `doc/phase1_naturalistic_span_candidate_pool.md`.
 - Naturally occurring repeat-ngram memo:
   `doc/phase1_natural_repeat_ngram_candidate_pool.md`.
+- Natural-repeat heterogeneity memo:
+  `doc/phase1_natural_repeat_heterogeneity.md`.
