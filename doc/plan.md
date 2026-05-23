@@ -330,11 +330,15 @@ These three numbers (S, C, M) are what the project should report for each archit
   span occurrence. With all-layer candidate pools, Pythia-160M across 9 seeds
   showed a positive but small aligned-transfer effect: own-head excess `0.6458`,
   aligned transfer `0.0665` versus same-index transfer `-0.0170`, and
-  aligned-minus-same `0.0835` with target-level CI `[0.0334, 0.1343]`. Pythia
-  410M was weaker: own-head excess `0.2416`, aligned-minus-same `0.0455`, and
-  target-level CI `[-0.0190, 0.0894]`. This reduces the risk that the synthetic
-  result is purely artificial, but the naturalistic effect is much smaller and
-  should be framed as supporting evidence rather than the main evidence.
+  aligned-minus-same `0.0835` with target-level CI `[0.0334, 0.1343]`. A
+  128-example replication kept the effect almost identical
+  (`aligned-minus-same=0.0816`, target CI `[0.0333, 0.1300]`), while a matched
+  `step0` control was null (`aligned-minus-same=0.0007`, target CI
+  `[-0.0004, 0.0016]`). Pythia 410M was weaker: own-head excess `0.2416`,
+  aligned-minus-same `0.0455`, and target-level CI `[-0.0190, 0.0894]`. This
+  reduces the risk that the synthetic result is purely artificial, but the
+  naturalistic effect is much smaller and should be framed as supporting
+  evidence rather than the main evidence.
 
 ### C. Resources concretely available (with HF / GitHub paths)
 - Pythia seeds: `EleutherAI/pythia-{14m,70m,160m,410m}-seed{1..9}`, plus `pythia-160m-weight-seed{1-3}` and `pythia-160m-data-seed{1-3}`. 154 checkpoints per model (steps 0, 1, 2, 4, 8, …, 143000). GitHub: `EleutherAI/pythia`.

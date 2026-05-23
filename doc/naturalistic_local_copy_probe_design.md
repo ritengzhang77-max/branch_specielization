@@ -155,6 +155,12 @@ Summary:
 - Pythia-160M, all 9 seeds, all-layer candidate pool: own top excess `0.6458`;
   aligned-minus-same `0.0835`; target-level bootstrap CI `[0.0334, 0.1343]`;
   aligned-minus-same positive for 8/9 target seeds.
+- A 128-probe / 128-eval Pythia-160M replication kept the same effect size:
+  own top excess `0.6060`; aligned-minus-same `0.0816`; target-level bootstrap
+  CI `[0.0333, 0.1300]`; aligned-minus-same positive for 8/9 target seeds.
+- A matched Pythia-160M `step0` control was null: own top excess `-0.0005`;
+  aligned-minus-same `0.0007`; target-level bootstrap CI
+  `[-0.0004, 0.0016]`.
 - Pythia-410M, all 9 seeds, all-layer candidate pool: own top excess `0.2416`;
   aligned-minus-same `0.0455`; target-level bootstrap CI
   `[-0.0190, 0.0894]`; aligned-minus-same positive for 8/9 target seeds.

@@ -84,6 +84,30 @@ Per-target target-level behavior:
   positive for 8/9 targets. Seed 6 is the main negative outlier with
   aligned-minus-same `-0.1853`.
 
+## Larger-Sample Replication And Initialization Control
+
+I reran the Pythia-160M all-layer experiment with 128 probe and 128 evaluation
+sequences, then matched it with a `step0` initialization control using the same
+settings.
+
+| 160M condition | Probe/eval sequences | Own top excess | Same-index transfer | Aligned transfer | Aligned - same | Target CI for aligned - same |
+|---|---:|---:|---:|---:|---:|---:|
+| `step0`, all layers | 128 / 128 | -0.0005 | -0.0006 | 0.0000 | 0.0007 | [-0.0004, 0.0016] |
+| `step143000`, all layers | 64 / 64 | 0.6458 | -0.0170 | 0.0665 | 0.0835 | [0.0334, 0.1343] |
+| `step143000`, all layers | 128 / 128 | 0.6060 | -0.0281 | 0.0534 | 0.0816 | [0.0333, 0.1300] |
+
+The 128-example replication leaves the main estimate almost unchanged:
+aligned-minus-same is `0.0816`, compared with `0.0835` in the 64-example run.
+The `step0` control is a clean null: own top excess is `-0.0005`, and
+aligned-minus-same is only `0.0007` with confidence intervals crossing zero.
+
+This makes the naturalistic 160M claim more trustworthy:
+
+```text
+The WikiText repeated-span effect is small, but it is stable to doubling the
+sample count and absent at initialization.
+```
+
 ## Comparison To Synthetic Local-Copy
 
 The naturalistic result is positive but much smaller than the synthetic
@@ -118,6 +142,10 @@ The 160M all-seed result is currently the strongest naturalistic evidence:
 - positive own-head causal excess with target-level CI excluding zero;
 - positive aligned-minus-same at both pair and target levels;
 - 8/9 target seeds have positive aligned-minus-same;
+- a 128-example replication gives essentially the same aligned-minus-same
+  estimate as the 64-example run;
+- a matched `step0` control gives near-zero own-head and aligned-transfer
+  effects;
 - examples were manually inspected through `example_rows.csv` after boundary
   filtering.
 
@@ -140,13 +168,11 @@ Main limitations:
 ## Next Experiments
 
 1. Rerun the 160M all-layer WikiText experiment with more probe/evaluation
-   sequences, e.g. 128 or 256, to check that the small transfer effect is stable.
-2. Add a `step0` 160M all-layer control to verify that the naturalistic
-   aligned-transfer effect is training-created rather than an initialization or
-   matching artifact.
-3. Build a naturally occurring repeated-ngram variant that does not insert the
+   sequences again at 256 if compute allows, but the 128-example replication has
+   already passed the main stability check.
+2. Build a naturally occurring repeated-ngram variant that does not insert the
    second span manually. This is lower-control but higher-validity.
-4. Test whether the seed-6 410M failure persists with more evaluation examples
+3. Test whether the seed-6 410M failure persists with more evaluation examples
    or whether it is sampling noise.
 
 ## Files
@@ -154,6 +180,10 @@ Main limitations:
 - Script: `scripts/pythia_naturalistic_span_candidate_pool_alignment.py`.
 - Pythia-160M all-seed result:
   `results/phase1_pythia160m_naturalistic_span_candidate_pool_seed9_all_layers/`.
+- Pythia-160M 128-example replication:
+  `results/phase1_pythia160m_naturalistic_span_candidate_pool_seed9_all_layers_n128/`.
+- Pythia-160M 128-example `step0` control:
+  `results/phase1_pythia160m_naturalistic_span_candidate_pool_seed9_all_layers_step0_n128/`.
 - Pythia-410M all-seed result:
   `results/phase1_pythia410m_naturalistic_span_candidate_pool_seed9_all_layers/`.
 - Initial design memo: `doc/naturalistic_local_copy_probe_design.md`.

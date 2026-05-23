@@ -266,12 +266,14 @@ Initial real-transformer follow-up:
   across 9 seeds gave a positive but small transfer result: own-head excess
   `0.6458`, aligned transfer `0.0665` versus same-index transfer `-0.0170`,
   aligned-minus-same `0.0835`, target-level CI `[0.0334, 0.1343]`, and
-  positive aligned-minus-same for 8/9 targets. Pythia-410M all-layer candidate
-  pools were weaker: own-head excess `0.2416`, aligned-minus-same `0.0455`,
-  target-level CI `[-0.0190, 0.0894]`, and 8/9 target positives. This means the
-  synthetic result is not purely an arbitrary-token artifact, but the
-  naturalistic validation is small and should be treated as supporting evidence,
-  not the primary effect.
+  positive aligned-minus-same for 8/9 targets. A 128-example replication kept
+  the effect nearly unchanged (`0.0816`, target CI `[0.0333, 0.1300]`), while a
+  matched `step0` control was null (`0.0007`, target CI
+  `[-0.0004, 0.0016]`). Pythia-410M all-layer candidate pools were weaker:
+  own-head excess `0.2416`, aligned-minus-same `0.0455`, target-level CI
+  `[-0.0190, 0.0894]`, and 8/9 target positives. This means the synthetic result
+  is not purely an arbitrary-token artifact, but the naturalistic validation is
+  small and should be treated as supporting evidence, not the primary effect.
 - A Pythia-160M follow-up over seeds 1-3 added checkpoint-specific raw-score
   alignment and source-head transfer. Repeat-match specialization rose by
   `step4000` (`0.4794`), while causal own-top excess over random controls was

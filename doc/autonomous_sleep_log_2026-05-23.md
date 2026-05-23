@@ -130,3 +130,39 @@ Next decisive checks:
    sequences;
 2. add a 160M `step0` all-layer naturalistic control;
 3. test naturally occurring repeated n-grams without inserted second spans.
+
+## Progress: Larger-Sample 160M Replication
+
+Reran the Pythia-160M all-layer naturalistic experiment with 128 probe sequences
+and 128 evaluation sequences.
+
+- result directory:
+  `results/phase1_pythia160m_naturalistic_span_candidate_pool_seed9_all_layers_n128/`;
+- own top excess: `0.6060`;
+- same-index transfer: `-0.0281`;
+- aligned transfer: `0.0534`;
+- aligned-minus-same: `0.0816`;
+- pair CI: `[0.0237, 0.1379]`;
+- target CI: `[0.0333, 0.1300]`;
+- target positives: 8/9.
+
+Interpretation: the larger-sample replication preserves the 64-example effect
+almost exactly (`0.0816` vs `0.0835` aligned-minus-same).
+
+## Progress: Matched 160M Step0 Control
+
+Ran a matched Pythia-160M all-layer `step0` control with 128 probe and 128
+evaluation sequences.
+
+- result directory:
+  `results/phase1_pythia160m_naturalistic_span_candidate_pool_seed9_all_layers_step0_n128/`;
+- own top excess: `-0.0005`;
+- same-index transfer: `-0.0006`;
+- aligned transfer: `0.0000`;
+- aligned-minus-same: `0.0007`;
+- pair CI: `[-0.0006, 0.0020]`;
+- target CI: `[-0.0004, 0.0016]`.
+
+Interpretation: the initialization control is null. The naturalistic 160M
+aligned-transfer effect is therefore small but training-created, not a raw
+matching artifact.

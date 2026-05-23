@@ -1183,3 +1183,31 @@ functional modularity?
   410M. The result is much smaller than synthetic local-copy, so the paper claim
   should present it as external-validity support, not as the primary effect.
 - Full memo: `doc/phase1_naturalistic_span_candidate_pool.md`.
+
+## 2026-05-23 - Naturalistic 160M larger-sample replication and step0 control
+
+- Reran Pythia-160M all-layer WikiText repeated-span candidate-pool alignment
+  with 128 probe sequences and 128 evaluation sequences.
+- Result directory:
+  `results/phase1_pythia160m_naturalistic_span_candidate_pool_seed9_all_layers_n128/`.
+- Result:
+  - own top excess over random: `0.6060`;
+  - same-index transfer: `-0.0281`;
+  - aligned transfer: `0.0534`;
+  - aligned-minus-same: `0.0816`;
+  - pair CI: `[0.0237, 0.1379]`, pair sign `p=0.0063`;
+  - target CI: `[0.0333, 0.1300]`, target sign `p=0.0391`;
+  - target positives: 8/9.
+- Ran matched `step0` initialization control with the same 128/128 setup.
+- Result directory:
+  `results/phase1_pythia160m_naturalistic_span_candidate_pool_seed9_all_layers_step0_n128/`.
+- Result:
+  - own top excess over random: `-0.0005`;
+  - same-index transfer: `-0.0006`;
+  - aligned transfer: `0.0000`;
+  - aligned-minus-same: `0.0007`;
+  - pair CI: `[-0.0006, 0.0020]`, pair sign `p=0.2888`;
+  - target CI: `[-0.0004, 0.0016]`, target sign `p=0.1797`.
+- Interpretation: the small naturalistic 160M effect replicated almost exactly
+  after doubling the sample count and is absent at initialization. This supports
+  a training-created weak aligned-transfer signal.
