@@ -176,6 +176,15 @@ Deliverables:
 - within-model or cross-checkpoint proxy analysis where multi-seed checkpoints do
   not exist.
 
+SwitchHead feasibility update:
+
+- Use `RobertCsordas/moe_attention` for the official training framework.
+- Use `RobertCsordas/switchhead` for the first local plug-in experiment.
+- Do not use `RobertCsordas/moe` as the SwitchHead target; it is a related
+  MoE-MLP codebase.
+- A GPU smoke test of `SwitchHeadRope` passed locally; CPU is not suitable
+  because the implementation uses Triton expert-projection kernels.
+
 ### Phase 3: Architectural Intervention
 
 Train uniform, heterogeneous-head-dimension, and explicitly routed/separated

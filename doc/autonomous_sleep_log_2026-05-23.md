@@ -824,3 +824,39 @@ natural ordinary-repeat probes appear before robust causal cross-seed transfer;
 own causal importance is visible by step16000, but aligned transfer becomes
 target-level robust only by step64000.
 ```
+
+## Progress: SwitchHead Follow-Up Feasibility
+
+Checked the SwitchHead code target for the next routed-attention bridge.
+
+Correction:
+
+```text
+github.com/RobertCsordas/moe is not the right SwitchHead target.
+```
+
+Correct targets:
+
+- training framework: `https://github.com/RobertCsordas/moe_attention`;
+- plug-in module: `https://github.com/RobertCsordas/switchhead`.
+
+Local checkouts in `.tools/`:
+
+- `.tools/moe_attention/` at `7169ad3`;
+- `.tools/switchhead/` at `0bb2f61`;
+- `.tools/csordas_moe/` at `6b175aa` as the stale-target comparison.
+
+GPU smoke test:
+
+```text
+SwitchHeadRope(d_model=32, n_heads=2, n_experts=2, d_head=8, moe_k=1)
+output shape: (2, 16, 32)
+```
+
+Decision:
+
+```text
+Use the plug-in `switchhead` implementation for the first local bridge
+experiment. Do not attempt a full W&B-based `moe_attention` reproduction as the
+next autonomous step.
+```

@@ -1692,3 +1692,22 @@ computations to consolidate.
 - Interpretation: ordinary natural-repeat specialization appears early,
   own-head causal importance becomes clear by step16000, and robust target-level
   aligned transfer appears later, by step64000.
+
+## 2026-05-23 - SwitchHead feasibility check
+
+- Verified that the roadmap's earlier `github.com/RobertCsordas/moe` SwitchHead
+  target is stale/wrong for this project. That repo is for a related MoE-MLP
+  paper, not SwitchHead attention.
+- Cloned ignored local checkouts:
+  - `.tools/moe_attention/`, commit `7169ad3`;
+  - `.tools/switchhead/`, commit `0bb2f61`;
+  - `.tools/csordas_moe/`, commit `6b175aa`, retained only as the stale-target
+    comparison.
+- Confirmed `switchhead` imports locally and a GPU smoke forward pass through
+  `SwitchHeadRope` succeeds with output shape `(2, 16, 32)`.
+- CPU smoke fails because the SwitchHead implementation uses Triton CVMM kernels
+  that require GPU tensors.
+- Wrote `doc/switchhead_followup_feasibility.md`.
+- Updated `doc/plan.md` and `doc/research_questions.md` to use
+  `RobertCsordas/moe_attention` for training code and `RobertCsordas/switchhead`
+  for the first local plug-in experiment.
