@@ -172,10 +172,15 @@ Summary:
 - A 128-probe / 128-eval Pythia-410M replication weakened the estimate:
   own top excess `0.1809`; aligned-minus-same `0.0293`; target-level bootstrap
   CI `[-0.0237, 0.0630]`; target seed 6 remained a large negative outlier.
+- A task-specific alignment follow-up on Pythia-410M rescued the generic weak
+  result: aligned-minus-same rose to `0.1544` with target-level bootstrap CI
+  `[0.0430, 0.2460]` and 8/9 target positives. The matched `step0`
+  task-alignment control was null (`aligned-minus-same=-0.0003`).
 
 Interpretation: the naturalistic result is positive for 160M and weak /
-heterogeneous for 410M under generic Phase 0 alignment. For 160M, task-specific
-alignment recovers a much stronger held-out transfer effect. This makes
-alignment basis part of the core methodology rather than a secondary detail.
+heterogeneous for 410M under generic Phase 0 alignment. Task-specific alignment
+recovers a much stronger held-out transfer effect in both 160M and 410M. This
+makes alignment basis part of the core methodology rather than a secondary
+detail.
 
 Full memo: `doc/phase1_naturalistic_span_candidate_pool.md`.

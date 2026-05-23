@@ -343,8 +343,11 @@ These three numbers (S, C, M) are what the project should report for each archit
   evidence rather than the main evidence. However, task-span alignment on the
   repeated-span probe split raised the 160M aligned-minus-same effect from
   `0.0835` to `0.5645` with target CI `[0.3653, 0.8068]`, 9/9 target positives,
-  and a null `step0` control. This makes the methodological lesson sharper:
-  weak natural roles require role-specific alignment representations.
+  and a null `step0` control. The same task-span alignment rescued 410M as well:
+  aligned-minus-same rose to `0.1544`, target CI `[0.0430, 0.2460]`, with 8/9
+  target positives and a null `step0` control, though seed 6 remains a negative
+  outlier. This makes the methodological lesson sharper: weak natural roles
+  require role-specific alignment representations.
 - A stricter natural-repeat follow-up scanned unmodified WikiText windows for
   exact repeated 4-token n-grams. Pythia-160M all-layer candidate pools across 9
   seeds showed trained causal repeat heads (`own_top_excess=0.1588`, target CI

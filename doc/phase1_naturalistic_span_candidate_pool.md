@@ -163,6 +163,23 @@ attention-score matching detects a weak transfer effect; role-specific matching
 recovers a much larger cross-seed functional transfer effect.
 ```
 
+Pythia-410M shows the same pattern, though less cleanly:
+
+| 410M condition | Alignment source | Own top excess | Same-index transfer | Aligned transfer | Aligned - same | Target CI for aligned - same |
+|---|---|---:|---:|---:|---:|---:|
+| `step0` | task span | -0.0008 | 0.0004 | 0.0002 | -0.0003 | [-0.0005, 0.0000] |
+| `step143000` | Phase 0 generic | 0.2416 | 0.0007 | 0.0462 | 0.0455 | [-0.0190, 0.0894] |
+| `step143000` | task span | 0.2416 | 0.0007 | 0.1551 | 0.1544 | [0.0430, 0.2460] |
+
+The 410M task-span result is positive at pair and target levels, but seed 6
+remains a stable negative outlier (`aligned-minus-same=-0.2138`). So the right
+410M interpretation is not "no naturalistic transfer"; it is:
+
+```text
+410M naturalistic transfer is present under role-specific alignment, but more
+heterogeneous than 160M.
+```
+
 ## Comparison To Synthetic Local-Copy
 
 The naturalistic result is positive but much smaller than the synthetic
@@ -255,4 +272,8 @@ Main limitations:
   `results/phase1_pythia410m_naturalistic_span_candidate_pool_seed9_all_layers/`.
 - Pythia-410M 128-example replication:
   `results/phase1_pythia410m_naturalistic_span_candidate_pool_seed9_all_layers_n128/`.
+- Pythia-410M task-span alignment result:
+  `results/phase1_pythia410m_naturalistic_span_task_alignment_seed9_all_layers/`.
+- Pythia-410M task-span alignment `step0` control:
+  `results/phase1_pythia410m_naturalistic_span_task_alignment_seed9_all_layers_step0/`.
 - Initial design memo: `doc/naturalistic_local_copy_probe_design.md`.

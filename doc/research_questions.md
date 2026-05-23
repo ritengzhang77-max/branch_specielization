@@ -281,7 +281,10 @@ Initial real-transformer follow-up:
   raised 160M aligned-minus-same from `0.0835` to `0.5645`, with target CI
   `[0.3653, 0.8068]`, 9/9 target positives, and a null `step0` control. Thus
   the naturalistic role is much stronger when the matching representation is
-  role-specific.
+  role-specific. The same task-span alignment rescued 410M:
+  aligned-minus-same rose to `0.1544`, target CI `[0.0430, 0.2460]`, with 8/9
+  target positives and a null `step0` control, although seed 6 remained a
+  negative outlier.
 - A stricter natural-repeat follow-up scanned unmodified WikiText windows for
   exact repeated 4-token n-grams. Pythia-160M all-layer candidate pools across 9
   seeds showed trained own-head causal importance (`own_top_excess=0.1588`,

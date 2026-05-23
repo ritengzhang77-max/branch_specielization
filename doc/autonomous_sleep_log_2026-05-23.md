@@ -315,3 +315,35 @@ Updated interpretation: the inserted-span naturalistic effect was not merely
 weak. It was weak under generic Phase 0 matching. Role-specific task-span
 matching gives a strong held-out transfer effect with a null initialization
 control.
+
+## Progress: 410M Inserted-Span Task-Specific Alignment
+
+Applied the same task-span alignment to Pythia-410M.
+
+Pythia-410M all-seed final checkpoint:
+
+- result directory:
+  `results/phase1_pythia410m_naturalistic_span_task_alignment_seed9_all_layers/`;
+- own top excess: `0.2416`;
+- same-index transfer: `0.0007`;
+- task-span aligned transfer: `0.1551`;
+- aligned-minus-same: `0.1544`;
+- pair CI: `[0.0939, 0.2075]`;
+- target CI: `[0.0430, 0.2460]`;
+- target positives: 8/9;
+- aligned better count: 54/72.
+
+Matched `step0` task-span alignment control:
+
+- result directory:
+  `results/phase1_pythia410m_naturalistic_span_task_alignment_seed9_all_layers_step0/`;
+- own top excess: `-0.0008`;
+- same-index transfer: `0.0004`;
+- task-span aligned transfer: `0.0002`;
+- aligned-minus-same: `-0.0003`;
+- target CI: `[-0.0005, 0.0000]`.
+
+Updated interpretation: task-span alignment also rescues 410M naturalistic
+transfer, though less cleanly than 160M because target seed 6 remains a negative
+outlier. The earlier weak 410M result should be framed as a generic-alignment
+failure, not absence of a transferable role.
