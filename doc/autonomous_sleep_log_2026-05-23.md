@@ -1346,3 +1346,33 @@ Wrote:
 ```text
 doc/phase3_toy_switchhead_two_layer_selector_type.md
 ```
+
+## Progress: SwitchHead Expanded-Seed Robustness
+
+Ran seeds 6-10 for the key output-selector induced conditions.
+
+One-layer:
+
+```text
+results/phase3_toy_switchhead_selector_output_w005_end800_seed6_10_steps2000/
+```
+
+Two-layer:
+
+```text
+results/phase3_toy_switchhead_2layer_induced_w005_end800_seed6_10_steps2000/
+```
+
+Result:
+
+```text
+one-layer output-selector induced condition: 10/10 routed match across seeds 1-10
+two-layer output-selector induced condition: 10/10 routed match across seeds 1-10
+two-layer top components: local L1E0 and induction L1E1 in 10/10 seeds
+```
+
+Wrote:
+
+```text
+doc/phase3_toy_switchhead_seed_robustness.md
+```

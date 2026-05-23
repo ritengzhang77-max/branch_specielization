@@ -250,6 +250,10 @@ SwitchHead feasibility update:
   when applied at the causal layer: layer-1 value-only supervision reached
   routed match `0.80`. But layer-1 output-only supervision remained the only
   clean 5/5 condition among output/value/both selector controls.
+- Expanded-seed robustness checks showed the core output-selector induced result
+  is stable across 10/10 one-layer seeds and 10/10 two-layer seeds. In the
+  two-layer condition, local top was `L1E0` and induction top was `L1E1` in all
+  10 tested seeds.
 
 ### Phase 3: Architectural Intervention
 

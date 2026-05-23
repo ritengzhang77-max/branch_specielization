@@ -2000,3 +2000,28 @@ computations to consolidate.
 - Interpretation update: value selector pressure is not null at the causal layer
   in a two-layer model, but output selector pressure remains the cleaner
   sufficient cue.
+
+## 2026-05-23 - SwitchHead expanded-seed robustness
+
+- Ran seeds 6-10 for the one-layer output-selector induced condition:
+  `results/phase3_toy_switchhead_selector_output_w005_end800_seed6_10_steps2000/`.
+- Result:
+  - local accuracy `1.0000`;
+  - induction accuracy `1.0000`;
+  - routed expert match `1.00`;
+  - output gate distance `0.9609`;
+  - value gate distance `0.0194`;
+  - causal expert distance `0.5721`.
+- Ran seeds 6-10 for the two-layer all-layer output-selector induced condition:
+  `results/phase3_toy_switchhead_2layer_induced_w005_end800_seed6_10_steps2000/`.
+- Result:
+  - local accuracy `1.0000`;
+  - induction accuracy `1.0000`;
+  - routed expert match `1.00`;
+  - output gate distance `0.7777`;
+  - causal expert distance `0.5551`.
+- Wrote `doc/phase3_toy_switchhead_seed_robustness.md`.
+- Interpretation update: the core output-selector induced-modularity result is
+  robust across 10/10 one-layer seeds and 10/10 two-layer seeds. The two-layer
+  causal localization to `L1E0` for local and `L1E1` for induction also holds in
+  all 10 tested seeds.

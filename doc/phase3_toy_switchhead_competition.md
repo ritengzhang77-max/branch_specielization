@@ -359,6 +359,12 @@ layer: output-only layer-1 supervision was 5/5 reliable, while value-only and
 both-selector layer-1 supervision were both 4/5. See
 `doc/phase3_toy_switchhead_two_layer_selector_type.md`.
 
+An expanded-seed robustness pass confirmed the core induced results. One-layer
+output-selector supervision was reliable across seeds 1-10, and two-layer
+all-layer output-selector supervision was also reliable across seeds 1-10 with
+local top `L1E0` and induction top `L1E1` in every two-layer seed. See
+`doc/phase3_toy_switchhead_seed_robustness.md`.
+
 So the best interpretation is:
 
 ```text
@@ -452,5 +458,7 @@ SwitchHead-specific tests are:
   `doc/phase3_toy_switchhead_selector_type.md`
 - Two-layer selector-type memo:
   `doc/phase3_toy_switchhead_two_layer_selector_type.md`
+- Seed robustness memo:
+  `doc/phase3_toy_switchhead_seed_robustness.md`
 - Feasibility memo:
   `doc/switchhead_followup_feasibility.md`
