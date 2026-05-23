@@ -1803,3 +1803,26 @@ computations to consolidate.
 - Interpretation update: in this toy setup, gate separation can precede fully
   reliable causal expert modularity; persistent 5/5 causal modularity appears
   between selector end steps 425 and 450.
+
+## 2026-05-23 - SwitchHead checkpoint trajectory
+
+- Added `--trajectory-eval-steps` to `scripts/toy_switchhead_competition.py`.
+- During implementation, a smoke test exposed a SwitchHead RoPE cache issue:
+  trajectory evaluation under `torch.inference_mode()` can cache inference
+  tensors and break subsequent training. The script now uses `torch.no_grad()`
+  in evaluation paths so training can safely resume after checkpoint analysis.
+- Ran a 5-seed trajectory with `expert_supervision_weight=0.05` and
+  `expert_supervision_end_step=450`:
+  `results/phase3_toy_switchhead_trajectory_w005_end450_seed5_steps2000/`.
+- Checkpoints:
+  `0, 100, 200, 300, 400, 425, 450, 500, 600, 800, 1000, 1500, 2000`.
+- Milestones:
+  - meaningful reliable gate split: checkpoint 425;
+  - causal same-top expert `0/5`: checkpoint 500;
+  - routed expert match `5/5`: checkpoint 500;
+  - mean local and induction accuracy both `1.0`: checkpoint 1500.
+- Boundary seed: seed 4 has gate split at checkpoints 425 and 450, but the
+  causal local role does not move to expert 0 until checkpoint 500.
+- Wrote `doc/phase3_toy_switchhead_checkpoint_trajectory.md`.
+- Interpretation update: direct within-run evidence supports the ordering
+  `gate specialization -> causal functional modularity`.

@@ -209,6 +209,12 @@ SwitchHead feasibility update:
   gate splitting but one causal failure, and end step 450 was reliable in 5/5
   seeds (`routed expert match=1.00`). This suggests gate specialization can
   precede causal functional modularity.
+- A direct checkpoint trajectory with selector pressure ending after step 450
+  confirmed the ordering within training: meaningful reliable gate separation
+  appeared by checkpoint 425, while causal same-top expert reached 0/5 and
+  routed expert match reached 5/5 at checkpoint 500. This is the clearest local
+  evidence so far for `structural routing cue -> gate specialization -> causal
+  functional modularity`.
 
 ### Phase 3: Architectural Intervention
 

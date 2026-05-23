@@ -318,6 +318,11 @@ same weight, end step 400 was partial (`routed expert match=0.80`), end step 425
 had reliable gate splitting but one causal failure, and end step 450 was reliable
 in 5/5 seeds. See `doc/phase3_toy_switchhead_selector_window_sweep.md`.
 
+A direct checkpointed trajectory with end step 450 confirmed the temporal
+ordering: reliable gate separation appeared by checkpoint 425, while reliable
+causal expert separation appeared by checkpoint 500. See
+`doc/phase3_toy_switchhead_checkpoint_trajectory.md`.
+
 So the best interpretation is:
 
 ```text
@@ -395,5 +400,7 @@ SwitchHead-specific tests are:
   `results/phase3_toy_switchhead_competition_weak_w005_end800_seed5_steps2000/`
 - Selector-window sweep memo:
   `doc/phase3_toy_switchhead_selector_window_sweep.md`
+- Checkpoint trajectory memo:
+  `doc/phase3_toy_switchhead_checkpoint_trajectory.md`
 - Feasibility memo:
   `doc/switchhead_followup_feasibility.md`

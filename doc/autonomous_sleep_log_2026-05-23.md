@@ -1030,3 +1030,50 @@ Wrote:
 ```text
 doc/phase3_toy_switchhead_selector_window_sweep.md
 ```
+
+## Progress: SwitchHead Checkpoint Trajectory
+
+Added trajectory evaluation to `scripts/toy_switchhead_competition.py` and ran a
+5-seed end-step-450 trajectory.
+
+Implementation note:
+
+```text
+SwitchHead RoPE caches break if checkpoint evaluation uses torch.inference_mode()
+and training then resumes. The script now uses torch.no_grad() for evaluation.
+```
+
+Result directory:
+
+```text
+results/phase3_toy_switchhead_trajectory_w005_end450_seed5_steps2000/
+```
+
+Milestones:
+
+| Milestone | First checkpoint |
+|---|---:|
+| Meaningful reliable gate split | 425 |
+| Causal same-top expert = 0/5 | 500 |
+| Routed expert match = 5/5 | 500 |
+| Mean local and induction accuracy = 1.0 | 1500 |
+
+Boundary behavior:
+
+```text
+seed 4 has the gate split by checkpoints 425 and 450, but its causal local role
+does not move to expert 0 until checkpoint 500.
+```
+
+Interpretation:
+
+```text
+the direct trajectory supports the ordering gate specialization -> causal
+functional modularity.
+```
+
+Wrote:
+
+```text
+doc/phase3_toy_switchhead_checkpoint_trajectory.md
+```

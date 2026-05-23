@@ -464,7 +464,10 @@ These three numbers (S, C, M) are what the project should report for each archit
   threshold: end step 400 was partial, end step 425 split gates but had one
   causal failure, and end step 450 produced reliable 5/5 causal expert
   modularity. This supports the temporal ordering that gate specialization can
-  precede causal functional modularity.
+  precede causal functional modularity. A direct checkpoint trajectory with
+  selector pressure ending after step 450 confirmed that ordering within a single
+  training run: reliable gate separation appeared by checkpoint 425, while
+  reliable causal expert separation appeared by checkpoint 500.
 
 ### C. Resources concretely available (with HF / GitHub paths)
 - Pythia seeds: `EleutherAI/pythia-{14m,70m,160m,410m}-seed{1..9}`, plus `pythia-160m-weight-seed{1-3}` and `pythia-160m-data-seed{1-3}`. 154 checkpoints per model (steps 0, 1, 2, 4, 8, …, 143000). GitHub: `EleutherAI/pythia`.

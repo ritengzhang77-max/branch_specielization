@@ -31,6 +31,7 @@ from toy_head_dim_intervention import resolve_device, specialization_distributio
 class ModelSummary:
     config: str
     seed: int
+    train_step: int
     eval_loss: float
     local_loss: float
     induction_loss: float
@@ -58,6 +59,7 @@ class ModelSummary:
 class ExpertScore:
     config: str
     seed: int
+    train_step: int
     layer: int
     expert: int
     local_loss_delta: float
@@ -103,6 +105,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--weight-decay", type=float, default=0.01)
     parser.add_argument("--local-weight", type=float, default=1.0)
     parser.add_argument("--induction-weight", type=float, default=1.0)
+    parser.add_argument("--trajectory-eval-steps", nargs="*", type=int, default=[])
     parser.add_argument("--device", default="auto", choices=["auto", "cuda", "cpu"])
     parser.add_argument("--output-dir", type=Path, default=Path("results/phase3_toy_switchhead_competition"))
     return parser.parse_args()
@@ -216,10 +219,16 @@ def train_model(
     args: argparse.Namespace,
     layout: dict[str, torch.Tensor | int],
     device: torch.device,
-) -> float:
+    eval_ids: torch.Tensor | None = None,
+    trajectory_steps: set[int] | None = None,
+    seed: int | None = None,
+) -> tuple[float, list[ModelSummary], list[ExpertScore]]:
     model.train()
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
     last_loss = 0.0
+    trajectory_steps = trajectory_steps or set()
+    trajectory_summaries: list[ModelSummary] = []
+    trajectory_expert_scores: list[ExpertScore] = []
     for step in range(args.steps):
         input_ids = make_task_dataset(train_rng, args.batch_size, args).to(device)
         optimizer.zero_grad(set_to_none=True)
@@ -234,7 +243,15 @@ def train_model(
         last_loss = float(loss.detach().cpu())
         if (step + 1) % max(args.steps // 4, 1) == 0:
             print(f"  step={step + 1} train_loss={last_loss:.4f}", flush=True)
-    return last_loss
+        train_step = step + 1
+        if train_step in trajectory_steps:
+            if eval_ids is None or seed is None:
+                raise ValueError("Trajectory evaluation requires eval_ids and seed.")
+            summary, scores = analyze_model(model, eval_ids, layout, args, device, seed, train_step)
+            trajectory_summaries.append(summary)
+            trajectory_expert_scores.extend(scores)
+            model.train()
+    return last_loss, trajectory_summaries, trajectory_expert_scores
 
 
 def effective_expert_supervision_weight(args: argparse.Namespace, step: int) -> float:
@@ -274,7 +291,9 @@ def evaluate(
     model.eval()
     totals: dict[str, float] = {}
     total = 0
-    with torch.inference_mode():
+    # SwitchHead's RoPE module caches sin/cos tensors. `inference_mode` can put
+    # inference tensors into that cache and break later training checkpoints.
+    with torch.no_grad():
         for ids in iter_batches(input_ids, args.batch_size):
             ids = ids.to(device)
             logits = model(ids, ablate=ablate)
@@ -299,7 +318,9 @@ def collect_gate_metrics(
     local_totals = []
     induction_totals = []
     model.eval()
-    with torch.inference_mode():
+    # Use no_grad rather than inference_mode so SwitchHead RoPE caches remain
+    # valid if training resumes after trajectory evaluation.
+    with torch.no_grad():
         for ids in iter_batches(input_ids, args.batch_size):
             ids = ids.to(device)
             for dist in model.collect_gate_distributions(ids):
@@ -320,6 +341,7 @@ def analyze_model(
     args: argparse.Namespace,
     device: torch.device,
     seed: int,
+    train_step: int,
 ) -> tuple[ModelSummary, list[ExpertScore]]:
     baseline = evaluate(model, eval_ids, layout, args, device)
     local_deltas = np.zeros((args.n_layers, args.n_experts), dtype=np.float64)
@@ -350,6 +372,7 @@ def analyze_model(
                 ExpertScore(
                     config=args.config,
                     seed=seed,
+                    train_step=train_step,
                     layer=layer_idx,
                     expert=expert_idx,
                     local_loss_delta=float(local_deltas[layer_idx, expert_idx]),
@@ -364,6 +387,7 @@ def analyze_model(
     summary = ModelSummary(
         config=args.config,
         seed=seed,
+        train_step=train_step,
         eval_loss=baseline["loss"],
         local_loss=baseline["local_loss"],
         induction_loss=baseline["induction_loss"],
@@ -425,6 +449,11 @@ def main() -> None:
 
     model_rows: list[ModelSummary] = []
     expert_rows: list[ExpertScore] = []
+    trajectory_model_rows: list[ModelSummary] = []
+    trajectory_expert_rows: list[ExpertScore] = []
+    trajectory_steps = {step for step in args.trajectory_eval_steps if step >= 0}
+    if any(step > args.steps for step in trajectory_steps):
+        raise ValueError("All --trajectory-eval-steps must be <= --steps.")
     for seed in args.seeds:
         print(f"training config={args.config} seed={seed}", flush=True)
         torch.manual_seed(seed)
@@ -432,14 +461,32 @@ def main() -> None:
         train_rng = np.random.default_rng(10_000 + seed)
         eval_rng = np.random.default_rng(20_000 + seed)
         model = TinySwitchHeadTransformer(switchhead, args, int(layout["seq_len"])).to(device)
-        train_model(model, train_rng, args, layout, device)
         eval_ids = make_task_dataset(eval_rng, args.eval_examples, args)
-        summary, scores = analyze_model(model, eval_ids, layout, args, device, seed)
+        if 0 in trajectory_steps:
+            summary, scores = analyze_model(model, eval_ids, layout, args, device, seed, 0)
+            trajectory_model_rows.append(summary)
+            trajectory_expert_rows.extend(scores)
+            model.train()
+        _, trajectory_summaries, trajectory_scores = train_model(
+            model,
+            train_rng,
+            args,
+            layout,
+            device,
+            eval_ids=eval_ids,
+            trajectory_steps={step for step in trajectory_steps if step > 0},
+            seed=seed,
+        )
+        trajectory_model_rows.extend(trajectory_summaries)
+        trajectory_expert_rows.extend(trajectory_scores)
+        summary, scores = analyze_model(model, eval_ids, layout, args, device, seed, args.steps)
         model_rows.append(summary)
         expert_rows.extend(scores)
 
     write_csv(args.output_dir / "model_summary.csv", [asdict(row) for row in model_rows])
     write_csv(args.output_dir / "expert_scores.csv", [asdict(row) for row in expert_rows])
+    write_csv(args.output_dir / "trajectory_model_summary.csv", [asdict(row) for row in trajectory_model_rows])
+    write_csv(args.output_dir / "trajectory_expert_scores.csv", [asdict(row) for row in trajectory_expert_rows])
     payload = {
         "args": vars(args) | {"switchhead_path": str(args.switchhead_path), "output_dir": str(args.output_dir)},
         "summary": summarize(model_rows),

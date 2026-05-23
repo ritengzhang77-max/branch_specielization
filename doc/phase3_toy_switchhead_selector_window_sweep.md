@@ -94,6 +94,12 @@ selection/gate specialization can precede causal functional modularity.
 This matches the earlier hand-built router trajectory, where role-aligned gate
 behavior appeared before full causal branch separation.
 
+A direct checkpointed SwitchHead trajectory confirms the same ordering within a
+single training run. With selector pressure ending after step 450, reliable gate
+separation appears by checkpoint 425 and reliable causal expert separation
+appears by checkpoint 500. See
+`doc/phase3_toy_switchhead_checkpoint_trajectory.md`.
+
 ## Caveats
 
 - The threshold is provisional and specific to this toy setup, optimizer, seed
