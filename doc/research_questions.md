@@ -312,6 +312,9 @@ Alignment-basis summary as of 2026-05-23:
     `0.1544`;
   - naturally occurring exact repeats, 160M: generic `-0.0016`,
     task-specific `0.1897`.
+- 410M naturally occurring exact repeats were weaker: own top excess was
+  positive (`0.0503`, target CI `[0.0068, 0.0873]`), but task-specific
+  aligned-minus-same was only `0.0215` with target CI `[-0.0166, 0.0564]`.
 - This means the alignment representation must be specified as part of the
   metric. Generic alignment is an unsupervised baseline; role-specific alignment
   is the better measurement for weak functional roles.

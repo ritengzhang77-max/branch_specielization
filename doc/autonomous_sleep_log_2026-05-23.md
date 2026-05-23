@@ -396,3 +396,32 @@ The hierarchy is now:
    conservative, task-specific alignment strong;
 3. naturally occurring exact repeats: generic alignment neutral, task-specific
    alignment positive.
+
+## Progress: 410M Naturally Occurring Repeat-Ngram Check
+
+Ran Pythia-410M all-seed naturally occurring exact-repeat task-specific
+alignment.
+
+- result directory:
+  `results/phase1_pythia410m_natural_repeat_ngram_task_alignment_seed9/`;
+- own top excess: `0.0503`;
+- own top excess target CI: `[0.0068, 0.0873]`;
+- own top excess positives: 8/9;
+- same-index transfer: `0.0173`;
+- task-repeat aligned transfer: `0.0388`;
+- aligned-minus-same: `0.0215`;
+- pair CI: `[-0.0120, 0.0461]`;
+- target CI: `[-0.0166, 0.0564]`;
+- target positives: 5/9.
+
+Matched `step0` control:
+
+- result directory:
+  `results/phase1_pythia410m_natural_repeat_ngram_task_alignment_seed9_step0/`;
+- own top excess: `-0.0013`;
+- aligned-minus-same: `-0.0022`;
+- target CI: `[-0.0042, -0.0002]`.
+
+Interpretation: exact natural repeats extend to 410M as a weak trained
+own-head causal signal, but not as a clean 410M alignment-transfer result under
+the current 4-token WikiText setup.

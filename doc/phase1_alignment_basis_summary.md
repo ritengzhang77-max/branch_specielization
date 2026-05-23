@@ -31,6 +31,7 @@ heads.
 | inserted WikiText repeated span, 64/64 | 410M | 0.0455 | 0.1544 | -0.0003 | task-specific alignment rescues 410M, but with seed-6 outlier |
 | inserted WikiText repeated span, 128/128 | 410M | 0.0293 | 0.1158 | not rerun | larger-sample replication stays positive but weaker than 160M |
 | naturally occurring exact 4-gram repeat | 160M | -0.0016 | 0.1897 | -0.0033 | unmodified natural repeats need role-specific alignment |
+| naturally occurring exact 4-gram repeat | 410M | not run | 0.0215 | -0.0022 | weak own-head signal, no clean target-level transfer |
 
 ## Interpretation
 
@@ -51,8 +52,8 @@ The current hierarchy is:
 1. Synthetic local-copy: high signal; generic alignment works.
 2. Inserted natural repeated spans: medium signal; generic alignment is positive
    but much too conservative; task-specific alignment is strong.
-3. Naturally occurring exact repeats: low/noisy signal; generic alignment is
-   neutral, task-specific alignment is positive.
+3. Naturally occurring exact repeats: low/noisy signal; 160M task-specific
+   alignment is positive, while 410M is only weak/suggestive.
 
 ## What This Means For The Research Question
 
@@ -96,10 +97,9 @@ That distinction should be explicit in any paper draft.
 
 1. Add task-specific alignment to the synthetic local-copy script as a sanity
    upper bound, even though generic alignment is already strong.
-2. Run naturally occurring exact-repeat task-specific alignment on 410M.
-3. Try a larger corpus for naturally occurring repeats so span length can be
+2. Try a larger corpus for naturally occurring repeats so span length can be
    raised from 4 tokens to 5-8 tokens without sampling replacement.
-4. Consider a two-stage metric in the paper: generic alignment as an unsupervised
+3. Consider a two-stage metric in the paper: generic alignment as an unsupervised
    baseline, task-specific alignment as the role-level measurement.
 
 ## Files

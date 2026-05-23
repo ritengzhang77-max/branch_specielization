@@ -63,6 +63,13 @@ Pythia-160M all-layer exact-repeat results:
 | `step143000` all seeds | Phase 0 generic | 9 | 0.1588 | 0.0464 | 0.0448 | -0.0016 | [-0.0548, 0.0360] |
 | `step143000` all seeds | task repeat | 9 | 0.1588 | 0.0464 | 0.2361 | 0.1897 | [0.0737, 0.3140] |
 
+Pythia-410M task-repeat alignment result:
+
+| Condition | Alignment source | Seeds | Own top excess | Same-index transfer | Aligned transfer | Aligned - same | Target CI for aligned - same |
+|---|---|---:|---:|---:|---:|---:|---:|
+| `step0` | task repeat | 9 | -0.0013 | 0.0005 | -0.0017 | -0.0022 | [-0.0042, -0.0002] |
+| `step143000` all seeds | task repeat | 9 | 0.0503 | 0.0173 | 0.0388 | 0.0215 | [-0.0166, 0.0564] |
+
 All-seed final checkpoint details under generic Phase 0 alignment:
 
 - own top excess was positive for 9/9 target seeds;
@@ -95,6 +102,18 @@ The matched `step0` task-repeat alignment control is not positive:
 - own top excess: `-0.0001`;
 - aligned-minus-same: `-0.0033`;
 - target-level aligned-minus-same CI: `[-0.0060, -0.0006]`.
+
+The 410M exact-repeat result is weaker:
+
+- own top excess is positive with target CI `[0.0068, 0.0873]`;
+- own top excess is positive for 8/9 targets;
+- aligned-minus-same is only `0.0215`;
+- target-level aligned-minus-same CI crosses zero: `[-0.0166, 0.0564]`;
+- target positives are 5/9.
+
+So exact naturally occurring repeats extend to 410M as a weak trained causal
+signal, but not as a clean 410M alignment-transfer result under the current
+4-token WikiText setup.
 
 ## Interpretation
 
@@ -177,3 +196,7 @@ Weaker parts:
   `results/phase1_pythia160m_natural_repeat_ngram_task_alignment_seed9/`.
 - Pythia-160M all-seed task-repeat alignment `step0` control:
   `results/phase1_pythia160m_natural_repeat_ngram_task_alignment_seed9_step0/`.
+- Pythia-410M all-seed task-repeat alignment result:
+  `results/phase1_pythia410m_natural_repeat_ngram_task_alignment_seed9/`.
+- Pythia-410M all-seed task-repeat alignment `step0` control:
+  `results/phase1_pythia410m_natural_repeat_ngram_task_alignment_seed9_step0/`.

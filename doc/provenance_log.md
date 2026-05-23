@@ -1369,3 +1369,27 @@ functional modularity?
 - Updated framing:
   `alignment representation is part of the measured phenomenon, not only a
   technical detail`.
+
+## 2026-05-23 - 410M naturally occurring repeat-ngram check
+
+- Ran Pythia-410M all-seed naturally occurring exact-repeat task-specific
+  alignment:
+  `results/phase1_pythia410m_natural_repeat_ngram_task_alignment_seed9/`.
+- Result:
+  - own top excess: `0.0503`;
+  - own top excess target CI: `[0.0068, 0.0873]`;
+  - own top excess positives: 8/9;
+  - same-index transfer: `0.0173`;
+  - task-repeat aligned transfer: `0.0388`;
+  - aligned-minus-same: `0.0215`;
+  - pair CI: `[-0.0120, 0.0461]`, pair sign `p=0.0005`;
+  - target CI: `[-0.0166, 0.0564]`, target sign `p=1.0`;
+  - target positives: 5/9.
+- Ran matched `step0` control:
+  `results/phase1_pythia410m_natural_repeat_ngram_task_alignment_seed9_step0/`.
+  - own top excess: `-0.0013`;
+  - aligned-minus-same: `-0.0022`;
+  - target CI: `[-0.0042, -0.0002]`.
+- Interpretation: 410M naturally occurring exact repeats show a weak
+  training-created own-head causal signal, but not a clean target-level
+  aligned-transfer effect. This is weaker than the 160M exact-repeat result.

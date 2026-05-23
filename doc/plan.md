@@ -356,7 +356,9 @@ These three numbers (S, C, M) are what the project should report for each archit
   underestimates weak natural roles. Task-specific repeated-position alignment
   raises inserted WikiText 160M aligned-minus-same from `0.0835` to `0.5645`,
   inserted WikiText 410M from `0.0455` to `0.1544`, and naturally occurring
-  exact-repeat 160M from `-0.0016` to `0.1897`. The paper should report generic
+  exact-repeat 160M from `-0.0016` to `0.1897`. A 410M exact-repeat check was
+  weaker: own-head causality was positive (`0.0503`), but aligned-minus-same was
+  only `0.0215` with target CI crossing zero. The paper should report generic
   alignment as an unsupervised baseline and task-specific alignment as the
   role-level measurement.
 - A stricter natural-repeat follow-up scanned unmodified WikiText windows for
