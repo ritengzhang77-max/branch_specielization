@@ -773,3 +773,30 @@ Next experiment:
 Run a denser weak-token-router trajectory between steps 400 and 800 to locate
 the causal consolidation window after gate alignment.
 ```
+
+## Progress: Dense Router Consolidation-Window Run
+
+Ran the planned dense weak-token-router trajectory:
+
+- output:
+  `results/phase3_toy_trajectory_consolidation_end800/`;
+- analysis:
+  `results/phase3_toy_trajectory_consolidation_end800_analysis/`;
+- memo:
+  `doc/phase3_toy_router_consolidation_window.md`.
+
+Key milestones in the solved regime:
+
+| Milestone | Step |
+|---|---:|
+| Gate routed-role match 5/5 | 400 |
+| Causal routed-role match 5/5 | 550 |
+| Branch distance >= 0.30 | 600 |
+| Branch distance >= 0.40 | 750 |
+
+Interpretation:
+
+```text
+role-aligned routing gates precede causal branch modularity, and causal
+separation strength keeps growing after the top-branch split appears.
+```

@@ -153,26 +153,30 @@ This framing makes positive and negative results both useful:
 
 ## Next Narrow Experiment
 
-The existing trajectory has a coarse jump between step 400 and step 600:
+The existing trajectory had a coarse jump between step 400 and step 600:
 
 ```text
 step 400: gate match 1.00, causal routed role match 0.00
 step 600: gate match 1.00, causal routed role match 1.00
 ```
 
-The next smallest useful experiment is a denser trajectory in that window for
-the `end800` weak-token-router condition:
+I ran the denser trajectory in that window for the `end800` weak-token-router
+condition:
 
 ```text
 steps: 400, 450, 500, 550, 600, 650, 700, 750, 800
 ```
 
-Goal:
+Result:
 
 ```text
-locate the causal consolidation window after gate alignment but before full
-branch modularity.
+first solved checkpoint with gate match 5/5: step 400
+first solved checkpoint with causal routed-role match 5/5: step 550
+first solved checkpoint with branch distance >= 0.30: step 600
+first solved checkpoint with branch distance >= 0.40: step 750
 ```
 
-This is more informative than another broad entropy/balance sweep because the
-mechanism has already narrowed to timing under role-informative routing pressure.
+This locates the causal consolidation window after gate alignment but before
+full branch-modularity strength. The next useful move is no longer another
+generic entropy/balance sweep; it is to test whether the same probe/gate-before-
+causality lag appears in a less hand-designed routed attention setting.

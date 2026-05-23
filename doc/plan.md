@@ -235,6 +235,12 @@ These three numbers (S, C, M) are what the project should report for each archit
   0.7652. Always-on labels kept strengthening the split to branch distance
   0.9773. This supports a causal-consolidation framing: role-aligned gates form
   before causally separable branch computations.
+- A denser 400-800 checkpoint run located the consolidation window more
+  precisely. In the solved regime, gate routed-role match was already 5/5 at
+  step 400 while causal routed-role match was 0/5. Causal routed-role match rose
+  to 2/5 at step 450, 3/5 at step 500, and 5/5 at step 550. Branch-distance
+  strength continued growing after the top-branch split appeared, crossing 0.30
+  at step 600 and reaching 0.4996 at step 800.
 - A small real-transformer follow-up on Pythia-14M checkpoints found an
   analogous probe-before-causality pattern for repeat-match heads. Across seeds
   1-3, selected layer-0/1 repeat-match specialization rose by step 4000

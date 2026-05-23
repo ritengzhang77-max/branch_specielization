@@ -264,6 +264,10 @@ Phase 3 synthesis as of 2026-05-23:
   locate the causal consolidation window. The next broader research step is to
   test whether this gate/probe-before-causality lag appears in a less
   hand-designed routed attention setting.
+- The dense 400-800 trajectory refined the timing: after the task was solved,
+  gate routed-role match was already 5/5 at step 400, causal routed-role match
+  reached 5/5 at step 550, branch distance crossed 0.30 at step 600, and branch
+  distance crossed 0.40 at step 750.
 
 Initial real-transformer follow-up:
 

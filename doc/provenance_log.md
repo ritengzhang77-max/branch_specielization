@@ -1650,3 +1650,24 @@ computations to consolidate.
 - Next narrow experiment selected: rerun the weak-token-router `end800`
   trajectory with denser evaluation between steps 400 and 800 to locate the
   causal consolidation window after gate alignment.
+
+## 2026-05-23 - Dense router consolidation-window trajectory
+
+- Added `scripts/analyze_router_consolidation_window.py`.
+- Ran the weak-token-router conflict-task trajectory with supervision active
+  through step 800 and dense checkpoints:
+  `0, 400, 450, 500, 550, 600, 650, 700, 750, 800`.
+- Output:
+  `results/phase3_toy_trajectory_consolidation_end800/`.
+- Analysis:
+  `results/phase3_toy_trajectory_consolidation_end800_analysis/`.
+- Wrote `doc/phase3_toy_router_consolidation_window.md`.
+- Main result:
+  - first solved checkpoint with gate routed-role match 5/5: step 400;
+  - first solved checkpoint with causal routed-role match 5/5: step 550;
+  - first solved checkpoint with branch distance >= 0.30: step 600;
+  - first solved checkpoint with branch distance >= 0.40: step 750;
+  - final step 800 branch distance: `0.4996`.
+- Interpretation: role-aligned routing gates precede causal branch modularity by
+  roughly 150 optimizer steps in this setup, and separation strength continues
+  growing after the top-branch split appears.
