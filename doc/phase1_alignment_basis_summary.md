@@ -121,3 +121,5 @@ That distinction should be explicit in any paper draft.
   `doc/phase1_natural_repeat_ngram_candidate_pool.md`.
 - Natural-repeat heterogeneity memo:
   `doc/phase1_natural_repeat_heterogeneity.md`.
+- Paper-facing Phase 1 claims/methods memo:
+  `doc/phase1_paper_claims_and_methods.md`.

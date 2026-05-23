@@ -1614,3 +1614,15 @@ functional modularity?
 - Interpretation update: category filtering gives the first clean target-level
   positive 410M exact-repeat transfer result, though the effect remains small
   compared with 160M. Generic Phase 0 alignment remains neutral.
+
+## 2026-05-23 - Phase 1 paper-facing claims memo
+
+- Wrote `doc/phase1_paper_claims_and_methods.md`.
+- Consolidated the current Phase 1 claim:
+  functional repeat/copy roles are stable across seeds after role-level
+  relabeling, but weak natural roles require role-specific alignment features.
+- The memo defines the two-stage metric:
+  - generic Phase 0 alignment as the task-agnostic baseline;
+  - role-specific alignment as the held-out role-stability measurement.
+- It also records the main caveat: these results establish functional
+  specialization and cross-seed role stability, not functional modularity.

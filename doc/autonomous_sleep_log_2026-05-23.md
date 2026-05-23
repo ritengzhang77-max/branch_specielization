@@ -720,3 +720,24 @@ cleaner than the mixed 8-gram run: the target-level CI is now positive. The
 effect is still small relative to 160M, so this supports "filtered natural
 repeat transfer exists in 410M" but not a strong monotonic scaling claim.
 Generic Phase 0 matching remains neutral.
+
+## Progress: Phase 1 Paper-Facing Claims Memo
+
+Wrote `doc/phase1_paper_claims_and_methods.md`.
+
+Current consolidated claim:
+
+```text
+Functional repeat/copy roles are stable across seeds after role-level
+relabeling, but weak natural roles require role-specific alignment features.
+```
+
+The memo separates:
+
+- generic Phase 0 alignment as the task-agnostic baseline;
+- role-specific alignment as the held-out role-stability measurement;
+- functional specialization from functional modularity.
+
+It also sketches a paper structure: definitions, metrics, synthetic upper bound,
+naturalistic inserted spans, unmodified natural repeats, heterogeneity analysis,
+and then explicit branch/heterogeneous architectures as the next stage.
