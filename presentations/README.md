@@ -6,6 +6,10 @@ compiled PDF, copied data, and provenance notes when available.
 
 ## 2026-05-22
 
+- `2026-05-22-1902-pythia160m-alignment-trajectory/`: Pythia-160M
+  repeat-match alignment trajectory. The main result is that causal
+  repeat-match transfer across seeds is weak by same head index but strong after
+  raw-score alignment, especially at the final checkpoint.
 - `2026-05-22-1626-conflict-router/`: conflict-heavy branch-routing checkpoint.
   The main result is that direct predecessor-vs-successor role conflict did not
   make unlabeled entropy/load-balancing routing discover causal branch

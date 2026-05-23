@@ -260,6 +260,22 @@ Initial real-transformer follow-up:
 - This does not show branch modularity in Pythia, but it supports the broader
   measurement warning: probe-defined specialization can precede causal
   importance, so specialization and causal tests must be reported separately.
+- A Pythia-160M follow-up over seeds 1-3 added checkpoint-specific raw-score
+  alignment and source-head transfer. Repeat-match specialization rose by
+  `step4000` (`0.4794`), while causal own-top excess over random controls was
+  still negative or near zero (`-0.0180`). By `step16000`, causal excess was
+  positive (`0.2324`) and aligned transfer beat same-index transfer by `0.1939`.
+  At `step143000`, same-index source transfer was much weaker than aligned
+  transfer (`0.3046` vs `1.1774`), with aligned transfer beating same-index in
+  6/6 ordered seed pairs. This supports weak, relabeled cross-seed role
+  universality for a causal repeat-match head role.
+
+The next Phase 1 question is therefore:
+
+```text
+Does the Pythia-160M aligned-transfer result survive a broader seed set and a
+larger alignment probe corpus?
+```
 
 ### Phase 4: Mechanistic Interpretation
 

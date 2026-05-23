@@ -244,6 +244,16 @@ These three numbers (S, C, M) are what the project should report for each archit
   at step143000. This does not establish branch modularity in Pythia, but it
   strengthens the methodological framing that specialization probes and causal
   importance can have different developmental timelines.
+- A Pythia-160M follow-up over seeds 1-3 added checkpoint-specific raw-score
+  alignment and cross-seed causal transfer. Repeat-match probe specialization
+  rose by step4000 (`0.4794`), but causal own-top excess over random controls
+  was still negative or near zero (`-0.0180`). By step16000, own-top causal
+  excess became positive (`0.2324`) and aligned source-head transfer beat
+  same-index source transfer by `0.1939`. At step143000, aligned transfer was
+  much stronger than same-index transfer (`1.1774` vs `0.3046`), with aligned
+  transfer better in all 6 ordered seed pairs. This strengthens the Phase 1
+  framing: head-role identity is weakly universal after relabeling/alignment,
+  not reliably tied to the same raw head index.
 
 ### C. Resources concretely available (with HF / GitHub paths)
 - Pythia seeds: `EleutherAI/pythia-{14m,70m,160m,410m}-seed{1..9}`, plus `pythia-160m-weight-seed{1-3}` and `pythia-160m-data-seed{1-3}`. 154 checkpoints per model (steps 0, 1, 2, 4, 8, …, 143000). GitHub: `EleutherAI/pythia`.

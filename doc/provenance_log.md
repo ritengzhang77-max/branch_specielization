@@ -783,3 +783,41 @@ functional modularity?
   `doc/phase1_pythia14m_repeat_match_checkpoint_trajectory.md`.
 - Created checkpoint deck:
   `presentations/2026-05-22-1759-pythia-repeat-trajectory/pythia_repeat_trajectory_checkpoint.pdf`.
+
+## 2026-05-22 Phase 1 Pythia-160M Repeat-Match Alignment Trajectory
+
+- Added `scripts/pythia_repeat_match_alignment_trajectory.py`.
+- Added `scripts/analyze_pythia_alignment_trajectory.py`.
+- Tested whether repeat-match causal head roles transfer across seeds by raw
+  head index or by checkpoint-specific raw-score alignment.
+- Ran Pythia-160M seeds 1, 2, and 3 at revisions:
+  `step0`, `step1000`, `step4000`, `step16000`, `step64000`, and `step143000`.
+- For each seed and checkpoint:
+  - selected the top repeat-match head in layers 0 and 1 from 64 synthetic
+    repeated-token probe sequences;
+  - built raw-score Hungarian head alignments using four natural probe texts;
+  - ablated own selected heads, random same-layer controls, source heads by same
+    index, and source heads by raw-score alignment;
+  - measured second-half repeated-token continuation loss.
+- Main trajectory result:
+  - repeat-match probe specialization rose by `step4000` (`0.4794`);
+  - causal own-top excess over random controls was still negative or near zero
+    at `step4000` (`-0.0180`);
+  - by `step16000`, own-top causal excess was positive (`0.2324`) and aligned
+    transfer beat same-index transfer by `0.1939`;
+  - at `step143000`, same-index source transfer was `0.3046`, aligned transfer
+    was `1.1774`, and aligned-minus-same was `0.8728`.
+- Paired transfer result:
+  - aligned transfer beat same-index in 5/6 ordered seed pairs at `step16000`;
+  - 5/6 at `step64000`;
+  - 6/6 at `step143000`.
+- Key interpretation:
+  - repeat-match specialization again appears before strong causal transfer;
+  - cross-seed causal role identity is much better captured by raw-score
+    alignment than by raw head index;
+  - this supports weak, relabeled role universality, not branch modularity in
+    ordinary Pythia heads.
+- Recorded the result in
+  `doc/phase1_pythia160m_repeat_match_alignment_trajectory.md`.
+- Created checkpoint deck:
+  `presentations/2026-05-22-1902-pythia160m-alignment-trajectory/pythia160m_alignment_trajectory_checkpoint.pdf`.
