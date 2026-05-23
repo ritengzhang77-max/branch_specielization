@@ -283,3 +283,5 @@ Weaker parts:
   `results/phase1_pythia410m_wikitext103_natural_repeat_8gram_task_alignment_seed9_n128_step0/`.
 - Natural-repeat heterogeneity memo:
   `doc/phase1_natural_repeat_heterogeneity.md`.
+- Category helper:
+  `scripts/analyze_natural_repeat_categories.py`.

@@ -1534,3 +1534,22 @@ functional modularity?
 - Interpretation: report aligned transfer and same-index transfer separately.
   Aligned-minus-same is useful, but can understate role transfer when a raw
   same-index source seed is unusually good.
+
+## 2026-05-23 - Natural-repeat semantic category counts
+
+- Added `scripts/analyze_natural_repeat_categories.py`.
+- The script can classify either a written `example_rows.csv` preview or
+  reconstruct the full deterministic evaluation set from a result directory.
+- Full evaluation-set counts:
+  - 160M WikiText-2 exact 4-gram, 64 eval examples:
+    ordinary phrase 27, tokenizer markup 17, proper-name-like 8,
+    numeric/date 8, quoted/title 3, all-caps/initialism 1;
+  - 160M WikiText-103 exact 8-gram, 128 eval examples:
+    ordinary phrase 35, tokenizer markup 32, proper-name-like 25,
+    numeric/date 20, quoted/title 16;
+  - 410M WikiText-103 exact 8-gram, 128 eval examples:
+    tokenizer markup 35, ordinary phrase 29, numeric/date 25,
+    quoted/title 21, proper-name-like 18.
+- Interpretation: natural exact repeats are semantically mixed. The next
+  filtering experiment should stratify by category or baseline predictability
+  before making model-size claims.

@@ -603,3 +603,21 @@ Interpretation: aligned-minus-same is a useful metric, but it is not a neutral
 truth oracle. A few raw same-index source heads can transfer unusually well and
 make aligned-minus-same understate role transfer. The paper should report
 aligned transfer, same-index transfer, and their difference together.
+
+## Progress: Natural-Repeat Category Counts
+
+Added `scripts/analyze_natural_repeat_categories.py` and used it to reconstruct
+the full deterministic evaluation sets from existing result directories.
+
+Primary category counts:
+
+| Run | n | Ordinary | Numeric/date | Quoted/title | Proper-name-like | Tokenizer markup |
+|---|---:|---:|---:|---:|---:|---:|
+| 160M WikiText-2 exact 4-gram | 64 | 27 | 8 | 3 | 8 | 17 |
+| 160M WikiText-103 exact 8-gram | 128 | 35 | 20 | 16 | 25 | 32 |
+| 410M WikiText-103 exact 8-gram | 128 | 29 | 25 | 21 | 18 | 35 |
+
+Interpretation: exact natural repeats are not one clean semantic behavior. They
+mix ordinary phrases, numeric/date spans, quoted titles, proper-name-like spans,
+and tokenizer-artifact spans. The next filtering experiment should stratify or
+filter examples before interpreting model-size differences.

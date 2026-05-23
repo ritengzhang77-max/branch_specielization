@@ -52,6 +52,24 @@ There are also strong positive 410M pair-level examples:
 | 410M exact 8-gram, task-repeat | 3 | 7 | -0.0013 | 0.1914 | 0.1927 |
 | 410M exact 8-gram, task-repeat | 5 | 3 | -0.0360 | 0.1239 | 0.1599 |
 
+## Semantic Mixture
+
+I added `scripts/analyze_natural_repeat_categories.py` to classify the repeated
+span text with simple heuristics. The categories are not interpretability
+labels; they are only a practical way to decide what to stratify next.
+
+Full evaluation-set counts:
+
+| Run | n | Ordinary | Numeric/date | Quoted/title | Proper-name-like | Tokenizer markup |
+|---|---:|---:|---:|---:|---:|---:|
+| 160M WikiText-2 exact 4-gram | 64 | 27 | 8 | 3 | 8 | 17 |
+| 160M WikiText-103 exact 8-gram | 128 | 35 | 20 | 16 | 25 | 32 |
+| 410M WikiText-103 exact 8-gram | 128 | 29 | 25 | 21 | 18 | 35 |
+
+The exact-repeat task is therefore not one semantic behavior. It mixes ordinary
+phrases, numbers/dates, titles/quotes, names, and tokenization artifacts such as
+`@-@`. This supports stratifying future runs before making model-size claims.
+
 ## Interpretation
 
 The 410M natural-repeat weakness should not be summarized as "alignment does not
