@@ -912,3 +912,83 @@ Interpretation:
 ```text
 more active SwitchHead experts created redundancy, not role-specific modularity.
 ```
+
+## Progress: Weak Role-Informed SwitchHead Selector
+
+Added weak expert-selection supervision to
+`scripts/toy_switchhead_competition.py`, then reran the one-layer two-expert
+SwitchHead setup with `expert_supervision_weight=0.05` active for all 2000
+training steps.
+
+Result directory:
+
+```text
+results/phase3_toy_switchhead_competition_weak_w005_seed5_steps2000/
+```
+
+Aggregate result:
+
+| Metric | Value |
+|---|---:|
+| Local accuracy | 1.0000 |
+| Induction accuracy | 1.0000 |
+| Gate same top expert | 0.00 |
+| Causal same top expert | 0.00 |
+| Routed expert match | 1.00 |
+| Gate distance | 0.9982 |
+| Causal expert distance | 0.5675 |
+| Top expert loss delta | about 7.0 |
+
+Interpretation:
+
+```text
+weak role-informative expert-selection pressure can make SwitchHead attention
+experts become role-aligned causal modules. This is induced functional
+modularity, not spontaneous modularity.
+```
+
+Next decisive test:
+
+```text
+turn the auxiliary selector pressure off partway through training and check
+whether gate separation and causal expert modularity persist.
+```
+
+## Progress: Transient SwitchHead Selector Pressure
+
+Ran the next decisive test with the same weak selector pressure active only
+through step 800, then removed for the final 1200 training steps.
+
+Result directory:
+
+```text
+results/phase3_toy_switchhead_competition_weak_w005_end800_seed5_steps2000/
+```
+
+Aggregate result:
+
+| Metric | Value |
+|---|---:|
+| Local accuracy | 1.0000 |
+| Induction accuracy | 1.0000 |
+| Gate same top expert | 0.00 |
+| Causal same top expert | 0.00 |
+| Routed expert match | 1.00 |
+| Gate distance | 0.9645 |
+| Causal expert distance | 0.5664 |
+| Top expert loss delta | about 7.0 |
+
+Interpretation:
+
+```text
+the induced SwitchHead expert split survives after the auxiliary selector loss
+is removed. This is stronger evidence for induced functional modularity than the
+full-supervision run.
+```
+
+Next decisive test:
+
+```text
+sweep shorter selector-pressure windows to find whether the effect needs 800
+steps or appears with a much smaller structural cue.
+```

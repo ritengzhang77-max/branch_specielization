@@ -199,6 +199,120 @@ failure mode:
 - single-expert causal deltas become tiny, indicating redundancy across active
   experts rather than role separation.
 
+### Two Experts With Weak Role-Informed Selection Pressure
+
+I then added a weak auxiliary loss on SwitchHead's output-expert selector:
+
+```text
+local positions -> expert 0
+induction positions -> expert 1
+expert supervision weight = 0.05
+```
+
+The task loss remained the primary objective. The auxiliary loss was active for
+the full 2000-step run.
+
+Command:
+
+```bash
+CUDA_VISIBLE_DEVICES=0 python3 -u scripts/toy_switchhead_competition.py \
+  --seeds 1 2 3 4 5 \
+  --steps 2000 \
+  --batch-size 128 \
+  --eval-examples 512 \
+  --n-layers 1 \
+  --n-heads 2 \
+  --n-experts 2 \
+  --d-head 32 \
+  --moe-k 1 \
+  --expert-supervision-weight 0.05 \
+  --device cuda \
+  --output-dir results/phase3_toy_switchhead_competition_weak_w005_seed5_steps2000
+```
+
+Aggregate over 5 seeds:
+
+| Metric | Value |
+|---|---:|
+| Local accuracy | 1.0000 |
+| Induction accuracy | 1.0000 |
+| Gate same top expert | 0.00 |
+| Causal same top expert | 0.00 |
+| Routed expert match | 1.00 |
+| Gate distribution distance | 0.9982 |
+| Causal expert distribution distance | 0.5675 |
+| Local top expert loss delta | 7.0359 |
+| Induction top expert loss delta | 7.0235 |
+
+Per-seed causal top expert:
+
+| Seed | Local top | Induction top | Routed match? | Causal distance | Gate distance |
+|---:|---|---|---:|---:|---:|
+| 1 | L0E0 | L0E1 | 1 | 0.5507 | 0.9983 |
+| 2 | L0E0 | L0E1 | 1 | 0.6537 | 0.9983 |
+| 3 | L0E0 | L0E1 | 1 | 0.5447 | 0.9981 |
+| 4 | L0E0 | L0E1 | 1 | 0.5214 | 0.9983 |
+| 5 | L0E0 | L0E1 | 1 | 0.5670 | 0.9980 |
+
+This is the first SwitchHead result where structural expert selection and causal
+functional modularity align cleanly across all tested seeds. Expert 0 is the
+local-role causal component in 5/5 seeds, and expert 1 is the induction-role
+causal component in 5/5 seeds.
+
+The result should be stated carefully. It is not spontaneous modularity. It
+shows that weak role-informative selector pressure can make SwitchHead's
+attention experts become role-aligned functional modules on this toy task.
+
+### Two Experts With Transient Selection Pressure
+
+To test whether the result is merely compliance with an active auxiliary loss, I
+reran the same setup with the selector loss turned off after step 800:
+
+```bash
+CUDA_VISIBLE_DEVICES=0 python3 -u scripts/toy_switchhead_competition.py \
+  --seeds 1 2 3 4 5 \
+  --steps 2000 \
+  --batch-size 128 \
+  --eval-examples 512 \
+  --n-layers 1 \
+  --n-heads 2 \
+  --n-experts 2 \
+  --d-head 32 \
+  --moe-k 1 \
+  --expert-supervision-weight 0.05 \
+  --expert-supervision-end-step 800 \
+  --device cuda \
+  --output-dir results/phase3_toy_switchhead_competition_weak_w005_end800_seed5_steps2000
+```
+
+Aggregate over 5 seeds:
+
+| Metric | Value |
+|---|---:|
+| Local accuracy | 1.0000 |
+| Induction accuracy | 1.0000 |
+| Gate same top expert | 0.00 |
+| Causal same top expert | 0.00 |
+| Routed expert match | 1.00 |
+| Gate distribution distance | 0.9645 |
+| Causal expert distribution distance | 0.5664 |
+| Local top expert loss delta | 7.0446 |
+| Induction top expert loss delta | 7.0217 |
+
+Per-seed causal top expert:
+
+| Seed | Local top | Induction top | Routed match? | Causal distance | Gate distance |
+|---:|---|---|---:|---:|---:|
+| 1 | L0E0 | L0E1 | 1 | 0.5514 | 0.9764 |
+| 2 | L0E0 | L0E1 | 1 | 0.6486 | 0.9545 |
+| 3 | L0E0 | L0E1 | 1 | 0.5452 | 0.9650 |
+| 4 | L0E0 | L0E1 | 1 | 0.5209 | 0.9635 |
+| 5 | L0E0 | L0E1 | 1 | 0.5656 | 0.9630 |
+
+This strengthens the induced-modularity result. The selector pressure is gone
+for the final 1200 training steps, but both the gate separation and causal
+expert separation persist in 5/5 seeds.
+
 So the best interpretation is:
 
 ```text
@@ -223,6 +337,20 @@ role-aligned modularity is not automatic. Role-informative pressure remains the
 only reliable mechanism observed so far.
 ```
 
+The weak-supervision SwitchHead result sharpens that answer:
+
+```text
+when the structural router is given weak role information, SwitchHead can convert
+expert selection into causal functional modularity.
+```
+
+The transient-pressure run adds:
+
+```text
+once induced, the role-aligned expert split can persist without the auxiliary
+selection loss remaining active.
+```
+
 ## Caveats
 
 - These are very small SwitchHead models, not the paper-scale language model.
@@ -233,19 +361,20 @@ only reliable mechanism observed so far.
 - The gate metric uses normalized sigmoid selection scores for interpretability;
   SwitchHead's actual top-k selection uses sigmoid scores directly.
 - The task remains synthetic.
+- The transient-pressure test turns off the auxiliary selector loss after step
+  800, but it does not yet identify the minimum pressure duration or weight.
 
 ## Next Step
 
 Do not claim a general negative result about SwitchHead. The next useful
 SwitchHead-specific tests are:
 
-1. Add a weak role-informative auxiliary selection loss, analogous to the
-   weak-token-router toy.
+1. Sweep shorter auxiliary selection windows, especially end steps 100, 200,
+   and 400, to identify the minimum cue duration that survives later training.
 2. Add checkpointed trajectories to ask whether gate/expert-selection separation
    ever precedes causal expert separation in this module.
-3. If weak selection pressure works, sweep its weight to test whether
-   selection compliance precedes causal expert modularity as in the branch-router
-   toy.
+3. Sweep the supervision weight and end step to test whether selection compliance
+   precedes causal expert modularity as in the branch-router toy.
 
 ## Artifacts
 
@@ -255,5 +384,9 @@ SwitchHead-specific tests are:
   `results/phase3_toy_switchhead_competition_seed5_steps2000/`
 - Four-expert result directory:
   `results/phase3_toy_switchhead_competition_seed5_e4k2_steps2000/`
+- Weak-selection result directory:
+  `results/phase3_toy_switchhead_competition_weak_w005_seed5_steps2000/`
+- Transient weak-selection result directory:
+  `results/phase3_toy_switchhead_competition_weak_w005_end800_seed5_steps2000/`
 - Feasibility memo:
   `doc/switchhead_followup_feasibility.md`

@@ -89,6 +89,16 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--mlp-dim", type=int, default=256)
     parser.add_argument("--dropout", type=float, default=0.0)
     parser.add_argument("--expert-dropout", type=float, default=0.0)
+    parser.add_argument("--expert-supervision-weight", type=float, default=0.0)
+    parser.add_argument(
+        "--expert-supervision-end-step",
+        type=int,
+        default=-1,
+        help=(
+            "Last training step with weak expert-selection supervision, exclusive. "
+            "-1 keeps supervision active for the full run; 0 disables it."
+        ),
+    )
     parser.add_argument("--lr", type=float, default=1e-3)
     parser.add_argument("--weight-decay", type=float, default=0.01)
     parser.add_argument("--local-weight", type=float, default=1.0)
@@ -215,6 +225,9 @@ def train_model(
         optimizer.zero_grad(set_to_none=True)
         logits = model(input_ids)
         loss, _ = combined_loss_accuracy(logits, input_ids, layout, args.local_weight, args.induction_weight)
+        supervision_weight = effective_expert_supervision_weight(args, step)
+        if supervision_weight > 0.0:
+            loss = loss + supervision_weight * expert_selection_supervision_loss(model, input_ids, layout)
         loss.backward()
         torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
         optimizer.step()
@@ -222,6 +235,32 @@ def train_model(
         if (step + 1) % max(args.steps // 4, 1) == 0:
             print(f"  step={step + 1} train_loss={last_loss:.4f}", flush=True)
     return last_loss
+
+
+def effective_expert_supervision_weight(args: argparse.Namespace, step: int) -> float:
+    if args.expert_supervision_end_step < 0:
+        return args.expert_supervision_weight
+    if step < args.expert_supervision_end_step:
+        return args.expert_supervision_weight
+    return 0.0
+
+
+def expert_selection_supervision_loss(
+    model: TinySwitchHeadTransformer,
+    input_ids: torch.Tensor,
+    layout: dict[str, torch.Tensor | int],
+) -> torch.Tensor:
+    if model.args.n_experts < 2:
+        raise ValueError("Expert supervision requires at least two experts.")
+    local_positions = layout["local_positions"].to(input_ids.device)
+    induction_positions = layout["induction_positions"].to(input_ids.device)
+    losses = []
+    for dist in model.collect_gate_distributions(input_ids):
+        # dist: batch, seq, heads, experts, normalized over experts.
+        local_prob = dist[:, local_positions, :, 0].clamp_min(1e-12)
+        induction_prob = dist[:, induction_positions, :, 1].clamp_min(1e-12)
+        losses.append(-0.5 * (local_prob.log().mean() + induction_prob.log().mean()))
+    return torch.stack(losses).mean()
 
 
 def evaluate(

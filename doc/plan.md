@@ -445,6 +445,22 @@ These three numbers (S, C, M) are what the project should report for each archit
   (`aligned-minus-same=0.0022`, target CI `[-0.0191, 0.0182]`). This suggests
   category filtering can rescue the 410M exact-repeat result, but the effect
   size is still far smaller than 160M's and remains alignment-basis dependent.
+- The first SwitchHead toy bridge showed a sharp distinction between spontaneous
+  and induced modularity. A one-layer two-expert SwitchHead model solved the
+  conflict-heavy local-vs-induction task in 5/5 seeds but reused experts across
+  roles (`gate same-top=1.00`, `causal same-top=0.80`, causal distance
+  `0.0087`). A 4-expert `moe_k=2` variant also solved the task but produced
+  redundancy, not role separation (`causal same-top=1.00`). Adding a weak
+  role-informed selector loss (`weight=0.05`) changed the outcome: local routed
+  to expert 0 and induction routed to expert 1 in 5/5 seeds, with causal
+  same-top `0.00`, routed expert match `1.00`, gate distance `0.9982`, and
+  causal expert distance `0.5675`. This supports the claim that structural
+  expert routing can become functional modularity under weak role pressure, but
+  does not support spontaneous modularity. A transient-pressure run with the
+  selector loss removed after step 800 preserved the split after 1200 further
+  unsupervised steps (`routed match=1.00`, gate distance `0.9645`, causal expert
+  distance `0.5664`), suggesting induced expert routing can consolidate into
+  persistent functional modularity.
 
 ### C. Resources concretely available (with HF / GitHub paths)
 - Pythia seeds: `EleutherAI/pythia-{14m,70m,160m,410m}-seed{1..9}`, plus `pythia-160m-weight-seed{1-3}` and `pythia-160m-data-seed{1-3}`. 154 checkpoints per model (steps 0, 1, 2, 4, 8, …, 143000). GitHub: `EleutherAI/pythia`.

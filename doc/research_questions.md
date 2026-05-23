@@ -191,6 +191,19 @@ SwitchHead feasibility update:
 - A 4-expert `moe_k=2` variant also solved the task but remained non-modular:
   causal same-top expert was 1.00 and single-expert ablation effects were tiny,
   suggesting redundancy across active experts rather than role separation.
+- With a weak role-informed output-expert selection loss
+  (`expert_supervision_weight=0.05`), the two-expert SwitchHead setup produced
+  role-aligned causal expert modularity in 5/5 seeds: gate same-top expert was
+  0.00, causal same-top expert was 0.00, routed expert match was 1.00, and
+  causal expert distribution distance was 0.5675. This is induced modularity,
+  not spontaneous modularity, because the auxiliary loss was active throughout
+  training.
+- A transient version with the same selector loss turned off after step 800
+  preserved the split after 1200 further unsupervised steps: gate same-top
+  expert was 0.00, causal same-top expert was 0.00, routed expert match was
+  1.00, gate distance was 0.9645, and causal expert distribution distance was
+  0.5664. This suggests induced expert routing can consolidate into persistent
+  functional modularity.
 
 ### Phase 3: Architectural Intervention
 

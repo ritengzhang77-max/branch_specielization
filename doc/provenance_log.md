@@ -1751,3 +1751,39 @@ computations to consolidate.
   - local/induction top expert loss deltas: about `0.024`.
 - Interpretation update: adding more active experts produced redundancy rather
   than role separation.
+- Added weak expert-selection supervision to
+  `scripts/toy_switchhead_competition.py`.
+- Ran a 5-seed weak role-informed SwitchHead run:
+  `results/phase3_toy_switchhead_competition_weak_w005_seed5_steps2000/`.
+- Setup:
+  - same one-layer, two-head, two-expert SwitchHead model;
+  - `moe_k=1`;
+  - `expert_supervision_weight=0.05`;
+  - auxiliary selector loss active for the full 2000-step run.
+- Result:
+  - local accuracy: `1.0000`;
+  - induction accuracy: `1.0000`;
+  - gate same top expert: `0.00`;
+  - causal same top expert: `0.00`;
+  - routed expert match: `1.00`;
+  - gate distribution distance: `0.9982`;
+  - causal expert distribution distance: `0.5675`;
+  - local/induction top expert loss deltas: about `7.0`.
+- Interpretation update: weak role-informative selector pressure is sufficient
+  to make SwitchHead attention experts become role-aligned causal modules in
+  this toy setup. This is a positive result for induced modularity, but not a
+  spontaneous-modularity result because the auxiliary loss remains active.
+- Ran the same weak-selector setup with transient pressure ending after step 800:
+  `results/phase3_toy_switchhead_competition_weak_w005_end800_seed5_steps2000/`.
+- Result:
+  - local accuracy: `1.0000`;
+  - induction accuracy: `1.0000`;
+  - gate same top expert: `0.00`;
+  - causal same top expert: `0.00`;
+  - routed expert match: `1.00`;
+  - gate distribution distance: `0.9645`;
+  - causal expert distribution distance: `0.5664`;
+  - local/induction top expert loss deltas: about `7.0`.
+- Interpretation update: SwitchHead's induced role-aligned expert split persists
+  after the auxiliary selector loss is removed for the final 1200 training
+  steps. This makes the result stronger than active-loss compliance.
