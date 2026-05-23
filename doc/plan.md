@@ -214,6 +214,16 @@ These three numbers (S, C, M) are what the project should report for each archit
   evidence therefore points to role-informative routing pressure, not capacity
   bottlenecks or conflict alone, as the reliable mechanism for branch-level
   functional modularity.
+- Annealed weak-label routing refined that mechanism. Role labels active only
+  through steps 50, 100, 200, or 400 did not persist as causal branch modularity:
+  all four conditions had same-top-branch rate 1.00 and routed role match 0.00.
+  Labels through step 800 produced partial persistence with routed role match
+  0.80 and branch distance 0.3337. Labels through step 1200 produced full
+  top-branch role separation after 400 unlabeled final steps, with routed role
+  match 1.00 and branch distance 0.7652, still weaker than always-on weak labels
+  at branch distance 0.9773. The next decisive toy experiment is to checkpoint
+  training trajectories and measure when gate separation and causal separation
+  first form, and whether they decay after label removal.
 
 ### C. Resources concretely available (with HF / GitHub paths)
 - Pythia seeds: `EleutherAI/pythia-{14m,70m,160m,410m}-seed{1..9}`, plus `pythia-160m-weight-seed{1-3}` and `pythia-160m-data-seed{1-3}`. 154 checkpoints per model (steps 0, 1, 2, 4, 8, …, 143000). GitHub: `EleutherAI/pythia`.

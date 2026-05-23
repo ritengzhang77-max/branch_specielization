@@ -151,6 +151,15 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--weight-decay", type=float, default=0.01)
     parser.add_argument("--router-temperature", type=float, default=1.0)
     parser.add_argument("--router-supervision-weight", type=float, default=0.05)
+    parser.add_argument(
+        "--router-supervision-end-step",
+        type=int,
+        default=-1,
+        help=(
+            "Last training step with weak router supervision, exclusive. "
+            "-1 keeps supervision active for the full run; 0 disables it."
+        ),
+    )
     parser.add_argument("--router-entropy-weight", type=float, default=0.0)
     parser.add_argument("--router-balance-weight", type=float, default=0.0)
     parser.add_argument("--local-weight", type=float, default=0.25)
@@ -362,6 +371,14 @@ def routing_regularization_loss(
     return loss
 
 
+def effective_router_supervision_weight(args: argparse.Namespace, step: int) -> float:
+    if args.router_supervision_end_step < 0:
+        return args.router_supervision_weight
+    if step < args.router_supervision_end_step:
+        return args.router_supervision_weight
+    return 0.0
+
+
 def train_model(
     model: TwoBranchTransformer,
     train_rng: np.random.Generator,
@@ -377,13 +394,14 @@ def train_model(
         optimizer.zero_grad(set_to_none=True)
         logits = model(input_ids)
         loss, _ = combined_loss_accuracy(logits, input_ids, layout, args.local_weight, args.induction_weight)
+        router_supervision_weight = effective_router_supervision_weight(args, step)
         if (
             model.mode in WEAK_SUPERVISION_MODES
-            and args.router_supervision_weight > 0.0
+            and router_supervision_weight > 0.0
         ) or args.router_entropy_weight > 0.0 or args.router_balance_weight > 0.0:
             weights = model.route_weights(model.embed_input(input_ids))
-        if model.mode in WEAK_SUPERVISION_MODES and args.router_supervision_weight > 0.0:
-            loss = loss + args.router_supervision_weight * routing_target_nll(weights, layout)
+        if model.mode in WEAK_SUPERVISION_MODES and router_supervision_weight > 0.0:
+            loss = loss + router_supervision_weight * routing_target_nll(weights, layout)
         if args.router_entropy_weight > 0.0 or args.router_balance_weight > 0.0:
             loss = loss + routing_regularization_loss(
                 weights,

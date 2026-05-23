@@ -226,13 +226,18 @@ Current toy-pilot status as of 2026-05-22:
   balance-only, and entropy+balance conflict-task routers all had
   same-top-branch rate 1.00 and routed role match 0.00 across 5 seeds. Weak
   labels and oracle routing both achieved routed role match 1.00.
+- Annealed weak-label routing showed that brief role labels are not enough as a
+  symmetry-breaking nudge. End steps 50, 100, 200, and 400 all solved the task
+  but had same-top-branch rate 1.00 and routed role match 0.00. End step 800
+  had routed role match 0.80 and branch distance 0.3337. End step 1200 had
+  routed role match 1.00 and branch distance 0.7652, below the always-on weak
+  label branch distance of 0.9773.
 
 The next Phase 3 question is therefore:
 
 ```text
-Is role-informative pressure needed only as an early symmetry breaker, or must it
-remain active throughout training for branch-level functional modularity to
-persist?
+When during training do gate separation and causal branch separation appear, and
+how much do they decay after role-informative routing pressure is removed?
 ```
 
 ### Phase 4: Mechanistic Interpretation

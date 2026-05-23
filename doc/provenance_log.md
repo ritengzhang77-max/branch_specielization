@@ -675,3 +675,46 @@ functional modularity?
 - Recorded the result in `doc/phase3_toy_conflict_router.md`.
 - Created checkpoint deck:
   `presentations/2026-05-22-1626-conflict-router/conflict_router_checkpoint.pdf`.
+
+## 2026-05-22 Phase 3 Annealed Weak Router Supervision
+
+- Extended `scripts/toy_branch_isolation_intervention.py` with
+  `--router-supervision-end-step`.
+- The new flag makes weak router supervision active only for optimization steps
+  `< N`; `-1` preserves the previous always-on behavior and `0` disables the
+  auxiliary routing-label loss.
+- Added `scripts/analyze_annealed_router_experiment.py`.
+- Tested the conflict-heavy `bidirectional_lookup` task with 64-dim branch heads,
+  equal local/induction weights, 1600 training steps, and weak-token-router
+  supervision weight 0.05 active through:
+  - step 50;
+  - step 100;
+  - step 200;
+  - step 400;
+  - step 800;
+  - step 1200.
+- All annealed conditions solved the task.
+- Brief early labels did not persist as causal branch modularity:
+  - end 50: same-top-branch rate 1.00, routed role match 0.00, branch distance
+    0.0670;
+  - end 100: same-top-branch rate 1.00, routed role match 0.00, branch distance
+    0.0395;
+  - end 200: same-top-branch rate 1.00, routed role match 0.00, branch distance
+    0.0560;
+  - end 400: same-top-branch rate 1.00, routed role match 0.00, branch distance
+    0.0945.
+- Longer role pressure produced partial or full persistence:
+  - end 800: routed role match 0.80, branch distance 0.3337;
+  - end 1200: routed role match 1.00, branch distance 0.7652.
+- Reference points from the conflict checkpoint:
+  - unlabeled entropy+balance: routed role match 0.00, branch distance 0.2069;
+  - always-on weak label 0.05: routed role match 1.00, branch distance 0.9773;
+  - oracle route: routed role match 1.00, branch distance 1.0000.
+- Key interpretation:
+  - role-informative pressure does not need to remain active until the final
+    step for top-branch modularity to persist;
+  - it must last through a large fraction of training in this setup;
+  - continuous pressure gives much stronger causal separation than late removal.
+- Recorded the result in `doc/phase3_toy_annealed_router.md`.
+- Created checkpoint deck:
+  `presentations/2026-05-22-1709-annealed-router/annealed_router_checkpoint.pdf`.
