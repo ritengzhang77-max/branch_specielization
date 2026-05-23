@@ -1369,6 +1369,8 @@ Result:
 one-layer output-selector induced condition: 10/10 routed match across seeds 1-10
 two-layer output-selector induced condition: 10/10 routed match across seeds 1-10
 two-layer top components: local L1E0 and induction L1E1 in 10/10 seeds
+one-layer spontaneous condition: only 2/10 routed match, near-zero causal distance
+two-layer spontaneous condition: only 1/10 routed match, shared gates
 ```
 
 Wrote:

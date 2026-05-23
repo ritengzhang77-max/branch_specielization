@@ -36,6 +36,28 @@ local top:           L0E0 in 10/10
 induction top:       L0E1 in 10/10
 ```
 
+## One-Layer Spontaneous Baseline
+
+Setup:
+
+```text
+n_layers = 1
+no selector supervision
+```
+
+| Seed set | Local acc. | Induction acc. | Routed match | Output gate dist. | Causal dist. |
+|---|---:|---:|---:|---:|---:|
+| 1-5 | 1.0000 | 1.0000 | 0.20 | 0.0032 | 0.0087 |
+| 6-10 | 1.0000 | 1.0000 | 0.20 | 0.0061 | 0.0086 |
+
+Across seeds 1-10:
+
+```text
+routed expert match: 2/10
+gate split:          absent / tiny
+causal distance:     near zero
+```
+
 ## Two-Layer All-Layer Output-Selector Condition
 
 Setup:
@@ -61,6 +83,28 @@ local top:           L1E0 in 10/10
 induction top:       L1E1 in 10/10
 ```
 
+## Two-Layer Spontaneous Baseline
+
+Setup:
+
+```text
+n_layers = 2
+no selector supervision
+```
+
+| Seed set | Local acc. | Induction acc. | Routed match | Output gate dist. | Causal dist. |
+|---|---:|---:|---:|---:|---:|
+| 1-5 | 1.0000 | 1.0000 | 0.20 | 0.0017 | 0.1617 |
+| 6-10 | 1.0000 | 1.0000 | 0.00 | 0.0041 | 0.1209 |
+
+Across seeds 1-10:
+
+```text
+routed expert match: 1/10
+gate split:          absent / tiny
+top causal layer:    late layer, usually shared across roles
+```
+
 ## Interpretation
 
 The core positive SwitchHead result is not a five-seed accident:
@@ -77,9 +121,20 @@ the induced causal role modules localize to layer 1 across all 10 two-layer
 seeds tested.
 ```
 
+The negative spontaneous result also survives the expanded seed set:
+
+```text
+SwitchHead solves the task across spontaneous seeds, but does not reliably form
+role-aligned expert modules without the role-informed output selector cue.
+```
+
 ## Result Directories
 
 - `results/phase3_toy_switchhead_selector_output_w005_end800_seed5_steps2000/`
 - `results/phase3_toy_switchhead_selector_output_w005_end800_seed6_10_steps2000/`
+- `results/phase3_toy_switchhead_competition_seed5_steps2000/`
+- `results/phase3_toy_switchhead_spontaneous_seed6_10_steps2000/`
 - `results/phase3_toy_switchhead_2layer_induced_w005_end800_seed5_steps2000_v2/`
 - `results/phase3_toy_switchhead_2layer_induced_w005_end800_seed6_10_steps2000/`
+- `results/phase3_toy_switchhead_2layer_spontaneous_seed5_steps2000_v2/`
+- `results/phase3_toy_switchhead_2layer_spontaneous_seed6_10_steps2000/`

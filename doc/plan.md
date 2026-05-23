@@ -491,7 +491,9 @@ These three numbers (S, C, M) are what the project should report for each archit
 - Expanded-seed robustness now strengthens the SwitchHead claim: the one-layer
   output-selector induced condition and the two-layer all-layer output-selector
   induced condition both reached routed match `1.00` across seeds 1-10; the
-  two-layer causal modules localized to `L1E0` and `L1E1` in all 10 seeds.
+  two-layer causal modules localized to `L1E0` and `L1E1` in all 10 seeds. The
+  expanded spontaneous controls remained negative: one-layer spontaneous had
+  only 2/10 routed match and two-layer spontaneous had only 1/10 routed match.
 
 ### C. Resources concretely available (with HF / GitHub paths)
 - Pythia seeds: `EleutherAI/pythia-{14m,70m,160m,410m}-seed{1..9}`, plus `pythia-160m-weight-seed{1-3}` and `pythia-160m-data-seed{1-3}`. 154 checkpoints per model (steps 0, 1, 2, 4, 8, …, 143000). GitHub: `EleutherAI/pythia`.

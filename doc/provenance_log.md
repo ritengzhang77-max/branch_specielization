@@ -2025,3 +2025,16 @@ computations to consolidate.
   robust across 10/10 one-layer seeds and 10/10 two-layer seeds. The two-layer
   causal localization to `L1E0` for local and `L1E1` for induction also holds in
   all 10 tested seeds.
+- Ran spontaneous negative controls on seeds 6-10:
+  - one-layer:
+    `results/phase3_toy_switchhead_spontaneous_seed6_10_steps2000/`;
+  - two-layer:
+    `results/phase3_toy_switchhead_2layer_spontaneous_seed6_10_steps2000/`.
+- Negative-control result:
+  - one-layer spontaneous seeds 6-10: routed match `0.20`, gate distance
+    `0.0061`, causal distance `0.0086`;
+  - two-layer spontaneous seeds 6-10: routed match `0.00`, gate distance
+    `0.0041`, causal distance `0.1209`.
+- Updated `doc/phase3_toy_switchhead_seed_robustness.md`.
+- Interpretation update: the negative spontaneous result also survives the
+  expanded seed set.

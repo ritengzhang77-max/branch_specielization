@@ -253,7 +253,9 @@ SwitchHead feasibility update:
 - Expanded-seed robustness checks showed the core output-selector induced result
   is stable across 10/10 one-layer seeds and 10/10 two-layer seeds. In the
   two-layer condition, local top was `L1E0` and induction top was `L1E1` in all
-  10 tested seeds.
+  10 tested seeds. Expanded spontaneous controls remained negative: one-layer
+  spontaneous had only 2/10 routed match with near-zero causal distance, and
+  two-layer spontaneous had only 1/10 routed match with shared gates.
 
 ### Phase 3: Architectural Intervention
 
