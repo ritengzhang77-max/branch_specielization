@@ -1093,3 +1093,12 @@ functional modularity?
     sign `p=7.3e-14`;
   - 410M: mean `1.6554`, bootstrap CI `[1.0527, 2.2303]`,
     sign `p=0.0029`.
+
+## 2026-05-22 - Sleep checkpoint summary
+
+- Wrote `doc/autonomous_sleep_checkpoint_summary_2026-05-22.md`.
+- The checkpoint memo summarizes repeat-match, fixed-layer local-copy,
+  layer-selection, cross-layer candidate-pool, checkpoint trajectory, and
+  model-size results.
+- It identifies the next best experiment as a naturalistic local-copy/induction
+  probe to test whether the current synthetic `[x, SEP, x]` result generalizes.
