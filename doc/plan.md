@@ -471,7 +471,9 @@ These three numbers (S, C, M) are what the project should report for each archit
   weight sweep found that weights `0.02` through `0.045` still solved the task
   but were only `4/5` modular, while `0.05` was reliable in 5/5 seeds. This
   narrows the induced-modularity claim to cues that cross both a duration and
-  strength threshold.
+  strength threshold. A strength-duration check confirmed the tradeoff: at end
+  step 800, `0.02` was still partial but `0.025` and `0.03` were reliable in 5/5
+  seeds, moving the reliable boundary below the 450-step value.
 
 ### C. Resources concretely available (with HF / GitHub paths)
 - Pythia seeds: `EleutherAI/pythia-{14m,70m,160m,410m}-seed{1..9}`, plus `pythia-160m-weight-seed{1-3}` and `pythia-160m-data-seed{1-3}`. 154 checkpoints per model (steps 0, 1, 2, 4, 8, …, 143000). GitHub: `EleutherAI/pythia`.

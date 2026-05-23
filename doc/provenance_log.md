@@ -1851,3 +1851,21 @@ computations to consolidate.
   tested selector weight that reliably induces 5/5 causal expert modularity is
   `0.05`. Smaller weights still influence routing but do not cross the
   reliability threshold in this seed set.
+
+## 2026-05-23 - SwitchHead strength-duration tradeoff
+
+- Ran longer-window lower-weight selector runs:
+  - `expert_supervision_weight=0.02`, `expert_supervision_end_step=800`;
+  - `expert_supervision_weight=0.025`, `expert_supervision_end_step=800`;
+  - `expert_supervision_weight=0.03`, `expert_supervision_end_step=800`.
+- Results:
+  - weight `0.02`, end step 800: routed expert match `0.80`, gate distance
+    `0.3864`, causal distance `0.3405`;
+  - weight `0.025`, end step 800: routed expert match `1.00`, gate distance
+    `0.5823`, causal distance `0.4834`;
+  - weight `0.03`, end step 800: routed expert match `1.00`, gate distance
+    `0.7632`, causal distance `0.5528`.
+- Wrote `doc/phase3_toy_switchhead_strength_duration_tradeoff.md`.
+- Interpretation update: selector duration can compensate for selector strength.
+  The reliable weight boundary moves from between `0.045` and `0.05` at end step
+  450 to between `0.02` and `0.025` at end step 800.

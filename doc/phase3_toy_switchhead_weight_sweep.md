@@ -78,6 +78,11 @@ SwitchHead expert routing can consolidate into persistent causal functional
 modularity.
 ```
 
+A follow-up strength-duration check found that the reliable weight threshold
+drops when the selector cue lasts longer: at end step 450, the first tested
+reliable weight was `0.05`; at end step 800, the first tested reliable weight was
+`0.025`. See `doc/phase3_toy_switchhead_strength_duration_tradeoff.md`.
+
 ## Result Directories
 
 - `results/phase3_toy_switchhead_competition_seed5_steps2000/`

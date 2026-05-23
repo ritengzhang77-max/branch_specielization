@@ -1109,3 +1109,31 @@ Wrote:
 ```text
 doc/phase3_toy_switchhead_weight_sweep.md
 ```
+
+## Progress: SwitchHead Strength-Duration Tradeoff
+
+Ran longer-window lower-weight selector tests to see whether cue duration can
+compensate for cue strength.
+
+Summary:
+
+| End step | Weight | Routed match | Gate distance | Causal distance |
+|---:|---:|---:|---:|---:|
+| 450 | 0.045 | 0.80 | 0.3483 | 0.3460 |
+| 450 | 0.05 | 1.00 | 0.4476 | 0.4240 |
+| 800 | 0.02 | 0.80 | 0.3864 | 0.3405 |
+| 800 | 0.025 | 1.00 | 0.5823 | 0.4834 |
+| 800 | 0.03 | 1.00 | 0.7632 | 0.5528 |
+
+Interpretation:
+
+```text
+duration compensates for cue strength: the reliable boundary moves from between
+0.045 and 0.05 at 450 steps to between 0.02 and 0.025 at 800 steps.
+```
+
+Wrote:
+
+```text
+doc/phase3_toy_switchhead_strength_duration_tradeoff.md
+```

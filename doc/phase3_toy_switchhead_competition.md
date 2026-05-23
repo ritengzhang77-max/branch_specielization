@@ -328,6 +328,11 @@ At the same 450-step window, a selector-weight sweep found that weights `0.02`,
 routed expert match. The first tested reliable 5/5 weight was `0.05`. See
 `doc/phase3_toy_switchhead_weight_sweep.md`.
 
+An additional strength-duration check showed that longer selector pressure lowers
+the reliable weight threshold. At an 800-step window, `0.02` was still partial
+but `0.025` and `0.03` were reliable in 5/5 seeds. See
+`doc/phase3_toy_switchhead_strength_duration_tradeoff.md`.
+
 So the best interpretation is:
 
 ```text
@@ -409,5 +414,7 @@ SwitchHead-specific tests are:
   `doc/phase3_toy_switchhead_checkpoint_trajectory.md`
 - Selector-weight sweep memo:
   `doc/phase3_toy_switchhead_weight_sweep.md`
+- Strength-duration tradeoff memo:
+  `doc/phase3_toy_switchhead_strength_duration_tradeoff.md`
 - Feasibility memo:
   `doc/switchhead_followup_feasibility.md`

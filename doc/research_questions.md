@@ -220,6 +220,10 @@ SwitchHead feasibility update:
   expert match; `0.05` was the first tested weight with reliable 5/5 causal
   expert modularity. This narrows the claim: the structural cue must be strong
   enough as well as present long enough.
+- A strength-duration check showed that longer selector pressure lowers the
+  required weight. At end step 800, weight `0.02` remained partial, but `0.025`
+  and `0.03` were reliable in 5/5 seeds. This supports a threshold model rather
+  than a fixed minimum-weight model.
 
 ### Phase 3: Architectural Intervention
 
