@@ -313,6 +313,10 @@ These three numbers (S, C, M) are what the project should report for each archit
   target-level aligned-minus-same was positive for all 9 seeds. This suggests
   the local-copy candidate-pool result is not unique to 160M, but the synthetic
   behavior may require enough model capacity to become a robust causal role.
+- Bootstrap/sign-test summaries support the same model-size interpretation:
+  aligned-minus-same target-level bootstrap CI crosses zero for 70M
+  (`[-0.1332, 0.2989]`) but is clearly positive for 160M (`[1.3341, 2.3715]`)
+  and 410M (`[1.0261, 2.2362]`).
 
 ### C. Resources concretely available (with HF / GitHub paths)
 - Pythia seeds: `EleutherAI/pythia-{14m,70m,160m,410m}-seed{1..9}`, plus `pythia-160m-weight-seed{1-3}` and `pythia-160m-data-seed{1-3}`. 154 checkpoints per model (steps 0, 1, 2, 4, 8, …, 143000). GitHub: `EleutherAI/pythia`.

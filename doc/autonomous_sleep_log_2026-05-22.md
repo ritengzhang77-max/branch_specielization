@@ -248,3 +248,17 @@ or negative result would also be informative.
   essentially neutral (`0.0004`).
 - Interpretation: the strong local-copy candidate-pool result is not unique to
   Pythia-160M. The model-size story is now: 70M weak, 160M strong, 410M strong.
+
+## Later Sleep-Block Checkpoint: Transfer Significance Summaries
+
+- Added `scripts/analyze_transfer_significance.py`.
+- Ran paired bootstrap/sign-test summaries for:
+  - 70M all-layer candidate pool;
+  - 160M layers 2-4 candidate pool;
+  - 410M layers 2-6 candidate pool.
+- Target-level aligned-minus-same bootstrap CIs:
+  - 70M: `[-0.1332, 0.2989]`, sign `p=0.1797`;
+  - 160M: `[1.3341, 2.3715]`, sign `p=0.0039`;
+  - 410M: `[1.0261, 2.2362]`, sign `p=0.0039`.
+- Interpretation: the model-size pattern is statistically cleaner after this
+  check: 70M is inconclusive/weak, while 160M and 410M are robustly positive.

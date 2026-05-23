@@ -1073,3 +1073,23 @@ functional modularity?
 - Interpretation: the local-copy candidate-pool result generalizes upward to
   410M. Combined with the 70M weak result, this suggests a capacity threshold for
   robust synthetic local-copy causal roles.
+
+## 2026-05-22 - Transfer significance summaries
+
+- Added `scripts/analyze_transfer_significance.py`.
+- Ran bootstrap confidence intervals and exact two-sided sign tests for:
+  - `results/phase1_pythia70m_local_copy_candidate_pool_all_layers_top2/`;
+  - `results/phase1_pythia160m_local_copy_candidate_pool_layers2_4_top2/`;
+  - `results/phase1_pythia410m_local_copy_candidate_pool_layers2_6_top2/`.
+- Target-level aligned-minus-same summaries:
+  - 70M: mean `0.0810`, bootstrap CI `[-0.1332, 0.2989]`, sign `p=0.1797`;
+  - 160M: mean `1.7838`, bootstrap CI `[1.3341, 2.3715]`,
+    sign `p=0.0039`;
+  - 410M: mean `1.6554`, bootstrap CI `[1.0261, 2.2362]`,
+    sign `p=0.0039`.
+- Pair-level aligned-minus-same summaries:
+  - 70M: mean `0.0810`, bootstrap CI `[-0.1165, 0.2619]`, sign `p=0.2888`;
+  - 160M: mean `1.7838`, bootstrap CI `[1.5049, 2.0556]`,
+    sign `p=7.3e-14`;
+  - 410M: mean `1.6554`, bootstrap CI `[1.0527, 2.2303]`,
+    sign `p=0.0029`.

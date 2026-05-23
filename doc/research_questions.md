@@ -350,6 +350,10 @@ Second-role result:
   gave own-top excess `4.1723`, same-index transfer `0.2562`, aligned transfer
   `1.9116`, aligned-minus-same `1.6554`, and aligned better `49/72` ordered
   pairs. Target-level aligned-minus-same was positive for all 9 seeds.
+- Bootstrap/sign-test summaries make the model-size pattern cleaner: the
+  target-level aligned-minus-same CI crosses zero for 70M (`[-0.1332, 0.2989]`)
+  but is positive for 160M (`[1.3341, 2.3715]`) and 410M
+  (`[1.0261, 2.2362]`).
 
 The next Phase 1 question is now:
 

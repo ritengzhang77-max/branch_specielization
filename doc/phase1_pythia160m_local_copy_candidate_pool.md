@@ -133,6 +133,17 @@ and the pair-level aligned-better count is `49/72` (`p ~= 0.0029`, two-sided
 sign test). Pair-level consistency is lower than 160M, but the mean functional
 transfer effect remains large.
 
+Significance summaries:
+
+| Model | Pair mean CI | Pair sign p | Target mean CI | Target sign p |
+|---|---:|---:|---:|---:|
+| 70M all layers | [-0.1165, 0.2619] | 0.2888 | [-0.1332, 0.2989] | 0.1797 |
+| 160M layers 2-4 | [1.5049, 2.0556] | 7.3e-14 | [1.3341, 2.3715] | 0.0039 |
+| 410M layers 2-6 | [1.0527, 2.2303] | 0.0029 | [1.0261, 2.2362] | 0.0039 |
+
+These bootstrap intervals are over ordered source-target pairs for the pair
+column and over target-seed means for the target column.
+
 ## Interpretation
 
 This is the clearest current local-copy result:
@@ -157,6 +168,7 @@ was evidence that fixed structural slots are too brittle.
 ## Files
 
 - Script: `scripts/pythia_local_copy_candidate_pool_alignment.py`.
+- Significance script: `scripts/analyze_transfer_significance.py`.
 - Result directory:
   `results/phase1_pythia160m_local_copy_candidate_pool_layers2_4_top2/`.
 - Trajectory combiner: `scripts/analyze_candidate_pool_trajectory.py`.
