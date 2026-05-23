@@ -142,3 +142,27 @@ If positive, this would make the current claim much more paper-ready:
 Cross-layer role alignment transfers an induction-like local-copy function
 across seeds, and the result is not limited to arbitrary synthetic token triples.
 ```
+
+## Completed First Pass
+
+The first standard-dataset version was implemented on 2026-05-23 using
+WikiText-2 repeated natural spans. The boundary-filtered version excludes EOS
+inside the sampled window and requires the first repeated-span token to start on
+a whitespace/newline boundary.
+
+Summary:
+
+- Pythia-160M, all 9 seeds, all-layer candidate pool: own top excess `0.6458`;
+  aligned-minus-same `0.0835`; target-level bootstrap CI `[0.0334, 0.1343]`;
+  aligned-minus-same positive for 8/9 target seeds.
+- Pythia-410M, all 9 seeds, all-layer candidate pool: own top excess `0.2416`;
+  aligned-minus-same `0.0455`; target-level bootstrap CI
+  `[-0.0190, 0.0894]`; aligned-minus-same positive for 8/9 target seeds.
+
+Interpretation: the naturalistic result is positive for 160M and suggestive for
+410M, but much smaller than the synthetic `[x, SEP, x]` result. This supports
+the external-validity direction while keeping the current paper claim modest:
+natural text preserves a weak aligned-transfer signal, not the large synthetic
+effect size.
+
+Full memo: `doc/phase1_naturalistic_span_candidate_pool.md`.

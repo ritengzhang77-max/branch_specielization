@@ -260,6 +260,18 @@ Initial real-transformer follow-up:
 - This does not show branch modularity in Pythia, but it supports the broader
   measurement warning: probe-defined specialization can precede causal
   importance, so specialization and causal tests must be reported separately.
+- A standard-dataset naturalistic follow-up replaced synthetic `[x, SEP, x]`
+  local-copy triples with WikiText repeated spans of the form
+  `prefix + span + distractor + span`. Pythia-160M all-layer candidate pools
+  across 9 seeds gave a positive but small transfer result: own-head excess
+  `0.6458`, aligned transfer `0.0665` versus same-index transfer `-0.0170`,
+  aligned-minus-same `0.0835`, target-level CI `[0.0334, 0.1343]`, and
+  positive aligned-minus-same for 8/9 targets. Pythia-410M all-layer candidate
+  pools were weaker: own-head excess `0.2416`, aligned-minus-same `0.0455`,
+  target-level CI `[-0.0190, 0.0894]`, and 8/9 target positives. This means the
+  synthetic result is not purely an arbitrary-token artifact, but the
+  naturalistic validation is small and should be treated as supporting evidence,
+  not the primary effect.
 - A Pythia-160M follow-up over seeds 1-3 added checkpoint-specific raw-score
   alignment and source-head transfer. Repeat-match specialization rose by
   `step4000` (`0.4794`), while causal own-top excess over random controls was

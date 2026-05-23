@@ -1139,3 +1139,47 @@ functional modularity?
   model-size results.
 - It identifies the next best experiment as a naturalistic local-copy/induction
   probe to test whether the current synthetic `[x, SEP, x]` result generalizes.
+
+## 2026-05-23 - Naturalistic WikiText repeated-span candidate-pool probe
+
+- Added `scripts/pythia_naturalistic_span_candidate_pool_alignment.py`.
+- Implemented a standard-dataset repeated-span task using Hugging Face
+  `wikitext`, config `wikitext-2-raw-v1`, train split.
+- Task construction:
+  - `prefix + span + distractor + span`;
+  - prefix length 16, span length 12, distractor length 24;
+  - attention probe scores attention from the second span occurrence to matching
+    first-span positions;
+  - causal readout is next-token loss over the second span occurrence.
+- Added boundary filtering after the first smoke test:
+  - exclude EOS tokens in sampled windows;
+  - require the first span token to decode as starting with whitespace/newline.
+- Result directories:
+  - smoke before boundary filtering:
+    `results/debug_pythia14m_naturalistic_span_candidate_pool/`;
+  - smoke after boundary filtering:
+    `results/debug_pythia14m_naturalistic_span_candidate_pool_v2/`;
+  - Pythia-160M 3-seed narrow layers 2-4:
+    `results/phase1_pythia160m_naturalistic_span_candidate_pool_seed3/`;
+  - Pythia-160M 3-seed all layers:
+    `results/phase1_pythia160m_naturalistic_span_candidate_pool_seed3_all_layers/`;
+  - Pythia-160M 9-seed all layers:
+    `results/phase1_pythia160m_naturalistic_span_candidate_pool_seed9_all_layers/`;
+  - Pythia-410M 3-seed narrow layers 2-6:
+    `results/phase1_pythia410m_naturalistic_span_candidate_pool_seed3_layers2_6/`;
+  - Pythia-410M 3-seed all layers:
+    `results/phase1_pythia410m_naturalistic_span_candidate_pool_seed3_all_layers/`;
+  - Pythia-410M 9-seed all layers:
+    `results/phase1_pythia410m_naturalistic_span_candidate_pool_seed9_all_layers/`.
+- Main all-seed results:
+  - 160M all layers: own top excess `0.6458`, aligned-minus-same `0.0835`,
+    pair CI `[0.0216, 0.1430]`, target CI `[0.0334, 0.1343]`, target positives
+    8/9;
+  - 410M all layers: own top excess `0.2416`, aligned-minus-same `0.0455`,
+    pair CI `[-0.0014, 0.0873]`, target CI `[-0.0190, 0.0894]`, target positives
+    8/9.
+- Interpretation: naturalistic repeated spans preserve a small positive
+  cross-seed role-alignment signal in 160M and a weaker suggestive signal in
+  410M. The result is much smaller than synthetic local-copy, so the paper claim
+  should present it as external-validity support, not as the primary effect.
+- Full memo: `doc/phase1_naturalistic_span_candidate_pool.md`.
