@@ -125,6 +125,17 @@ output selector chooses the role expert." The role-relevant computation has
 consolidated into the value-side expert codebook, while the output side is
 largely tolerant to expert relabeling.
 
+A checkpoint parameter diagnostic supports this interpretation:
+
+```text
+output projection expert cosine = 0.7887
+value projection expert cosine = 0.0451
+```
+
+So the tolerated output-side swap is not mysterious: the output projections are
+much more similar than the value projections, while the value projections form
+distinct expert-specific bases.
+
 ## Measurement Lesson
 
 The new source-aligned value-gate metric remained near zero:

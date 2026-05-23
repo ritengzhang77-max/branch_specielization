@@ -285,10 +285,11 @@ SwitchHead feasibility update:
   path without retraining; the debug load smoke exactly reproduced the saved
   metrics.
 - A checkpoint parameter diagnostic supports the swap interpretation. In
-  successful saved two-layer checkpoints, layer-1 output experts are much more
-  similar than layer-1 value experts (`o` cosine `0.8295` vs `v` cosine
-  `0.2884` over seeds 1/2/4/5), matching the tolerated `swap_o` and destructive
-  `swap_v` pattern.
+  successful saved one-layer checkpoints, output experts are much more similar
+  than value experts (`o` cosine `0.7887` vs `v` cosine `0.0451`). Successful
+  saved two-layer checkpoints show the same layer-1 pattern (`o` cosine
+  `0.8295` vs `v` cosine `0.2884` over seeds 1/2/4/5), matching the tolerated
+  `swap_o` and destructive `swap_v` pattern.
 
 ### Phase 3: Architectural Intervention
 

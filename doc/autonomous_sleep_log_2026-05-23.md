@@ -1653,3 +1653,44 @@ layer-1 output projection experts are much more similar than layer-1 value
 projection experts, matching the swap result where layer-1 swap_o is tolerated
 but layer-1 swap_v is destructive.
 ```
+
+## Progress: One-Layer Checkpoints And Parameter Diagnostics
+
+Saved one-layer induced checkpoints:
+
+```text
+results/phase3_toy_switchhead_1layer_induced_w005_end800_seed5_steps2000_checkpoints/
+```
+
+This reproduced the canonical one-layer induced result:
+
+```text
+local accuracy = 1.0000
+induction accuracy = 1.0000
+routed expert match = 1.00
+output gate distance = 0.9645
+causal expert distance = 0.5663
+attended value-gate distance = 0.0091
+```
+
+Parameter diagnostic:
+
+```text
+results/phase3_toy_switchhead_1layer_parameter_diagnostics/
+```
+
+Summary:
+
+```text
+layer-0 o cosine = 0.7887
+layer-0 v cosine = 0.0451
+layer-0 sel_o cosine = -0.8963
+layer-0 sel_v cosine = -0.0199
+```
+
+Interpretation:
+
+```text
+the one-layer parameter geometry directly matches the swap result: output
+projections are similar, while value projections are highly distinct.
+```

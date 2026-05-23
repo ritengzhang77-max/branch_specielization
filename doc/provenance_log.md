@@ -2215,3 +2215,26 @@ computations to consolidate.
   `swap_o` is tolerated but layer-1 `swap_v` is destructive. Layer-0 output
   experts are less similar, consistent with layer-0 output swaps hurting local
   performance.
+
+## 2026-05-23 - One-layer SwitchHead checkpoint parameter diagnostics
+
+- Saved one-layer induced checkpoints:
+  `results/phase3_toy_switchhead_1layer_induced_w005_end800_seed5_steps2000_checkpoints/`.
+- The checkpoint-saving run reproduced the canonical one-layer induced result:
+  - local accuracy `1.0000`;
+  - induction accuracy `1.0000`;
+  - routed expert match `1.00`;
+  - output gate distance `0.9645`;
+  - causal expert distance `0.5663`;
+  - attended value-gate distance `0.0091`.
+- Ran parameter diagnostics:
+  `results/phase3_toy_switchhead_1layer_parameter_diagnostics/`.
+- Summary:
+  - layer-0 `o` cosine `0.7887`, relative L2 `0.6514`;
+  - layer-0 `v` cosine `0.0451`, relative L2 `1.3816`;
+  - layer-0 `sel_o` cosine `-0.8963`;
+  - layer-0 `sel_v` cosine `-0.0199`.
+- Interpretation update: the one-layer parameter geometry matches the swap
+  result directly. Output projections are similar enough that output-side swaps
+  are tolerated, while value projections are highly distinct and value-side
+  mismatches are destructive.
