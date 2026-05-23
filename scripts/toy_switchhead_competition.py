@@ -92,6 +92,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--dropout", type=float, default=0.0)
     parser.add_argument("--expert-dropout", type=float, default=0.0)
     parser.add_argument("--expert-supervision-weight", type=float, default=0.0)
+    parser.add_argument("--local-target-expert", type=int, default=0)
+    parser.add_argument("--induction-target-expert", type=int, default=1)
     parser.add_argument(
         "--expert-supervision-end-step",
         type=int,
@@ -269,13 +271,19 @@ def expert_selection_supervision_loss(
 ) -> torch.Tensor:
     if model.args.n_experts < 2:
         raise ValueError("Expert supervision requires at least two experts.")
+    local_target = int(model.args.local_target_expert)
+    induction_target = int(model.args.induction_target_expert)
+    if not 0 <= local_target < model.args.n_experts:
+        raise ValueError("--local-target-expert must be in [0, n_experts).")
+    if not 0 <= induction_target < model.args.n_experts:
+        raise ValueError("--induction-target-expert must be in [0, n_experts).")
     local_positions = layout["local_positions"].to(input_ids.device)
     induction_positions = layout["induction_positions"].to(input_ids.device)
     losses = []
     for dist in model.collect_gate_distributions(input_ids):
         # dist: batch, seq, heads, experts, normalized over experts.
-        local_prob = dist[:, local_positions, :, 0].clamp_min(1e-12)
-        induction_prob = dist[:, induction_positions, :, 1].clamp_min(1e-12)
+        local_prob = dist[:, local_positions, :, local_target].clamp_min(1e-12)
+        induction_prob = dist[:, induction_positions, :, induction_target].clamp_min(1e-12)
         losses.append(-0.5 * (local_prob.log().mean() + induction_prob.log().mean()))
     return torch.stack(losses).mean()
 
@@ -397,7 +405,10 @@ def analyze_model(
         induction_top_component=f"L{induction_top[0]}E{induction_top[1]}",
         same_top_component=local_top == induction_top,
         same_top_expert=int(local_top[1]) == int(induction_top[1]),
-        routed_expert_match=int(local_top[1]) == 0 and int(induction_top[1]) == 1,
+        routed_expert_match=(
+            int(local_top[1]) == int(args.local_target_expert)
+            and int(induction_top[1]) == int(args.induction_target_expert)
+        ),
         expert_distribution_distance=expert_dist,
         gate_distribution_distance=gate_dist,
         gate_local_top_expert=gate_local_top,
@@ -442,6 +453,10 @@ def main() -> None:
     args = parse_args()
     if args.device == "cpu":
         raise ValueError("SwitchHead uses Triton CVMM kernels and requires CUDA for n_experts > 1.")
+    if not 0 <= args.local_target_expert < args.n_experts:
+        raise ValueError("--local-target-expert must be in [0, n_experts).")
+    if not 0 <= args.induction_target_expert < args.n_experts:
+        raise ValueError("--induction-target-expert must be in [0, n_experts).")
     switchhead = import_switchhead(args.switchhead_path)
     device = resolve_device(args.device)
     layout = build_layout(args)

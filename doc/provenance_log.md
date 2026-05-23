@@ -1869,3 +1869,20 @@ computations to consolidate.
 - Interpretation update: selector duration can compensate for selector strength.
   The reliable weight boundary moves from between `0.045` and `0.05` at end step
   450 to between `0.02` and `0.025` at end step 800.
+
+## 2026-05-23 - SwitchHead expert-label control
+
+- Parameterized selector targets in `scripts/toy_switchhead_competition.py` with
+  `--local-target-expert` and `--induction-target-expert`.
+- Ran reversed target controls:
+  - local -> expert 1;
+  - induction -> expert 0.
+- Results:
+  - reversed target, weight `0.05`, end step 450: routed expert match `0.80`,
+    gate distance `0.3936`, causal distance `0.4014`;
+  - reversed target, weight `0.05`, end step 800: routed expert match `1.00`,
+    gate distance `0.9646`, causal distance `0.5609`.
+- Wrote `doc/phase3_toy_switchhead_label_control.md`.
+- Interpretation update: under sufficient cue duration, the causal roles follow
+  the requested expert labels. The 450-step asymmetry cautions that the exact
+  threshold is optimization- and label-assignment-sensitive.

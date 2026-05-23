@@ -224,6 +224,11 @@ SwitchHead feasibility update:
   required weight. At end step 800, weight `0.02` remained partial, but `0.025`
   and `0.03` were reliable in 5/5 seeds. This supports a threshold model rather
   than a fixed minimum-weight model.
+- A reversed-label control showed that the induced modules can follow the
+  requested labels. With selector target local -> expert 1 and induction ->
+  expert 0, the 800-step run was reliable in 5/5 seeds with the causal roles
+  reversed. The 450-step reversed run was only 4/5, so the exact threshold is
+  label/optimization sensitive.
 
 ### Phase 3: Architectural Intervention
 

@@ -1137,3 +1137,41 @@ Wrote:
 ```text
 doc/phase3_toy_switchhead_strength_duration_tradeoff.md
 ```
+
+## Progress: SwitchHead Expert-Label Control
+
+Added selector target arguments to `scripts/toy_switchhead_competition.py`:
+
+```text
+--local-target-expert
+--induction-target-expert
+```
+
+Ran reversed target controls:
+
+```text
+local -> expert 1
+induction -> expert 0
+```
+
+Summary:
+
+| Target | End step | Weight | Routed match | Gate distance | Causal distance |
+|---|---:|---:|---:|---:|---:|
+| default 0/1 | 450 | 0.05 | 1.00 | 0.4476 | 0.4240 |
+| reversed 1/0 | 450 | 0.05 | 0.80 | 0.3936 | 0.4014 |
+| default 0/1 | 800 | 0.05 | 1.00 | 0.9645 | 0.5664 |
+| reversed 1/0 | 800 | 0.05 | 1.00 | 0.9646 | 0.5609 |
+
+Interpretation:
+
+```text
+under sufficient cue duration, the expert roles follow the requested labels.
+The short-window threshold is label/optimization sensitive.
+```
+
+Wrote:
+
+```text
+doc/phase3_toy_switchhead_label_control.md
+```

@@ -333,6 +333,11 @@ the reliable weight threshold. At an 800-step window, `0.02` was still partial
 but `0.025` and `0.03` were reliable in 5/5 seeds. See
 `doc/phase3_toy_switchhead_strength_duration_tradeoff.md`.
 
+A label-symmetry control reversed the selector target to local -> expert 1 and
+induction -> expert 0. The reversed assignment was only `4/5` reliable at end
+step 450, but was `5/5` reliable at end step 800 with the causal roles reversed.
+See `doc/phase3_toy_switchhead_label_control.md`.
+
 So the best interpretation is:
 
 ```text
@@ -416,5 +421,7 @@ SwitchHead-specific tests are:
   `doc/phase3_toy_switchhead_weight_sweep.md`
 - Strength-duration tradeoff memo:
   `doc/phase3_toy_switchhead_strength_duration_tradeoff.md`
+- Expert-label control memo:
+  `doc/phase3_toy_switchhead_label_control.md`
 - Feasibility memo:
   `doc/switchhead_followup_feasibility.md`
