@@ -353,8 +353,10 @@ These three numbers (S, C, M) are what the project should report for each archit
   alignment representations.
 - The alignment-basis summary as of 2026-05-23 is now a core Phase 1 result:
   generic Phase 0 alignment works for high-signal synthetic local-copy, but
-  underestimates weak natural roles. Task-specific repeated-position alignment
-  raises inserted WikiText 160M aligned-minus-same from `0.0835` to `0.5645`,
+  underestimates weak natural roles and can also miss some relabeling in 410M
+  synthetic local-copy. Task-specific repeated-position alignment raises
+  synthetic 160M aligned-minus-same from `1.7838` to `1.9593`, synthetic 410M
+  from `1.6554` to `3.7737`, inserted WikiText 160M from `0.0835` to `0.5645`,
   inserted WikiText 410M from `0.0455` to `0.1544`, and naturally occurring
   exact-repeat 160M from `-0.0016` to `0.1897`. A 410M exact-repeat check was
   weaker: own-head causality was positive (`0.0503`), but aligned-minus-same was

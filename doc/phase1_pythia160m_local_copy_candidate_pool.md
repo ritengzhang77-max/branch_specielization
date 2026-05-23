@@ -29,8 +29,8 @@ Candidate pool:
 - candidate layers: 2, 3, 4;
 - candidates per seed: top 2 heads by local-copy probe score across all
   candidate layers;
-- alignment representation: raw attention scores on the shared Phase 0 probe
-  corpus;
+- primary alignment representation: raw attention scores on the shared Phase 0
+  probe corpus;
 - alignment method: Hungarian matching over the full 36-head candidate pool
   (`3 layers x 12 heads`), allowing source heads to map across layers;
 - transfer baseline: same raw `(layer, head)` index.
@@ -90,6 +90,43 @@ The target-level aligned-minus-same effect is positive for `9/9` target seeds
 The candidate-pool result is much stronger than either fixed-slot rule. It
 raises own-head causal importance and makes cross-seed aligned transfer
 consistent across nearly all source-target pairs.
+
+## Task-Specific Alignment Sanity Check
+
+After the naturalistic probes showed that weak roles depend strongly on the
+alignment representation, I added a `task_local_copy` alignment source to the
+synthetic candidate-pool script. This uses attention to the repeated value
+positions on the local-copy probe split for matching, while causal loss remains
+held out on the evaluation split.
+
+| Model / candidate pool | Alignment source | Own top excess | Same-index transfer | Aligned transfer | Aligned - same | Aligned better | Step0 aligned - same |
+|---|---|---:|---:|---:|---:|---:|---:|
+| 160M layers 2-4, top 2 | Phase 0 generic | 2.2896 | 0.4876 | 2.2714 | 1.7838 | 66/72 | -0.0004 |
+| 160M layers 2-4, top 2 | task-local copy | 2.2896 | 0.4876 | 2.4469 | 1.9593 | 66/72 | 0.0000 |
+| 410M layers 2-6, top 2 | Phase 0 generic | 4.1723 | 0.2562 | 1.9116 | 1.6554 | 49/72 | -0.0007 |
+| 410M layers 2-6, top 2 | task-local copy | 4.1723 | 0.2562 | 4.0299 | 3.7737 | 66/72 | -0.0004 |
+
+Significance summaries:
+
+| Model | Alignment source | Pair mean CI | Pair sign p | Target mean CI | Target positives | Target sign p |
+|---|---|---:|---:|---:|---:|---:|
+| 160M | task-local copy | [1.6902, 2.2171] | 1.2e-14 | [1.5948, 2.5006] | 9/9 | 0.0039 |
+| 160M step0 | task-local copy | [-0.0005, 0.0005] | 0.9063 | [-0.0004, 0.0003] | 5/9 | 1.0 |
+| 410M | task-local copy | [3.2483, 4.2896] | 7.3e-14 | [2.4658, 4.8657] | 8/9 | 0.0391 |
+| 410M step0 | task-local copy | [-0.0009, 0.0001] | 0.1249 | [-0.0007, -0.0001] | 2/9 | 0.1797 |
+
+Interpretation:
+
+- Synthetic local-copy is strong enough that generic Phase 0 alignment already
+  works.
+- Task-local alignment is an upper-bound sanity check: it gives a similar 160M
+  result and a much stronger 410M final-checkpoint result.
+- The 410M improvement suggests that the final checkpoint still has the same
+  local-copy role, but generic attention-pattern matching partially misses the
+  right cross-seed relabeling.
+- Matched `step0` controls are null or slightly negative at negligible scale, so
+  the trained effect is not produced by the role-informed matching machinery
+  alone.
 
 ## Training Trajectory
 
@@ -196,5 +233,13 @@ was evidence that fixed structural slots are too brittle.
   `results/phase1_pythia410m_local_copy_candidate_pool_layers2_6_top2/`.
 - Pythia-410M trajectory:
   `results/phase1_pythia410m_local_copy_candidate_pool_trajectory/`.
+- Pythia-160M task-local alignment:
+  `results/phase1_pythia160m_local_copy_task_alignment_layers2_4_top2/`.
+- Pythia-160M task-local `step0` control:
+  `results/phase1_pythia160m_local_copy_task_alignment_layers2_4_top2_step0/`.
+- Pythia-410M task-local alignment:
+  `results/phase1_pythia410m_local_copy_task_alignment_layers2_6_top2/`.
+- Pythia-410M task-local `step0` control:
+  `results/phase1_pythia410m_local_copy_task_alignment_layers2_6_top2_step0/`.
 - Prior layer-selection memo:
   `doc/phase1_pythia160m_local_copy_layer_selection.md`.

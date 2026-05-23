@@ -425,3 +425,58 @@ Matched `step0` control:
 Interpretation: exact natural repeats extend to 410M as a weak trained
 own-head causal signal, but not as a clean 410M alignment-transfer result under
 the current 4-token WikiText setup.
+
+## Progress: Synthetic Local-Copy Task-Specific Alignment
+
+Added `--alignment-source task_local_copy` to
+`scripts/pythia_local_copy_candidate_pool_alignment.py`. This aligns heads using
+attention to the repeated-value positions in the synthetic local-copy probe
+split, while keeping causal loss on held-out evaluation sequences.
+
+Pythia-160M all-seed final checkpoint:
+
+- result directory:
+  `results/phase1_pythia160m_local_copy_task_alignment_layers2_4_top2/`;
+- own top excess: `2.2896`;
+- same-index transfer: `0.4876`;
+- task-local aligned transfer: `2.4469`;
+- aligned-minus-same: `1.9593`;
+- pair CI: `[1.6902, 2.2171]`;
+- target CI: `[1.5948, 2.5006]`;
+- target positives: 9/9;
+- aligned better count: 66/72.
+
+Matched Pythia-160M `step0` control:
+
+- result directory:
+  `results/phase1_pythia160m_local_copy_task_alignment_layers2_4_top2_step0/`;
+- own top excess: `-0.0004`;
+- aligned-minus-same: `0.0000`;
+- target CI: `[-0.0004, 0.0003]`.
+
+Pythia-410M all-seed final checkpoint:
+
+- result directory:
+  `results/phase1_pythia410m_local_copy_task_alignment_layers2_6_top2/`;
+- own top excess: `4.1723`;
+- same-index transfer: `0.2562`;
+- task-local aligned transfer: `4.0299`;
+- aligned-minus-same: `3.7737`;
+- pair CI: `[3.2483, 4.2896]`;
+- target CI: `[2.4658, 4.8657]`;
+- target positives: 8/9;
+- aligned better count: 66/72.
+
+Matched Pythia-410M `step0` control:
+
+- result directory:
+  `results/phase1_pythia410m_local_copy_task_alignment_layers2_6_top2_step0/`;
+- own top excess: `-0.0009`;
+- aligned-minus-same: `-0.0004`;
+- target CI: `[-0.0007, -0.0001]` at negligible absolute scale.
+
+Interpretation: task-local alignment is an upper-bound sanity check for the
+synthetic task. It agrees with the strong 160M generic result and substantially
+strengthens the 410M final-checkpoint result, showing that even for a large
+synthetic causal role, generic Phase 0 matching can miss part of the
+cross-seed relabeling.

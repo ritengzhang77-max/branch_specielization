@@ -1393,3 +1393,48 @@ functional modularity?
 - Interpretation: 410M naturally occurring exact repeats show a weak
   training-created own-head causal signal, but not a clean target-level
   aligned-transfer effect. This is weaker than the 160M exact-repeat result.
+
+## 2026-05-23 - Synthetic local-copy task-specific alignment
+
+- Added `--alignment-source task_local_copy` to
+  `scripts/pythia_local_copy_candidate_pool_alignment.py`.
+- The new alignment source matches heads using attention to the local-copy
+  repeated-value positions on the probe split. Causal loss is still evaluated on
+  held-out synthetic sequences.
+- Smoke-tested the path with Pythia-14M seeds 1-2:
+  `results/debug_pythia14m_local_copy_task_alignment/`.
+- Ran Pythia-160M all-seed final checkpoint:
+  `results/phase1_pythia160m_local_copy_task_alignment_layers2_4_top2/`.
+  - own top excess: `2.2896`;
+  - same-index transfer: `0.4876`;
+  - task-local aligned transfer: `2.4469`;
+  - aligned-minus-same: `1.9593`;
+  - pair CI: `[1.6902, 2.2171]`, pair sign `p=1.2e-14`;
+  - target CI: `[1.5948, 2.5006]`, target sign `p=0.0039`;
+  - target positives: 9/9;
+  - aligned better count: 66/72.
+- Ran matched Pythia-160M `step0` control:
+  `results/phase1_pythia160m_local_copy_task_alignment_layers2_4_top2_step0/`.
+  - own top excess: `-0.0004`;
+  - aligned-minus-same: `0.0000`;
+  - target CI: `[-0.0004, 0.0003]`.
+- Ran Pythia-410M all-seed final checkpoint:
+  `results/phase1_pythia410m_local_copy_task_alignment_layers2_6_top2/`.
+  - own top excess: `4.1723`;
+  - same-index transfer: `0.2562`;
+  - task-local aligned transfer: `4.0299`;
+  - aligned-minus-same: `3.7737`;
+  - pair CI: `[3.2483, 4.2896]`, pair sign `p=7.3e-14`;
+  - target CI: `[2.4658, 4.8657]`, target sign `p=0.0391`;
+  - target positives: 8/9;
+  - aligned better count: 66/72.
+- Ran matched Pythia-410M `step0` control:
+  `results/phase1_pythia410m_local_copy_task_alignment_layers2_6_top2_step0/`.
+  - own top excess: `-0.0009`;
+  - aligned-minus-same: `-0.0004`;
+  - target CI: `[-0.0007, -0.0001]` at negligible absolute scale.
+- Interpretation: synthetic local-copy remains the high-signal upper-bound
+  task. Generic Phase 0 alignment is already strong, but task-local alignment
+  recovers even stronger 410M final-checkpoint transfer, suggesting the generic
+  matching representation can miss part of the role-level relabeling even when
+  the role is causally large.

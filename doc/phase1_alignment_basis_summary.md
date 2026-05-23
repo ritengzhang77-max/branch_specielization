@@ -24,8 +24,8 @@ heads.
 
 | Task | Model | Generic Phase 0 alignment | Task-specific alignment | Step0 task-specific control | Interpretation |
 |---|---:|---:|---:|---:|---|
-| synthetic `[x, SEP, x]` local-copy | 160M | 1.7838 | not needed yet | step0 generic -0.0004 | high-signal role transfers under generic alignment |
-| synthetic `[x, SEP, x]` local-copy | 410M | 1.6554 | not needed yet | step0 generic -0.0007 | high-signal role transfers under generic alignment |
+| synthetic `[x, SEP, x]` local-copy | 160M | 1.7838 | 1.9593 | 0.0000 | high-signal role transfers under both generic and task-local alignment |
+| synthetic `[x, SEP, x]` local-copy | 410M | 1.6554 | 3.7737 | -0.0004 | task-local alignment recovers much stronger final-checkpoint transfer |
 | inserted WikiText repeated span, 64/64 | 160M | 0.0835 | 0.5645 | 0.0003 | task-specific alignment reveals much stronger natural transfer |
 | inserted WikiText repeated span, 128/128 | 160M | 0.0816 | 0.4773 | not rerun | larger-sample replication stays strong |
 | inserted WikiText repeated span, 64/64 | 410M | 0.0455 | 0.1544 | -0.0003 | task-specific alignment rescues 410M, but with seed-6 outlier |
@@ -49,7 +49,8 @@ task-local roles.
 
 The current hierarchy is:
 
-1. Synthetic local-copy: high signal; generic alignment works.
+1. Synthetic local-copy: high signal; generic alignment works, and task-local
+   alignment acts as an upper-bound sanity check.
 2. Inserted natural repeated spans: medium signal; generic alignment is positive
    but much too conservative; task-specific alignment is strong.
 3. Naturally occurring exact repeats: low/noisy signal; 160M task-specific
@@ -95,12 +96,13 @@ That distinction should be explicit in any paper draft.
 
 ## Next Best Checks
 
-1. Add task-specific alignment to the synthetic local-copy script as a sanity
-   upper bound, even though generic alignment is already strong.
-2. Try a larger corpus for naturally occurring repeats so span length can be
+1. Try a larger corpus for naturally occurring repeats so span length can be
    raised from 4 tokens to 5-8 tokens without sampling replacement.
-3. Consider a two-stage metric in the paper: generic alignment as an unsupervised
+2. Consider a two-stage metric in the paper: generic alignment as an unsupervised
    baseline, task-specific alignment as the role-level measurement.
+3. Inspect the remaining heterogeneous cases, especially 410M natural repeats
+   and the 410M repeated-span seed-6 outlier, before making any model-size
+   scaling claim.
 
 ## Files
 
