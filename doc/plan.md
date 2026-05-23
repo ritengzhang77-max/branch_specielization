@@ -511,6 +511,12 @@ These three numbers (S, C, M) are what the project should report for each archit
   actual local/induction attention patterns gave only `0.0091` distance. The
   codebook effect is therefore not just marginal value-expert usage hidden by
   the wrong source-position average.
+- Checkpoint saving is now implemented for SwitchHead toy runs. A two-layer
+  checkpoint-saving pass produced local checkpoint files for seeds 1-5, but the
+  run itself was only `4/5` on routed match because seed 3 landed in the shared
+  top-expert basin. A separate seed-3 checkpoint retry did recover `L1E0/L1E1`.
+  Future canonical checkpoint sets should save during the exact successful run
+  or rerun failed seeds explicitly.
 
 ### C. Resources concretely available (with HF / GitHub paths)
 - Pythia seeds: `EleutherAI/pythia-{14m,70m,160m,410m}-seed{1..9}`, plus `pythia-160m-weight-seed{1-3}` and `pythia-160m-data-seed{1-3}`. 154 checkpoints per model (steps 0, 1, 2, 4, 8, …, 143000). GitHub: `EleutherAI/pythia`.

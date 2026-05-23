@@ -1527,3 +1527,50 @@ the value-side swap fragility is not explained by simple attended role-wise
 value-expert usage. The better description is an internal expert-codebook /
 basis-consistency relation.
 ```
+
+## Progress: SwitchHead Checkpoint Saving
+
+Added:
+
+```text
+--save-final-checkpoints
+--checkpoint-dir
+```
+
+Smoke checkpoint:
+
+```text
+results/debug_switchhead_checkpoint_save/checkpoints/model_seed1.pt
+```
+
+Two-layer checkpoint-saving pass:
+
+```text
+results/phase3_toy_switchhead_2layer_induced_w005_end800_seed5_steps2000_checkpoints/
+```
+
+This saved `model_seed1.pt` through `model_seed5.pt`, but the run is not a clean
+canonical 5/5 induced set: seed 3 solved the task while both roles had top
+component `L1E0`, so routed match was `0.80` overall.
+
+Seed-3 retry:
+
+```text
+results/phase3_toy_switchhead_2layer_induced_w005_end800_seed3_checkpoint_retry/
+```
+
+The retry succeeded:
+
+```text
+local top = L1E0
+induction top = L1E1
+routed expert match = 1.00
+```
+
+Interpretation:
+
+```text
+checkpoint saving works. For canonical checkpoint sets, save during the exact
+successful run or rerun failed seeds explicitly, because SwitchHead/Triton
+training is not fully deterministic.
+```

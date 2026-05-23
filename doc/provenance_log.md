@@ -2140,3 +2140,29 @@ computations to consolidate.
   simple marginal or attention-weighted local-vs-induction value-expert usage.
   It is better described as an internal expert-codebook or basis-consistency
   relation.
+
+## 2026-05-23 - SwitchHead checkpoint saving
+
+- Added `--save-final-checkpoints` and `--checkpoint-dir` to
+  `scripts/toy_switchhead_competition.py`.
+- Checkpoints save:
+  - `model_state_dict`;
+  - serializable args;
+  - layout tensors;
+  - seed;
+  - train step.
+- Smoke-tested checkpoint saving:
+  `results/debug_switchhead_checkpoint_save/checkpoints/model_seed1.pt`.
+- Ran a two-layer induced checkpoint-saving pass:
+  `results/phase3_toy_switchhead_2layer_induced_w005_end800_seed5_steps2000_checkpoints/`.
+- This pass saved checkpoints for seeds 1-5, but should not be used as the
+  canonical 5/5 induced set: seed 3 solved the task but had local and induction
+  both top at `L1E0`, giving routed match `0.80` overall.
+- Ran a seed-3 retry:
+  `results/phase3_toy_switchhead_2layer_induced_w005_end800_seed3_checkpoint_retry/`.
+- The retry succeeded with local top `L1E0`, induction top `L1E1`, routed match
+  `1.00`, and saved
+  `results/phase3_toy_switchhead_2layer_induced_w005_end800_seed3_checkpoint_retry/checkpoints/model_seed3.pt`.
+- Interpretation update: checkpoint saving works. Because SwitchHead/Triton
+  training is not fully deterministic, future canonical checkpoint sets should
+  either save during the exact successful run or rerun failed seeds explicitly.

@@ -219,7 +219,6 @@ The next narrow experiment should make the swap/patch workflow less wasteful and
 more diagnostic:
 
 ```text
-save trained checkpoints and add activation-patching utilities, so new
-interventions can be run without retraining and value-side codebook effects can
-be tested on exactly the same models.
+add checkpoint-loading and activation-patching utilities, so value-side codebook
+effects can be tested on exactly the same saved models without retraining.
 ```

@@ -171,6 +171,13 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--device", default="auto", choices=["auto", "cuda", "cpu"])
     parser.add_argument("--output-dir", type=Path, default=Path("results/phase3_toy_switchhead_competition"))
+    parser.add_argument("--save-final-checkpoints", action="store_true")
+    parser.add_argument(
+        "--checkpoint-dir",
+        type=Path,
+        default=None,
+        help="Directory for --save-final-checkpoints. Defaults to output_dir/checkpoints.",
+    )
     return parser.parse_args()
 
 
@@ -807,6 +814,38 @@ def write_csv(path: Path, rows: list[dict[str, object]]) -> None:
         writer.writerows(rows)
 
 
+def serializable_args(args: argparse.Namespace) -> dict[str, object]:
+    data = vars(args).copy()
+    for key in ["switchhead_path", "output_dir", "checkpoint_dir"]:
+        if data.get(key) is not None:
+            data[key] = str(data[key])
+    return data
+
+
+def save_final_checkpoint(
+    model: TinySwitchHeadTransformer,
+    args: argparse.Namespace,
+    layout: dict[str, torch.Tensor | int],
+    seed: int,
+) -> None:
+    checkpoint_dir = args.checkpoint_dir or (args.output_dir / "checkpoints")
+    checkpoint_dir.mkdir(parents=True, exist_ok=True)
+    layout_payload = {
+        key: value.detach().cpu() if isinstance(value, torch.Tensor) else value
+        for key, value in layout.items()
+    }
+    torch.save(
+        {
+            "model_state_dict": model.state_dict(),
+            "args": serializable_args(args),
+            "layout": layout_payload,
+            "seed": seed,
+            "train_step": args.steps,
+        },
+        checkpoint_dir / f"model_seed{seed}.pt",
+    )
+
+
 def collect_swap_interventions(
     model: TinySwitchHeadTransformer,
     eval_ids: torch.Tensor,
@@ -939,6 +978,8 @@ def main() -> None:
         summary, scores = analyze_model(model, eval_ids, layout, args, device, seed, args.steps)
         model_rows.append(summary)
         expert_rows.extend(scores)
+        if args.save_final_checkpoints:
+            save_final_checkpoint(model, args, layout, seed)
         if args.run_swap_interventions:
             swap_rows.extend(collect_swap_interventions(model, eval_ids, layout, args, device, seed))
 
@@ -948,7 +989,7 @@ def main() -> None:
     write_csv(args.output_dir / "trajectory_expert_scores.csv", [asdict(row) for row in trajectory_expert_rows])
     write_csv(args.output_dir / "swap_intervention_summary.csv", [asdict(row) for row in swap_rows])
     payload = {
-        "args": vars(args) | {"switchhead_path": str(args.switchhead_path), "output_dir": str(args.output_dir)},
+        "args": serializable_args(args),
         "summary": summarize(model_rows),
     }
     with (args.output_dir / "summary.json").open("w") as handle:

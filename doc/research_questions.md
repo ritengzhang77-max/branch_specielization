@@ -275,6 +275,11 @@ SwitchHead feasibility update:
   attention flow. In the one-layer induced condition, the attended value-gate
   distance was still only `0.0091`, so the value-side swap fragility is not
   explained by simple attended value-expert usage.
+- SwitchHead checkpoint saving is implemented. A two-layer checkpoint-saving run
+  saved seed 1-5 checkpoints but was only `4/5` on routed match because seed 3
+  landed in a shared-top basin; a seed-3 retry recovered the intended `L1E0/L1E1`
+  split. Future patching should load explicitly validated checkpoints rather
+  than assuming every nominally identical rerun reproduces the same basin.
 
 ### Phase 3: Architectural Intervention
 
