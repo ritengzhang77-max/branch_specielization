@@ -146,7 +146,7 @@ substantially damaged both roles.
 
 ## Next Step
 
-Checkpoint saving is now implemented. The next implementation improvement is to
-add checkpoint loading and activation-patching utilities. That would allow
-additional swaps and codebook patches on exactly the same validated trained
-models without rerunning training.
+Checkpoint saving and loading are now implemented. The next implementation
+improvement is to add activation-patching utilities. That would allow additional
+codebook patches on exactly the same validated trained models without rerunning
+training.

@@ -517,6 +517,9 @@ These three numbers (S, C, M) are what the project should report for each archit
   top-expert basin. A separate seed-3 checkpoint retry did recover `L1E0/L1E1`.
   Future canonical checkpoint sets should save during the exact successful run
   or rerun failed seeds explicitly.
+- Checkpoint loading is also implemented. `--load-final-checkpoints` skips
+  training, restores `model_seed{seed}.pt`, and runs the usual analysis/swap
+  pipeline; a debug load smoke reproduced the saved metrics exactly.
 
 ### C. Resources concretely available (with HF / GitHub paths)
 - Pythia seeds: `EleutherAI/pythia-{14m,70m,160m,410m}-seed{1..9}`, plus `pythia-160m-weight-seed{1-3}` and `pythia-160m-data-seed{1-3}`. 154 checkpoints per model (steps 0, 1, 2, 4, 8, …, 143000). GitHub: `EleutherAI/pythia`.

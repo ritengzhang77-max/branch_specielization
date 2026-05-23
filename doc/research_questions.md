@@ -280,6 +280,10 @@ SwitchHead feasibility update:
   landed in a shared-top basin; a seed-3 retry recovered the intended `L1E0/L1E1`
   split. Future patching should load explicitly validated checkpoints rather
   than assuming every nominally identical rerun reproduces the same basin.
+- SwitchHead checkpoint loading is implemented. `--load-final-checkpoints`
+  restores saved `model_seed{seed}.pt` files and runs the usual analysis/swap
+  path without retraining; the debug load smoke exactly reproduced the saved
+  metrics.
 
 ### Phase 3: Architectural Intervention
 

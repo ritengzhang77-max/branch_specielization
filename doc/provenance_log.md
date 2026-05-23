@@ -2166,3 +2166,17 @@ computations to consolidate.
 - Interpretation update: checkpoint saving works. Because SwitchHead/Triton
   training is not fully deterministic, future canonical checkpoint sets should
   either save during the exact successful run or rerun failed seeds explicitly.
+
+## 2026-05-23 - SwitchHead checkpoint loading
+
+- Added `--load-final-checkpoints` to `scripts/toy_switchhead_competition.py`.
+- Loading skips training, restores `model_seed{seed}.pt` from `--checkpoint-dir`
+  or `output_dir/checkpoints`, and then runs the normal analysis/swap pipeline.
+- Updated checkpoint saves to store CPU state dict tensors.
+- Updated checkpoint loads to use `torch.load(..., weights_only=True)`.
+- Smoke-tested checkpoint loading from:
+  `results/debug_switchhead_checkpoint_save/checkpoints/model_seed1.pt`.
+- Load smoke output:
+  `results/debug_switchhead_checkpoint_load_weights_only/`.
+- The loaded smoke reproduced the saved four-step debug metrics exactly, with no
+  PyTorch pickle warning.

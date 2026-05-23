@@ -172,6 +172,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--device", default="auto", choices=["auto", "cuda", "cpu"])
     parser.add_argument("--output-dir", type=Path, default=Path("results/phase3_toy_switchhead_competition"))
     parser.add_argument("--save-final-checkpoints", action="store_true")
+    parser.add_argument("--load-final-checkpoints", action="store_true")
     parser.add_argument(
         "--checkpoint-dir",
         type=Path,
@@ -836,7 +837,10 @@ def save_final_checkpoint(
     }
     torch.save(
         {
-            "model_state_dict": model.state_dict(),
+            "model_state_dict": {
+                key: value.detach().cpu()
+                for key, value in model.state_dict().items()
+            },
             "args": serializable_args(args),
             "layout": layout_payload,
             "seed": seed,
@@ -844,6 +848,18 @@ def save_final_checkpoint(
         },
         checkpoint_dir / f"model_seed{seed}.pt",
     )
+
+
+def load_final_checkpoint(
+    model: TinySwitchHeadTransformer,
+    args: argparse.Namespace,
+    seed: int,
+    device: torch.device,
+) -> int:
+    checkpoint_dir = args.checkpoint_dir or (args.output_dir / "checkpoints")
+    checkpoint = torch.load(checkpoint_dir / f"model_seed{seed}.pt", map_location=device, weights_only=True)
+    model.load_state_dict(checkpoint["model_state_dict"])
+    return int(checkpoint.get("train_step", args.steps))
 
 
 def collect_swap_interventions(
@@ -937,6 +953,8 @@ def main() -> None:
     resolve_supervised_layers(args)
     resolve_swap_intervention_layer_groups(args)
     resolve_supervised_selectors(args)
+    if args.load_final_checkpoints and args.trajectory_eval_steps:
+        raise ValueError("--load-final-checkpoints is incompatible with --trajectory-eval-steps.")
     switchhead = import_switchhead(args.switchhead_path)
     device = resolve_device(args.device)
     layout = build_layout(args)
@@ -951,31 +969,36 @@ def main() -> None:
     if any(step > args.steps for step in trajectory_steps):
         raise ValueError("All --trajectory-eval-steps must be <= --steps.")
     for seed in args.seeds:
-        print(f"training config={args.config} seed={seed}", flush=True)
+        action = "loading" if args.load_final_checkpoints else "training"
+        print(f"{action} config={args.config} seed={seed}", flush=True)
         torch.manual_seed(seed)
         np.random.seed(seed)
         train_rng = np.random.default_rng(10_000 + seed)
         eval_rng = np.random.default_rng(20_000 + seed)
         model = TinySwitchHeadTransformer(switchhead, args, int(layout["seq_len"])).to(device)
         eval_ids = make_task_dataset(eval_rng, args.eval_examples, args)
-        if 0 in trajectory_steps:
+        train_step = args.steps
+        if args.load_final_checkpoints:
+            train_step = load_final_checkpoint(model, args, seed, device)
+        elif 0 in trajectory_steps:
             summary, scores = analyze_model(model, eval_ids, layout, args, device, seed, 0)
             trajectory_model_rows.append(summary)
             trajectory_expert_rows.extend(scores)
             model.train()
-        _, trajectory_summaries, trajectory_scores = train_model(
-            model,
-            train_rng,
-            args,
-            layout,
-            device,
-            eval_ids=eval_ids,
-            trajectory_steps={step for step in trajectory_steps if step > 0},
-            seed=seed,
-        )
-        trajectory_model_rows.extend(trajectory_summaries)
-        trajectory_expert_rows.extend(trajectory_scores)
-        summary, scores = analyze_model(model, eval_ids, layout, args, device, seed, args.steps)
+        if not args.load_final_checkpoints:
+            _, trajectory_summaries, trajectory_scores = train_model(
+                model,
+                train_rng,
+                args,
+                layout,
+                device,
+                eval_ids=eval_ids,
+                trajectory_steps={step for step in trajectory_steps if step > 0},
+                seed=seed,
+            )
+            trajectory_model_rows.extend(trajectory_summaries)
+            trajectory_expert_rows.extend(trajectory_scores)
+        summary, scores = analyze_model(model, eval_ids, layout, args, device, seed, train_step)
         model_rows.append(summary)
         expert_rows.extend(scores)
         if args.save_final_checkpoints:

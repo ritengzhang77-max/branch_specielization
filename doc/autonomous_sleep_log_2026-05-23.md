@@ -1574,3 +1574,24 @@ checkpoint saving works. For canonical checkpoint sets, save during the exact
 successful run or rerun failed seeds explicitly, because SwitchHead/Triton
 training is not fully deterministic.
 ```
+
+## Progress: SwitchHead Checkpoint Loading
+
+Added:
+
+```text
+--load-final-checkpoints
+```
+
+This skips training, loads `model_seed{seed}.pt`, and runs the normal
+analysis/swap pipeline. I also changed saved model weights to CPU tensors and
+changed loading to `torch.load(..., weights_only=True)`.
+
+Load smoke:
+
+```text
+results/debug_switchhead_checkpoint_load_weights_only/
+```
+
+The load smoke reproduced the saved four-step debug metrics exactly and removed
+the PyTorch pickle warning.
