@@ -2267,3 +2267,34 @@ computations to consolidate.
   is not automatic or uniquely caused by heterogeneity. Full ontology-level
   functional modularity remains untested until the project evaluates many
   roles/subroles and asks whether related roles cluster together across heads.
+
+## 2026-05-23 - Ordinary attention-head role ontology sweep
+
+- Added the v2 framing memo:
+  `doc/project_plan_v2_attention_head_structure.md`.
+- Added `scripts/toy_role_ontology_head_dim_intervention.py`.
+- The script keeps the unit as ordinary attention heads and trains one tiny
+  decoder-only model on six roles in three families: local-copy (`local_a`,
+  `local_b`), KV lookup (`kv_a`, `kv_b`), and induction (`induction_short`,
+  `induction_long`).
+- Ran a 5-seed, six-layout matched-budget sweep:
+  `results/phase3_toy_role_ontology_head_dim_20260523/`.
+- Added the memo:
+  `doc/phase3_toy_role_ontology_head_dim.md`.
+- Main structural role-affinity result: across the four one-64 heterogeneous
+  layouts, local-copy and KV-lookup subroles chose the 64-dim structural type in
+  `80/80` cases. Induction subroles split across 64/32/16, with
+  `induction_short` choosing 64 in `9/20` and `induction_long` choosing 32 in
+  `12/20`.
+- Main specialization result: one-64 heterogeneous layouts increased mean role
+  specialization over `uniform4` (`0.663` to `0.723` vs `0.449`) and reduced
+  effective heads (`2.08` to `2.30` vs `4.15`).
+- Main ontology-modularity result: hetero layouts can improve family clustering
+  over `uniform4`, but `uniform2` is a strong baseline. `hetero4_64second`
+  reached family gap `0.607`, ARI `0.889`; `uniform4` had gap `0.511`, ARI
+  `0.586`; `uniform2` had gap `0.653`, ARI `1.000`.
+- Interpretation update: structural role affinity is now the cleanest term for
+  the user's core claim. Heterogeneous heads strongly bias role-to-head-type
+  assignment and increase specialization. Full functional modularity remains a
+  separate controlled question because fewer/wider uniform heads can also
+  produce strong role-family clustering.

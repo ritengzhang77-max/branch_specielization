@@ -189,6 +189,19 @@ These three numbers (S, C, M) are what the project should report for each archit
   separability can appear depending on layout and task pressure; full
   ontology-level functional modularity remains untested until the project uses
   many roles/subroles and a clustering/partition analysis.
+- The first ordinary-head role-ontology experiment tested six roles in three
+  families: local-copy, KV lookup, and induction. It found strong structural
+  role affinity: local-copy and KV-lookup subroles chose the 64-dim structural
+  type in `80/80` one-64 heterogeneous cases, while induction subroles split
+  across 64/32/16. It also strengthened the specialization result
+  (`uniform4` specialization `0.449`; one-64 hetero `0.663` to `0.723`).
+- The same ontology run gave a controlled modularity update: hetero layouts can
+  improve role-family clustering over `uniform4` (`hetero4_64second` family gap
+  `0.607`, ARI `0.889`, vs `uniform4` gap `0.511`, ARI `0.586`), but
+  `uniform2` was the strongest clustering control (`family gap 0.653`, ARI
+  `1.000`). Current conclusion: heterogeneity strongly supports structural role
+  affinity and specialization; full functional modularity remains baseline- and
+  capacity-sensitive.
 - Adding another high-capacity head, or adding separate branch towers without
   routing, does not automatically produce role-specific functional modularity.
 - Oracle routing can produce branch-level functional modularity.

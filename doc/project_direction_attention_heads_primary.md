@@ -159,6 +159,55 @@ Q3: Does structure produce ontology-level functional modularity across many
     related roles/subroles? Current answer: not tested yet.
 ```
 
+### Latest v2 Term: Structural Role Affinity
+
+The cleanest term for the user's core intended claim is:
+
+```text
+structural role affinity
+```
+
+Definition:
+
+```text
+given different-shaped attention heads, a role reliably prefers a particular
+structural head type, such as the 64-dim head, across seeds and layout
+permutations.
+```
+
+The first ordinary-head role-ontology experiment supports this strongly:
+
+```text
+local-copy and KV-lookup subroles choose the 64-dim structural type in 80/80
+one-64 heterogeneous cases.
+```
+
+Induction subroles do not simply follow the 64-dim type:
+
+```text
+induction_short -> 64 in 9/20, 32 in 8/20, 16 in 3/20
+induction_long  -> 64 in 2/20, 32 in 12/20, 16 in 6/20
+```
+
+This supports a sharper claim than "modularity":
+
+```text
+different-shaped attention heads bias which functional roles attach to which
+head types.
+```
+
+The same experiment partially supports ontology-level modularity but does not
+settle it:
+
+```text
+hetero4_64second family gap 0.607, ARI 0.889
+uniform4 family gap 0.511, ARI 0.586
+uniform2 family gap 0.653, ARI 1.000
+```
+
+So functional modularity remains a controlled question against fewer/wider
+uniform-head baselines.
+
 ## What Must Be Reframed
 
 SwitchHead findings should not be presented as if they were ordinary
