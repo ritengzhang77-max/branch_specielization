@@ -848,3 +848,32 @@ functional modularity?
   `doc/phase1_pythia160m_seed9_alignment_selected_checkpoints.md`.
 - Created checkpoint deck:
   `presentations/phase1/2026-05-22-2032-pythia160m-seed9-alignment/outputs/pythia160m_seed9_alignment_checkpoint.pdf`.
+
+## 2026-05-22 Autonomous Sleep Research: Local-Copy Pilot
+
+- Read and followed `/home/gavin/.codex/skills/autonomous-sleep-research/SKILL.md`.
+- Recorded autonomous block start and planned stop in
+  `doc/autonomous_sleep_log_2026-05-22.md`.
+- Added `scripts/pythia_local_copy_alignment.py`, a local-copy /
+  previous-token contrast task:
+  - sequence pattern `[x, SEP, x]`;
+  - probe score: attention from `SEP` to previous `x`;
+  - causal readout: next-token loss at `SEP`, where target is copied `x`;
+  - same-index vs raw-score-aligned source-head transfer.
+- Completed a Pythia-14M two-seed smoke run; the task was not reliable at 14M
+  (`own_top_excess_over_random=-0.1005`).
+- Completed a Pythia-160M two-seed final-checkpoint pilot on layer 3:
+  - selected local-copy specialization `0.3142`;
+  - own top excess over random `2.1609`;
+  - same-index source transfer `0.0033`;
+  - aligned source transfer `0.1033`;
+  - aligned-minus-same `0.0999`.
+- Interpretation:
+  - local-copy heads can be causal within a seed;
+  - the two-seed pilot does not show repeat-match-like cross-seed causal
+    transfer;
+  - this is a useful boundary condition to test when GPUs are stable.
+- Attempted all-9-seed local-copy scaling, but current GPU/CPU jobs were
+  interrupted before target rows completed. Updated the script with
+  partial-output writes and `--target-seeds` chunking for the next attempt.
+- Recorded the pilot in `doc/phase1_pythia160m_local_copy_pilot.md`.

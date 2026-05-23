@@ -262,6 +262,14 @@ These three numbers (S, C, M) are what the project should report for each archit
   `0.2541`, 59/72 pairs). The 3-seed "probe before causal transfer" story was
   too sharp for Pythia-160M: aligned causal transfer is already detectable by
   step4000, but it strengthens substantially through training.
+- A second-role pilot tested local-copy / previous-token behavior with
+  `[x, SEP, x]` triples. A Pythia-160M two-seed final-checkpoint pilot on layer
+  3 found strong within-seed causality (`own_top_excess_over_random=2.1609`) but
+  weak cross-seed transfer (`same_index=0.0033`, `aligned=0.1033`, aligned
+  better in 1/2 ordered pairs). This suggests the repeat-match alignment result
+  may not automatically generalize to every attention pattern. All-seed scaling
+  was blocked by current machine/GPU contention, so the script now supports
+  partial outputs and `--target-seeds` chunking for later completion.
 
 ### C. Resources concretely available (with HF / GitHub paths)
 - Pythia seeds: `EleutherAI/pythia-{14m,70m,160m,410m}-seed{1..9}`, plus `pythia-160m-weight-seed{1-3}` and `pythia-160m-data-seed{1-3}`. 154 checkpoints per model (steps 0, 1, 2, 4, 8, …, 143000). GitHub: `EleutherAI/pythia`.

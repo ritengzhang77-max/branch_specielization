@@ -299,6 +299,21 @@ Does alignment-based causal transfer generalize beyond repeat-match heads to a
 second head-role task?
 ```
 
+Initial second-role pilot:
+
+- A local-copy / previous-token task was implemented using `[x, SEP, x]`
+  triples. The probe is attention from `SEP` back to the previous `x`; the
+  causal readout is next-token loss at `SEP`, where the target is copied `x`.
+- A Pythia-160M two-seed final-checkpoint pilot on layer 3 found strong within
+  seed causality but weak cross-seed transfer: own top excess over random was
+  `2.1609`, same-index source transfer was `0.0033`, aligned source transfer was
+  `0.1033`, and aligned-minus-same was `0.0999`.
+- This is not yet an all-seed result because current GPU/CPU jobs were
+  interrupted before enough target rows completed. The script now supports
+  partial outputs and target-seed chunking for a later stable run.
+- Tentative boundary condition: alignment-based causal transfer may be strong
+  for repeat-match but not automatic for every attention pattern.
+
 ### Phase 4: Mechanistic Interpretation
 
 If Phase 3 shows a signal, explain it mechanistically.
