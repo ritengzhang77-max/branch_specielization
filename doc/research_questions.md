@@ -204,6 +204,11 @@ SwitchHead feasibility update:
   1.00, gate distance was 0.9645, and causal expert distribution distance was
   0.5664. This suggests induced expert routing can consolidate into persistent
   functional modularity.
+- A selector-window sweep narrowed the provisional reliability boundary. End
+  step 400 was partial (`routed expert match=0.80`), end step 425 had reliable
+  gate splitting but one causal failure, and end step 450 was reliable in 5/5
+  seeds (`routed expert match=1.00`). This suggests gate specialization can
+  precede causal functional modularity.
 
 ### Phase 3: Architectural Intervention
 

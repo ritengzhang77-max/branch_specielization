@@ -313,6 +313,11 @@ This strengthens the induced-modularity result. The selector pressure is gone
 for the final 1200 training steps, but both the gate separation and causal
 expert separation persist in 5/5 seeds.
 
+A follow-up selector-window sweep narrowed the provisional threshold. With the
+same weight, end step 400 was partial (`routed expert match=0.80`), end step 425
+had reliable gate splitting but one causal failure, and end step 450 was reliable
+in 5/5 seeds. See `doc/phase3_toy_switchhead_selector_window_sweep.md`.
+
 So the best interpretation is:
 
 ```text
@@ -388,5 +393,7 @@ SwitchHead-specific tests are:
   `results/phase3_toy_switchhead_competition_weak_w005_seed5_steps2000/`
 - Transient weak-selection result directory:
   `results/phase3_toy_switchhead_competition_weak_w005_end800_seed5_steps2000/`
+- Selector-window sweep memo:
+  `doc/phase3_toy_switchhead_selector_window_sweep.md`
 - Feasibility memo:
   `doc/switchhead_followup_feasibility.md`

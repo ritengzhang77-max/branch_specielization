@@ -992,3 +992,41 @@ Next decisive test:
 sweep shorter selector-pressure windows to find whether the effect needs 800
 steps or appears with a much smaller structural cue.
 ```
+
+## Progress: SwitchHead Selector-Window Sweep
+
+Swept the weak selector-pressure end step at 400, 425, 450, 500, 600, and 800.
+
+Summary:
+
+| Selector end step | Gate same top | Causal same top | Routed match | Gate distance | Causal distance |
+|---:|---:|---:|---:|---:|---:|
+| 0 / none | 1.00 | 0.80 | 0.20 | 0.0032 | 0.0087 |
+| 400 | 0.20 | 0.20 | 0.80 | 0.3030 | 0.3290 |
+| 425 | 0.00 | 0.20 | 0.80 | 0.3728 | 0.3780 |
+| 450 | 0.00 | 0.00 | 1.00 | 0.4476 | 0.4240 |
+| 500 | 0.00 | 0.00 | 1.00 | 0.5986 | 0.5188 |
+| 600 | 0.00 | 0.00 | 1.00 | 0.8427 | 0.5646 |
+| 800 | 0.00 | 0.00 | 1.00 | 0.9645 | 0.5664 |
+| full run | 0.00 | 0.00 | 1.00 | 0.9982 | 0.5675 |
+
+Interpretation:
+
+```text
+the reliability boundary for persistent causal modularity lies between 425 and
+450 selector-supervised steps in this deterministic 5-seed toy setup.
+```
+
+The 425-step run is especially informative: gate top experts are split in 5/5
+seeds, but one seed still has the same causal top expert for both roles. This
+supports the ordering:
+
+```text
+gate specialization can precede causal functional modularity.
+```
+
+Wrote:
+
+```text
+doc/phase3_toy_switchhead_selector_window_sweep.md
+```

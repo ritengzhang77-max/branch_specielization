@@ -1787,3 +1787,19 @@ computations to consolidate.
 - Interpretation update: SwitchHead's induced role-aligned expert split persists
   after the auxiliary selector loss is removed for the final 1200 training
   steps. This makes the result stronger than active-loss compliance.
+- Ran a selector-window sweep with end steps 400, 425, 450, 500, 600, and 800,
+  plus the no-supervision and full-supervision baselines.
+- Wrote `doc/phase3_toy_switchhead_selector_window_sweep.md`.
+- Main sweep result:
+  - no supervision: routed expert match `0.20`, gate distance `0.0032`, causal
+    distance `0.0087`;
+  - end step 400: routed expert match `0.80`, gate distance `0.3030`, causal
+    distance `0.3290`;
+  - end step 425: gate same-top `0.00`, but routed expert match still `0.80`;
+  - end step 450: routed expert match `1.00`, gate distance `0.4476`, causal
+    distance `0.4240`;
+  - end step 800: routed expert match `1.00`, gate distance `0.9645`, causal
+    distance `0.5664`.
+- Interpretation update: in this toy setup, gate separation can precede fully
+  reliable causal expert modularity; persistent 5/5 causal modularity appears
+  between selector end steps 425 and 450.
