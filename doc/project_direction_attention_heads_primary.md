@@ -100,6 +100,58 @@ doc/phase3_toy_induction_head_dim_intervention.md
 
 These are the strongest current results for the user's intended project.
 
+### Latest Evidence: Head-Level Specialization vs Modularity
+
+A larger ordinary-attention-head local-vs-induction sweep was run on
+2026-05-23:
+
+```text
+results/phase3_toy_competition_head_dim_modularity_sweep_20260523
+doc/phase3_attention_head_specialization_modularity_sweep.md
+```
+
+The experiment used 10 seeds across nine matched-budget head-dimension layouts.
+
+Strong result:
+
+```text
+In one-64 heterogeneous layouts, the local causal role follows the 64-dim head
+slot in 40/40 models.
+```
+
+Concretely:
+
+```text
+hetero4            [16,16,32,64] -> local top slot L1H3 in 10/10
+hetero4_64first    [64,16,16,32] -> local top slot L1H0 in 10/10
+hetero4_64second   [16,64,16,32] -> local top slot L1H1 in 10/10
+hetero4_64third    [16,32,64,16] -> local top slot L1H2 in 10/10
+```
+
+This supports:
+
+```text
+structural head-dimension heterogeneity can create stable functional
+specialization slots in ordinary attention heads.
+```
+
+The modularity result is mixed:
+
+```text
+hetero4 improves local-vs-induction role separation over uniform4
+(TV distance 0.528 vs 0.398), but uniform2 also has high role separation
+(TV distance 0.511).
+```
+
+This means the project should keep two questions separate:
+
+```text
+Q1: Does structure make role-to-head assignment stable?  Current toy answer: yes.
+Q2: Does structure make different roles separate across heads? Current toy
+    answer: sometimes, but not automatically and not uniquely because of
+    heterogeneity.
+```
+
 ## What Must Be Reframed
 
 SwitchHead findings should not be presented as if they were ordinary

@@ -72,6 +72,8 @@ class ModelSummary:
     induction_top_accuracy_delta: float
     same_top_slot: bool
     same_top_head_dim: bool
+    role_distribution_tv_distance: float
+    role_distribution_overlap: float
 
 
 @dataclass
@@ -111,7 +113,21 @@ class PairStability:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--configs", nargs="+", default=["uniform4", "hetero4", "uniform2", "hetero4_64first"])
+    parser.add_argument(
+        "--configs",
+        nargs="+",
+        default=[
+            "uniform4",
+            "hetero4",
+            "hetero4_64first",
+            "hetero4_64second",
+            "hetero4_64third",
+            "hetero4_two48_center",
+            "hetero4_two48_skip",
+            "hetero4_two48_front",
+            "uniform2",
+        ],
+    )
     parser.add_argument("--seeds", nargs="+", type=int, default=[1, 2, 3, 4, 5])
     parser.add_argument("--steps", type=int, default=1600)
     parser.add_argument("--batch-size", type=int, default=128)
@@ -413,6 +429,14 @@ def top_role(role_scores: list[np.ndarray], head_dims: list[int]) -> dict[str, f
     return best
 
 
+def flattened_role_distribution(role_scores: list[np.ndarray]) -> np.ndarray:
+    return specialization_distribution(np.concatenate(role_scores))
+
+
+def role_distribution_tv_distance(first: np.ndarray, second: np.ndarray) -> float:
+    return float(0.5 * np.abs(first - second).sum())
+
+
 def random_same_layer_score(
     role_scores: list[np.ndarray],
     top_layer: int,
@@ -497,6 +521,10 @@ def summarize_config(
         ),
         "same_top_slot_rate": float(np.mean([row.same_top_slot for row in config_models])),
         "same_top_head_dim_rate": float(np.mean([row.same_top_head_dim for row in config_models])),
+        "role_distribution_tv_distance_mean": float(
+            np.mean([row.role_distribution_tv_distance for row in config_models])
+        ),
+        "role_distribution_overlap_mean": float(np.mean([row.role_distribution_overlap for row in config_models])),
         "local_top_head_dim_counts": {str(dim): count for dim, count in sorted(local_dims.items())},
         "induction_top_head_dim_counts": {str(dim): count for dim, count in sorted(induction_dims.items())},
         "local_top_slot_counts": {slot: count for slot, count in sorted(local_slots.items())},
@@ -524,6 +552,8 @@ def write_config_summary(path: Path, summary_by_config: dict[str, dict[str, obje
         "induction_random_same_layer_loss_delta_mean",
         "same_top_slot_rate",
         "same_top_head_dim_rate",
+        "role_distribution_tv_distance_mean",
+        "role_distribution_overlap_mean",
         "local_raw_role_similarity_mean",
         "local_aligned_role_similarity_mean",
         "local_random_role_similarity_mean",
@@ -655,6 +685,10 @@ def main() -> None:
 
             local_top = top_role(local_scores, head_dims)
             induction_top = top_role(induction_scores, head_dims)
+            local_flat_dist = flattened_role_distribution(local_scores)
+            induction_flat_dist = flattened_role_distribution(induction_scores)
+            local_induction_tv = role_distribution_tv_distance(local_flat_dist, induction_flat_dist)
+            local_induction_overlap = float(np.minimum(local_flat_dist, induction_flat_dist).sum())
             model_rows.append(
                 ModelSummary(
                     config=config_name,
@@ -704,6 +738,8 @@ def main() -> None:
                         and int(local_top["head"]) == int(induction_top["head"])
                     ),
                     same_top_head_dim=bool(int(local_top["head_dim"]) == int(induction_top["head_dim"])),
+                    role_distribution_tv_distance=local_induction_tv,
+                    role_distribution_overlap=local_induction_overlap,
                 )
             )
 

@@ -2238,3 +2238,30 @@ computations to consolidate.
   result directly. Output projections are similar enough that output-side swaps
   are tolerated, while value projections are highly distinct and value-side
   mismatches are destructive.
+
+## 2026-05-23 - Ordinary attention-head specialization/modularity sweep
+
+- Scope correction: this run uses ordinary attention heads as the unit of
+  analysis, not SwitchHead experts, MoE experts, or branch towers.
+- Added explicit head-level modularity metrics to
+  `scripts/toy_competition_head_dim_intervention.py`:
+  `role_distribution_tv_distance` and `role_distribution_overlap`, computed
+  from flattened local-vs-induction causal ablation distributions over
+  `(layer, head)` slots.
+- Ran a 10-seed, nine-layout matched-budget sweep:
+  `results/phase3_toy_competition_head_dim_modularity_sweep_20260523/`.
+- Added the memo:
+  `doc/phase3_attention_head_specialization_modularity_sweep.md`.
+- Updated the direction lock:
+  `doc/project_direction_attention_heads_primary.md`.
+- Main specialization result: in the one-64 heterogeneous layouts, the local
+  causal role followed the 64-dim head slot in `40/40` models:
+  `[16,16,32,64] -> L1H3`, `[64,16,16,32] -> L1H0`,
+  `[16,64,16,32] -> L1H1`, and `[16,32,64,16] -> L1H2`, each in `10/10`
+  seeds.
+- Main modularity result: `hetero4` improved local-vs-induction role separation
+  over `uniform4` (`TV=0.528` vs `0.398`), but `uniform2` also had high
+  separation (`TV=0.511`). Interpretation update: heterogeneous head dimensions
+  strongly stabilize functional specialization slots, while functional
+  modularity is a separate outcome that appears in some layouts but is not
+  automatic or uniquely caused by heterogeneity.

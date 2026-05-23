@@ -177,6 +177,16 @@ These three numbers (S, C, M) are what the project should report for each archit
   key-value and induction-style tasks.
 - In local-vs-induction competition, capacity heterogeneity behaves like a
   capacity-slot and task-pressure mechanism, not a fixed semantic role taxonomy.
+- A larger ordinary-attention-head sweep on 2026-05-23 strengthened the
+  specialization result: across four one-64 heterogeneous layouts, the local
+  causal role followed the 64-dim head slot in `40/40` models. Moving the 64-dim
+  head moved the local role (`L1H3`, `L1H0`, `L1H1`, `L1H2` respectively).
+- The same sweep gave mixed but useful modularity evidence. `hetero4` improved
+  local-vs-induction causal role separation over `uniform4` (`TV=0.528` vs
+  `0.398`), but `uniform2` also separated the roles well (`TV=0.511`). This
+  supports keeping two claims separate: structural heterogeneity strongly
+  stabilizes role-to-head assignment, while functional modularity is an
+  additional outcome that depends on layout and task pressure.
 - Adding another high-capacity head, or adding separate branch towers without
   routing, does not automatically produce role-specific functional modularity.
 - Oracle routing can produce branch-level functional modularity.
