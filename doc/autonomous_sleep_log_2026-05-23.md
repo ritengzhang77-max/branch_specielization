@@ -480,3 +480,56 @@ synthetic task. It agrees with the strong 160M generic result and substantially
 strengthens the 410M final-checkpoint result, showing that even for a large
 synthetic causal role, generic Phase 0 matching can miss part of the
 cross-seed relabeling.
+
+## Progress: WikiText-103 Exact 8-Gram Natural Repeats
+
+Checked whether the naturally occurring exact-repeat result survives longer
+spans on a larger standard corpus.
+
+Candidate-count scan on 500024 WikiText-103 train tokens:
+
+- exact 5-gram candidates: 3839;
+- exact 6-gram candidates: 2049;
+- exact 7-gram candidates: 980;
+- exact 8-gram candidates: 524.
+
+Ran Pythia-160M exact 8-gram task-repeat alignment with 128 probe and 128
+evaluation windows, sampled without replacement.
+
+- result directory:
+  `results/phase1_pythia160m_wikitext103_natural_repeat_8gram_task_alignment_seed9_n128/`;
+- own top excess: `0.3718`;
+- own top target CI: `[0.1494, 0.6444]`;
+- own top positives: 9/9;
+- same-index transfer: `0.0334`;
+- task-repeat aligned transfer: `0.3155`;
+- aligned-minus-same: `0.2820`;
+- pair CI: `[0.1822, 0.3918]`;
+- target CI: `[0.0995, 0.5164]`;
+- target positives: 8/9;
+- aligned better count: 63/72.
+
+Matched `step0` task-repeat control:
+
+- result directory:
+  `results/phase1_pythia160m_wikitext103_natural_repeat_8gram_task_alignment_seed9_n128_step0/`;
+- own top excess: `-0.0010`;
+- aligned-minus-same: `-0.0018`;
+- target CI: `[-0.0035, -0.0001]` at negligible absolute scale.
+
+Generic Phase 0 comparison on the same deterministic 8-gram sample:
+
+- result directory:
+  `results/phase1_pythia160m_wikitext103_natural_repeat_8gram_phase0_alignment_seed9_n128/`;
+- own top excess: `0.3718`;
+- same-index transfer: `0.0334`;
+- generic aligned transfer: `0.0397`;
+- aligned-minus-same: `0.0063`;
+- pair CI: `[-0.0424, 0.0426]`;
+- target CI: `[-0.0253, 0.0344]`;
+- target positives: 5/9.
+
+Interpretation: longer exact natural repeats strengthen the 160M external
+validity result. The role is causally stronger than in the 4-gram WikiText-2
+task, but the alignment-basis conclusion remains: generic Phase 0 matching is
+neutral, while task-repeat matching gives positive held-out transfer.

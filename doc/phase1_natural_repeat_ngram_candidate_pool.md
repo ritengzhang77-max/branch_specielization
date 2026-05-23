@@ -115,6 +115,52 @@ So exact naturally occurring repeats extend to 410M as a weak trained causal
 signal, but not as a clean 410M alignment-transfer result under the current
 4-token WikiText setup.
 
+## WikiText-103 Exact 8-Gram Extension
+
+To reduce the concern that 4-token repeats are too short or too accidental, I
+reran the natural-repeat probe on a larger standard corpus:
+
+- dataset: Hugging Face `wikitext`, config `wikitext-103-raw-v1`, train split;
+- first 20000 rows, token stream length `500024`;
+- context length `128`;
+- exact repeat span length `8`;
+- minimum gap `8`;
+- candidate windows found: `524`;
+- sampled windows: 128 probe plus 128 evaluation, without replacement.
+
+Candidate-count scan on the same 500k-token stream:
+
+| Exact span length | Candidate windows |
+|---:|---:|
+| 5 | 3839 |
+| 6 | 2049 |
+| 7 | 980 |
+| 8 | 524 |
+
+Pythia-160M WikiText-103 exact 8-gram results:
+
+| Condition | Alignment source | Seeds | Own top excess | Same-index transfer | Aligned transfer | Aligned - same | Target CI for aligned - same |
+|---|---|---:|---:|---:|---:|---:|---:|
+| `step0` | task repeat | 9 | -0.0010 | 0.0006 | -0.0012 | -0.0018 | [-0.0035, -0.0001] |
+| `step143000` | Phase 0 generic | 9 | 0.3718 | 0.0334 | 0.0397 | 0.0063 | [-0.0253, 0.0344] |
+| `step143000` | task repeat | 9 | 0.3718 | 0.0334 | 0.3155 | 0.2820 | [0.0995, 0.5164] |
+
+Additional task-repeat details:
+
+- own top excess is positive for 9/9 target seeds;
+- task-repeat aligned-minus-same is positive for 8/9 target seeds;
+- task-repeat pair-level CI is `[0.1822, 0.3918]`;
+- task-repeat aligned-better count is 63/72;
+- generic Phase 0 aligned-minus-same has target CI crossing zero and only 5/9
+  positive targets.
+
+Interpretation: the larger-corpus exact 8-gram check strengthens the 160M
+natural-repeat result. The task is more natural than inserted spans, uses longer
+exact repeated phrases, avoids sampling replacement, and still shows trained
+own-head causality plus task-specific cross-seed transfer. It also preserves
+the alignment-basis lesson: generic Phase 0 matching is essentially neutral on
+this weak natural role, while role-specific matching is positive.
+
 ## Interpretation
 
 This probe separates two claims:
@@ -160,11 +206,13 @@ Stronger parts:
 - own-head causality is positive for 9/9 final-checkpoint seeds;
 - both `step0` controls are null with respect to positive transfer;
 - the task-specific alignment result uses held-out evaluation windows.
+- the WikiText-103 exact 8-gram extension uses longer repeated spans and enough
+  candidates to sample probe/evaluation windows without replacement.
 
 Weaker parts:
 
-- exact 4-token repeats are short and semantically mixed;
-- WikiText-2 yields only a small exact-repeat candidate pool;
+- exact repeats are semantically mixed;
+- the 410M exact-repeat result is still weak under the current setup;
 - generic-alignment aligned-minus-same has high variance and target-level CI
   crosses zero;
 - the task-specific alignment result is stronger but more role-informed, so it
@@ -172,14 +220,12 @@ Weaker parts:
 
 ## Next Experiments
 
-1. Use a larger corpus such as WikiText-103 or OpenWebText to support exact
-   repeated spans of length 5-8 without replacement.
-2. Filter repeated spans by lower baseline predictability, so the model must rely
+1. Filter repeated spans by lower baseline predictability, so the model must rely
    more on copying rather than ordinary language-model context.
-3. Compare same-index vs aligned transfer separately for name/title repeats,
+2. Compare same-index vs aligned transfer separately for name/title repeats,
    numeric repeats, and ordinary phrase repeats.
-4. Test whether task-specific alignment also improves the inserted-span WikiText
-   result and the synthetic local-copy result.
+3. Run the WikiText-103 exact 8-gram task on Pythia-410M to test whether the
+   weak 410M exact-repeat result was mainly a short-span/WikiText-2 issue.
 
 ## Files
 
@@ -200,3 +246,9 @@ Weaker parts:
   `results/phase1_pythia410m_natural_repeat_ngram_task_alignment_seed9/`.
 - Pythia-410M all-seed task-repeat alignment `step0` control:
   `results/phase1_pythia410m_natural_repeat_ngram_task_alignment_seed9_step0/`.
+- Pythia-160M WikiText-103 exact 8-gram Phase 0 alignment:
+  `results/phase1_pythia160m_wikitext103_natural_repeat_8gram_phase0_alignment_seed9_n128/`.
+- Pythia-160M WikiText-103 exact 8-gram task-repeat alignment:
+  `results/phase1_pythia160m_wikitext103_natural_repeat_8gram_task_alignment_seed9_n128/`.
+- Pythia-160M WikiText-103 exact 8-gram task-repeat `step0` control:
+  `results/phase1_pythia160m_wikitext103_natural_repeat_8gram_task_alignment_seed9_n128_step0/`.

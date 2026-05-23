@@ -32,6 +32,7 @@ heads.
 | inserted WikiText repeated span, 128/128 | 410M | 0.0293 | 0.1158 | not rerun | larger-sample replication stays positive but weaker than 160M |
 | naturally occurring exact 4-gram repeat | 160M | -0.0016 | 0.1897 | -0.0033 | unmodified natural repeats need role-specific alignment |
 | naturally occurring exact 4-gram repeat | 410M | not run | 0.0215 | -0.0022 | weak own-head signal, no clean target-level transfer |
+| naturally occurring exact 8-gram repeat, WikiText-103 | 160M | 0.0063 | 0.2820 | -0.0018 | longer natural repeats strengthen 160M task-specific transfer |
 
 ## Interpretation
 
@@ -53,8 +54,9 @@ The current hierarchy is:
    alignment acts as an upper-bound sanity check.
 2. Inserted natural repeated spans: medium signal; generic alignment is positive
    but much too conservative; task-specific alignment is strong.
-3. Naturally occurring exact repeats: low/noisy signal; 160M task-specific
-   alignment is positive, while 410M is only weak/suggestive.
+3. Naturally occurring exact repeats: low/noisy under 4-token WikiText-2, but
+   cleaner for 160M with 8-token WikiText-103 repeats; 410M is still only
+   weak/suggestive under the current exact-repeat setup.
 
 ## What This Means For The Research Question
 
@@ -96,8 +98,8 @@ That distinction should be explicit in any paper draft.
 
 ## Next Best Checks
 
-1. Try a larger corpus for naturally occurring repeats so span length can be
-   raised from 4 tokens to 5-8 tokens without sampling replacement.
+1. Extend the WikiText-103 exact 8-gram check to Pythia-410M to test whether
+   the weaker 410M exact-repeat result was mainly a short-span/WikiText-2 issue.
 2. Consider a two-stage metric in the paper: generic alignment as an unsupervised
    baseline, task-specific alignment as the role-level measurement.
 3. Inspect the remaining heterogeneous cases, especially 410M natural repeats

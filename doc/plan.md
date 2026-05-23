@@ -375,6 +375,18 @@ These three numbers (S, C, M) are what the project should report for each archit
   the matched `step0` task-alignment control was null. This means unmodified
   natural repeats are causally real and can support role-relabeling, but only
   when the matching representation is specific to the repeated-span role.
+- A larger-corpus natural-repeat follow-up moved from WikiText-2 exact 4-grams
+  to WikiText-103 exact 8-grams. In the first 500024 tokens, the scan found 524
+  exact 8-token repeat windows, enough for 128 probe plus 128 evaluation windows
+  without replacement. Pythia-160M own-head causality increased
+  (`own_top_excess=0.3718`, target CI `[0.1494, 0.6444]`, 9/9 positive).
+  Generic Phase 0 alignment remained essentially neutral
+  (`aligned-minus-same=0.0063`, target CI `[-0.0253, 0.0344]`), but task-repeat
+  alignment was positive (`aligned-minus-same=0.2820`, target CI
+  `[0.0995, 0.5164]`, 8/9 target positives), with a matched `step0` control
+  near zero/slightly negative (`aligned-minus-same=-0.0018`). This strengthens
+  the external-validity claim for 160M natural repeats and makes 410M exact
+  8-grams the next natural check.
 
 ### C. Resources concretely available (with HF / GitHub paths)
 - Pythia seeds: `EleutherAI/pythia-{14m,70m,160m,410m}-seed{1..9}`, plus `pythia-160m-weight-seed{1-3}` and `pythia-160m-data-seed{1-3}`. 154 checkpoints per model (steps 0, 1, 2, 4, 8, …, 143000). GitHub: `EleutherAI/pythia`.

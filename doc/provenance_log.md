@@ -1438,3 +1438,45 @@ functional modularity?
   recovers even stronger 410M final-checkpoint transfer, suggesting the generic
   matching representation can miss part of the role-level relabeling even when
   the role is causally large.
+
+## 2026-05-23 - WikiText-103 exact 8-gram repeat check
+
+- Scanned a larger WikiText-103 token stream to support longer naturally
+  occurring exact repeats.
+- Candidate-count scan on 500024 tokens from `wikitext-103-raw-v1`, first 20000
+  train rows, context length 128, min gap 8:
+  - exact 5-gram candidates: 3839;
+  - exact 6-gram candidates: 2049;
+  - exact 7-gram candidates: 980;
+  - exact 8-gram candidates: 524.
+- Ran Pythia-160M all-seed exact 8-gram task-repeat alignment with 128 probe and
+  128 evaluation windows, sampled without replacement:
+  `results/phase1_pythia160m_wikitext103_natural_repeat_8gram_task_alignment_seed9_n128/`.
+  - own top excess: `0.3718`;
+  - own top target CI: `[0.1494, 0.6444]`;
+  - own top positives: 9/9;
+  - same-index transfer: `0.0334`;
+  - task-repeat aligned transfer: `0.3155`;
+  - aligned-minus-same: `0.2820`;
+  - pair CI: `[0.1822, 0.3918]`, pair sign `p=4.2e-11`;
+  - target CI: `[0.0995, 0.5164]`, target sign `p=0.0391`;
+  - target positives: 8/9;
+  - aligned better count: 63/72.
+- Ran matched Pythia-160M `step0` task-repeat control:
+  `results/phase1_pythia160m_wikitext103_natural_repeat_8gram_task_alignment_seed9_n128_step0/`.
+  - own top excess: `-0.0010`;
+  - aligned-minus-same: `-0.0018`;
+  - target CI: `[-0.0035, -0.0001]` at negligible absolute scale.
+- Ran Pythia-160M all-seed exact 8-gram generic Phase 0 comparison:
+  `results/phase1_pythia160m_wikitext103_natural_repeat_8gram_phase0_alignment_seed9_n128/`.
+  - own top excess: `0.3718`;
+  - same-index transfer: `0.0334`;
+  - generic aligned transfer: `0.0397`;
+  - aligned-minus-same: `0.0063`;
+  - pair CI: `[-0.0424, 0.0426]`;
+  - target CI: `[-0.0253, 0.0344]`;
+  - target positives: 5/9.
+- Interpretation: longer exact repeats on a larger standard corpus strengthen
+  the 160M natural-repeat result. The role is causally stronger than in the
+  WikiText-2 4-gram task, but generic Phase 0 alignment remains neutral; the
+  positive transfer appears under task-repeat matching.
