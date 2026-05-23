@@ -405,6 +405,14 @@ These three numbers (S, C, M) are what the project should report for each archit
   at this scale (`0.0012`, target CI `[-0.0005, 0.0028]`). This weakens the
   concern that the natural-repeat signal is only due to numbers, titles, proper
   names, or tokenizer-artifact spans.
+- The matched 410M ordinary-phrase exact 8-gram run gives the first clean
+  target-level positive 410M exact-repeat transfer result. From 1000066 tokens,
+  the filter found 140 candidates, enough for 64/64 without replacement.
+  Own-top excess was `0.0559` with target CI `[0.0189, 0.0949]`; task-repeat
+  aligned-minus-same was `0.0327` with target CI `[0.0027, 0.0599]`, 8/9 target
+  positives, and a null matched `step0` control (`0.0009`, target CI
+  `[-0.0003, 0.0022]`). This suggests category filtering can rescue the 410M
+  exact-repeat result, but the effect size is still far smaller than 160M's.
 
 ### C. Resources concretely available (with HF / GitHub paths)
 - Pythia seeds: `EleutherAI/pythia-{14m,70m,160m,410m}-seed{1..9}`, plus `pythia-160m-weight-seed{1-3}` and `pythia-160m-data-seed{1-3}`. 154 checkpoints per model (steps 0, 1, 2, 4, 8, …, 143000). GitHub: `EleutherAI/pythia`.

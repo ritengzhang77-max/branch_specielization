@@ -670,3 +670,43 @@ Generic Phase 0 comparison:
 Interpretation: filtering to ordinary phrases does not remove the 160M
 natural-repeat effect. The result remains strongly alignment-basis dependent:
 task-repeat matching transfers, generic Phase 0 matching is neutral.
+
+## Progress: 410M Ordinary-Phrase Filtered Exact 8-Gram Check
+
+Ran the matched Pythia-410M ordinary-phrase-only task-repeat check.
+
+Setup:
+
+- dataset: WikiText-103 train;
+- token stream length: `1000066`;
+- repeated span: exact 8-gram;
+- primary category: `ordinary_phrase`;
+- candidates: `140`;
+- probe/eval: 64/64, no replacement.
+
+Task-repeat alignment:
+
+- result directory:
+  `results/phase1_pythia410m_wikitext103_natural_repeat_8gram_ordinary_task_alignment_seed9_n64/`;
+- own top excess: `0.0559`;
+- own top target CI: `[0.0189, 0.0949]`;
+- same-index transfer: `0.0102`;
+- task-repeat aligned transfer: `0.0429`;
+- aligned-minus-same: `0.0327`;
+- pair CI: `[0.0112, 0.0506]`;
+- target CI: `[0.0027, 0.0599]`;
+- target positives: 8/9;
+- aligned better count: 56/72.
+
+Matched `step0` task-repeat control:
+
+- result directory:
+  `results/phase1_pythia410m_wikitext103_natural_repeat_8gram_ordinary_task_alignment_seed9_n64_step0/`;
+- own top excess: `0.0010`;
+- aligned-minus-same: `0.0009`;
+- target CI: `[-0.0003, 0.0022]`.
+
+Interpretation: filtering to ordinary phrases makes the 410M exact-repeat result
+cleaner than the mixed 8-gram run: the target-level CI is now positive. The
+effect is still small relative to 160M, so this supports "filtered natural
+repeat transfer exists in 410M" but not a strong monotonic scaling claim.

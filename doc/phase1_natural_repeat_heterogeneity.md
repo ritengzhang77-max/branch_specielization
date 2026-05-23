@@ -73,9 +73,9 @@ phrases, numbers/dates, titles/quotes, names, and tokenization artifacts such as
 ## Ordinary-Phrase Filtered Result
 
 I then added `--span-primary-category ordinary_phrase` to the natural-repeat
-runner and tested Pythia-160M on WikiText-103 exact 8-gram ordinary phrases.
+runner and tested WikiText-103 exact 8-gram ordinary phrases.
 
-Setup:
+Pythia-160M setup:
 
 - token stream length: 1000066;
 - ordinary-phrase candidates: 147;
@@ -89,9 +89,23 @@ Result:
 | task repeat | 0.3133 | 0.0248 | 0.2500 | 0.2252 | [0.1096, 0.3776] |
 | task repeat `step0` | 0.0009 | -0.0000 | 0.0012 | 0.0012 | [-0.0005, 0.0028] |
 
-Interpretation: ordinary phrases preserve the core 160M result. This weakens the
-concern that the natural-repeat signal is only an artifact of numbers, titles,
-proper names, or tokenizer-markup spans.
+Pythia-410M setup:
+
+- token stream length: 1000066;
+- ordinary-phrase candidates: 140;
+- 64 probe plus 64 evaluation examples, sampled without replacement.
+
+Result:
+
+| Alignment source | Own top excess | Same-index | Aligned | Aligned - same | Target CI |
+|---|---:|---:|---:|---:|---:|
+| task repeat | 0.0559 | 0.0102 | 0.0429 | 0.0327 | [0.0027, 0.0599] |
+| task repeat `step0` | 0.0010 | -0.0008 | 0.0002 | 0.0009 | [-0.0003, 0.0022] |
+
+Interpretation: ordinary phrases preserve the core 160M result and make the 410M
+result cleaner than the mixed exact 8-gram run. This weakens the concern that
+the natural-repeat signal is only an artifact of numbers, titles, proper names,
+or tokenizer-markup spans.
 
 ## Interpretation
 

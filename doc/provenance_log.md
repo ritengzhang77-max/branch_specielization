@@ -1585,3 +1585,26 @@ functional modularity?
   - target CI: `[-0.0044, 0.0305]`.
 - Interpretation: the ordinary-phrase filtered task preserves the 160M
   task-specific transfer result and keeps generic Phase 0 matching neutral.
+- Ran Pythia-410M WikiText-103 exact 8-gram ordinary-phrase task-repeat
+  alignment:
+  `results/phase1_pythia410m_wikitext103_natural_repeat_8gram_ordinary_task_alignment_seed9_n64/`.
+  - token stream length: `1000066`;
+  - ordinary-phrase candidate windows: `140`;
+  - sampled 64 probe plus 64 evaluation windows, without replacement;
+  - own top excess: `0.0559`;
+  - own top target CI: `[0.0189, 0.0949]`;
+  - same-index transfer: `0.0102`;
+  - task-repeat aligned transfer: `0.0429`;
+  - aligned-minus-same: `0.0327`;
+  - pair CI: `[0.0112, 0.0506]`, pair sign `p=2.4e-06`;
+  - target CI: `[0.0027, 0.0599]`, target sign `p=0.0391`;
+  - target positives: 8/9;
+  - aligned better count: 56/72.
+- Ran matched Pythia-410M `step0` task-repeat control:
+  `results/phase1_pythia410m_wikitext103_natural_repeat_8gram_ordinary_task_alignment_seed9_n64_step0/`.
+  - own top excess: `0.0010`;
+  - aligned-minus-same: `0.0009`;
+  - target CI: `[-0.0003, 0.0022]`.
+- Interpretation update: category filtering gives the first clean target-level
+  positive 410M exact-repeat transfer result, though the effect remains small
+  compared with 160M.
