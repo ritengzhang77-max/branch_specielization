@@ -292,11 +292,30 @@ mixed. Hetero helps relative to uniform4, but uniform2 is stronger.
 
 ## Next Missing Baseline
 
-The missing comparison is:
+The comparison originally missing was:
 
 ```text
 uniform2 [64,64] vs hetero2 [32,96] or [48,80]
 ```
 
-This directly tests whether unequal two-head structure beats the strong
-fewer/wider uniform-head baseline.
+This has now been run:
+
+```text
+doc/phase3_toy_role_ontology_hetero2.md
+results/phase3_toy_role_ontology_hetero2_20260523
+```
+
+Result:
+
+| Question | `uniform2 [64,64]` | Best hetero2 result | Interpretation |
+|---|---:|---:|---|
+| Structural role affinity | local/KV top head index H0 `16/20`, H1 `4/20`; no dimension contrast | local/KV choose larger hetero2 head in `60/60` | hetero2 strengthens role-to-head-type affinity |
+| Specialization | `0.636` | `[48,80]`: `0.756` | hetero2 beats uniform2 on concentration |
+| Modularity | family gap `0.653`, ARI `1.000` | `[48,80]`: gap `0.601`, ARI `1.000` | hetero2 does not beat uniform2 on modularity |
+
+Updated conclusion:
+
+```text
+unequal two-head structure improves structural role affinity and specialization,
+but not ontology-level functional modularity over the strong uniform2 baseline.
+```

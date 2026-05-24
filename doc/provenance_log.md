@@ -2298,3 +2298,32 @@ computations to consolidate.
   assignment and increase specialization. Full functional modularity remains a
   separate controlled question because fewer/wider uniform heads can also
   produce strong role-family clustering.
+
+## 2026-05-23 - Hetero2 role ontology control
+
+- Ran the missing two-head heterogeneous control against `uniform2 [64,64]`:
+  `results/phase3_toy_role_ontology_hetero2_20260523/`.
+- Configs:
+  - `uniform2 = [64,64]`
+  - `[32,96]`
+  - `[48,80]`
+  - `[16,112]`
+- Added memo:
+  `doc/phase3_toy_role_ontology_hetero2.md`.
+- Main baseline-vs-experiment table:
+  - `uniform2`: specialization `0.636`, effective heads `2.25`, family gap
+    `0.653`, ARI `1.000`.
+  - `[32,96]`: specialization `0.695`, effective heads `1.86`, family gap
+    `0.480`, ARI `0.889`.
+  - `[48,80]`: specialization `0.756`, effective heads `1.91`, family gap
+    `0.601`, ARI `1.000`.
+  - `[16,112]`: specialization `0.702`, effective heads `1.76`, family gap
+    `0.327`, ARI `0.667`.
+- Structural role-affinity result: local-copy and KV-lookup roles chose the
+  larger hetero2 head in `60/60` cases.
+- Interpretation update: hetero2 gives a clean matched-head-count result for
+  stronger structural role affinity and stronger specialization than `uniform2`,
+  but it does not improve ontology-level modularity over `uniform2`. The best
+  hetero2 modularity setting, `[48,80]`, ties ARI but has lower family gap than
+  `uniform2`. Extreme imbalance `[16,112]` appears to collapse all roles onto
+  the huge head and harms family clustering.

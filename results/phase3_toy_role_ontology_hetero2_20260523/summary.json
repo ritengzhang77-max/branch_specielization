@@ -1,0 +1,238 @@
+{
+  "args": {
+    "configs": [
+      "uniform2",
+      "32,96",
+      "48,80",
+      "16,112"
+    ],
+    "seeds": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "steps": 1200,
+    "batch_size": 128,
+    "eval_examples": 512,
+    "kv_pairs": 4,
+    "induction_short_length": 8,
+    "induction_long_length": 16,
+    "vocab_size": 192,
+    "d_model": 128,
+    "n_layers": 2,
+    "mlp_dim": 256,
+    "lr": 0.001,
+    "weight_decay": 0.01,
+    "device": "cuda",
+    "output_dir": "results/phase3_toy_role_ontology_hetero2_20260523"
+  },
+  "layout": {
+    "seq_len": 78,
+    "role_positions": {
+      "local_a": [
+        1
+      ],
+      "local_b": [
+        4
+      ],
+      "kv_a": [
+        15
+      ],
+      "kv_b": [
+        26
+      ],
+      "induction_short": [
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43
+      ],
+      "induction_long": [
+        62,
+        63,
+        64,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        71,
+        72,
+        73,
+        74,
+        75,
+        76
+      ]
+    }
+  },
+  "role_families": {
+    "local_a": "local_copy",
+    "local_b": "local_copy",
+    "kv_a": "kv_lookup",
+    "kv_b": "kv_lookup",
+    "induction_short": "induction",
+    "induction_long": "induction"
+  },
+  "head_dims_by_config": {
+    "uniform2": [
+      64,
+      64
+    ],
+    "32,96": [
+      32,
+      96
+    ],
+    "48,80": [
+      48,
+      80
+    ],
+    "16,112": [
+      16,
+      112
+    ]
+  },
+  "summary_by_config": {
+    "uniform2": {
+      "n_models": 5,
+      "eval_loss_mean": 0.0033723135071340947,
+      "role_accuracy_mean": 0.9993142440915108,
+      "role_accuracy_min": 0.9933594167232513,
+      "role_specialization_mean": 0.6361819335042874,
+      "role_effective_heads_mean": 2.24989530904115,
+      "role_top_dim_mass_mean": 1.0,
+      "within_family_similarity_mean": 0.9232480423836058,
+      "between_family_similarity_mean": 0.2707232160110714,
+      "family_gap_mean": 0.6525248263725344,
+      "family_cluster_ari_mean": 1.0,
+      "role_top_dim_counts": {
+        "local_a": {
+          "64": 5
+        },
+        "local_b": {
+          "64": 5
+        },
+        "kv_a": {
+          "64": 5
+        },
+        "kv_b": {
+          "64": 5
+        },
+        "induction_short": {
+          "64": 5
+        },
+        "induction_long": {
+          "64": 5
+        }
+      }
+    },
+    "32,96": {
+      "n_models": 5,
+      "eval_loss_mean": 0.0031951422279234976,
+      "role_accuracy_mean": 0.9993898898363114,
+      "role_accuracy_min": 0.9957031905651093,
+      "role_specialization_mean": 0.6953755231337224,
+      "role_effective_heads_mean": 1.8560718988316143,
+      "role_top_dim_mass_mean": 0.8974362880488874,
+      "within_family_similarity_mean": 0.9320355683411539,
+      "between_family_similarity_mean": 0.4517896964435506,
+      "family_gap_mean": 0.4802458718976032,
+      "family_cluster_ari_mean": 0.888888888888889,
+      "role_top_dim_counts": {
+        "local_a": {
+          "96": 5
+        },
+        "local_b": {
+          "96": 5
+        },
+        "kv_a": {
+          "96": 5
+        },
+        "kv_b": {
+          "96": 5
+        },
+        "induction_short": {
+          "32": 2,
+          "96": 3
+        },
+        "induction_long": {
+          "32": 2,
+          "96": 3
+        }
+      }
+    },
+    "48,80": {
+      "n_models": 5,
+      "eval_loss_mean": 0.0034086407627910375,
+      "role_accuracy_mean": 0.9994215091069538,
+      "role_accuracy_min": 0.994140625,
+      "role_specialization_mean": 0.756481754363601,
+      "role_effective_heads_mean": 1.9083107456434654,
+      "role_top_dim_mass_mean": 0.8832812305774539,
+      "within_family_similarity_mean": 0.9391623699860651,
+      "between_family_similarity_mean": 0.3381555222224467,
+      "family_gap_mean": 0.6010068477636183,
+      "family_cluster_ari_mean": 1.0,
+      "role_top_dim_counts": {
+        "local_a": {
+          "80": 5
+        },
+        "local_b": {
+          "80": 5
+        },
+        "kv_a": {
+          "80": 5
+        },
+        "kv_b": {
+          "80": 5
+        },
+        "induction_short": {
+          "48": 3,
+          "80": 2
+        },
+        "induction_long": {
+          "48": 4,
+          "80": 1
+        }
+      }
+    },
+    "16,112": {
+      "n_models": 5,
+      "eval_loss_mean": 0.004021945688873529,
+      "role_accuracy_mean": 0.9993433862924576,
+      "role_accuracy_min": 0.9921875,
+      "role_specialization_mean": 0.7016393104117197,
+      "role_effective_heads_mean": 1.762859593898488,
+      "role_top_dim_mass_mean": 0.9716762248719908,
+      "within_family_similarity_mean": 0.9338239364963992,
+      "between_family_similarity_mean": 0.6073154225997944,
+      "family_gap_mean": 0.32650851389660474,
+      "family_cluster_ari_mean": 0.6666666666666667,
+      "role_top_dim_counts": {
+        "local_a": {
+          "112": 5
+        },
+        "local_b": {
+          "112": 5
+        },
+        "kv_a": {
+          "112": 5
+        },
+        "kv_b": {
+          "112": 5
+        },
+        "induction_short": {
+          "112": 5
+        },
+        "induction_long": {
+          "112": 5
+        }
+      }
+    }
+  }
+}

@@ -202,6 +202,17 @@ These three numbers (S, C, M) are what the project should report for each archit
   `1.000`). Current conclusion: heterogeneity strongly supports structural role
   affinity and specialization; full functional modularity remains baseline- and
   capacity-sensitive.
+- The follow-up hetero2 control compared `uniform2 [64,64]` to `[32,96]`,
+  `[48,80]`, and `[16,112]` with the same head count and total head dimension.
+  Hetero2 strengthened structural role affinity and specialization: local-copy
+  and KV-lookup roles chose the larger hetero2 head in `60/60` cases, and
+  specialization rose from `0.636` for `uniform2` to `0.695`, `0.756`, and
+  `0.702`. But hetero2 did not beat `uniform2` on ontology-level modularity:
+  `uniform2` family gap was `0.653` with ARI `1.000`, while `[32,96]`,
+  `[48,80]`, and `[16,112]` had family gaps `0.480`, `0.601`, and `0.327`.
+  This sharpens the claim: heterogeneity reliably increases role affinity and
+  concentration, but capacity imbalance alone does not improve modularity over
+  the strong fewer/wider uniform baseline.
 - Adding another high-capacity head, or adding separate branch towers without
   routing, does not automatically produce role-specific functional modularity.
 - Oracle routing can produce branch-level functional modularity.
