@@ -49,14 +49,27 @@ Two model-depth settings were tested:
 
 ## Metrics
 
-The same metrics as Toy Ontology v2 were used.
+The original Toy Ontology v2 metrics were used, then updated on 2026-05-24 to
+replace ARI as the main modularity diagnostic.
 
 | Question | Metric |
 |---|---|
 | Structural role affinity | largest-dimension top rate; chance is `1/8 = 0.125` for hetero8. |
 | Functional specialization | top role mass and effective heads. |
-| Functional modularity | family gap and ARI over exact layer-head slots. |
-| Structural-type modularity control | family gap and ARI after collapsing each role distribution by head dimension. |
+| Functional modularity | family gap and ontology alignment over exact layer-head slots. |
+| Structural-type modularity control | family gap and ontology alignment after collapsing each role distribution by head dimension. |
+
+Ontology alignment is the Spearman correlation between pairwise head-usage
+similarity and pairwise ontology similarity. For the current ontology, ontology
+similarity is binary: same-family pairs are `1`, different-family pairs are `0`.
+ARI is no longer used as a main metric because the ontology families are
+predefined hypotheses, not guaranteed discovered clusters.
+
+The metric definition is documented in:
+
+```text
+doc/ontology_alignment_metric.md
+```
 
 ## Main Result Table
 
@@ -64,11 +77,11 @@ The same metrics as Toy Ontology v2 were used.
 
 This model uses 8 heads per layer and 4 layers.
 
-| Config | Min Acc | Largest-Top Rate | Specialization | Effective Heads | Family Gap | ARI | Dim-Family Gap | Dim-ARI |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|
-| `uniform8` | 0.996 | n/a | 0.517 | 9.117 | 0.048 | 0.060 | 0.000 | 0.000 |
-| `hetero8_unique_spread` | 0.991 | 0.50 | 0.488 | 8.020 | 0.050 | 0.051 | 0.019 | 0.013 |
-| `hetero8_unique_extreme` | 0.990 | 0.72 | 0.619 | 4.589 | 0.038 | 0.025 | 0.023 | 0.018 |
+| Config | Min Acc | Largest-Top Rate | Specialization | Effective Heads | Family Gap | Ontology Align | Shuffle p |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| `uniform8` | 0.996 | n/a | 0.517 | 9.117 | 0.048 | 0.050 | 0.223 |
+| `hetero8_unique_spread` | 0.991 | 0.50 | 0.488 | 8.020 | 0.050 | 0.061 | 0.160 |
+| `hetero8_unique_extreme` | 0.990 | 0.72 | 0.619 | 4.589 | 0.038 | 0.045 | 0.325 |
 
 Interpretation:
 
@@ -83,11 +96,11 @@ Interpretation:
 This model uses 8 heads per layer and 2 layers. The first 1000-step run showed
 undertraining in `uniform8`, so this cleaner 2000-step run is the one to use.
 
-| Config | Min Acc | Largest-Top Rate | Specialization | Effective Heads | Family Gap | ARI | Dim-Family Gap | Dim-ARI |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|
-| `uniform8` | 0.978 | n/a | 0.514 | 5.314 | 0.132 | 0.130 | 0.000 | 0.000 |
-| `hetero8_unique_spread` | 0.988 | 0.62 | 0.609 | 3.923 | 0.079 | 0.046 | 0.042 | 0.044 |
-| `hetero8_unique_extreme` | 0.997 | 0.76 | 0.784 | 2.247 | 0.081 | 0.058 | 0.046 | 0.063 |
+| Config | Min Acc | Largest-Top Rate | Specialization | Effective Heads | Family Gap | Ontology Align | Shuffle p |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| `uniform8` | 0.978 | n/a | 0.514 | 5.314 | 0.132 | 0.130 | 0.173 |
+| `hetero8_unique_spread` | 0.988 | 0.62 | 0.609 | 3.923 | 0.079 | 0.087 | 0.192 |
+| `hetero8_unique_extreme` | 0.997 | 0.76 | 0.784 | 2.247 | 0.081 | 0.087 | 0.099 |
 
 Interpretation:
 
@@ -97,6 +110,17 @@ Interpretation:
   suggests extra depth/slots can fragment exact-slot clustering.
 - But even after fixing the undertraining issue, hetero8 modularity remained
   below the matched uniform8 baseline.
+
+Dimension-collapsed ontology alignment for the 16-slot run was also weak:
+
+| Config | Dim-Family Gap | Dim-Ontology Align | Shuffle p |
+|---|---:|---:|---:|
+| `uniform8` | 0.000 | 0.000 | 1.000 |
+| `hetero8_unique_spread` | 0.042 | 0.055 | 0.237 |
+| `hetero8_unique_extreme` | 0.046 | 0.068 | 0.143 |
+
+So the head-dimension type itself carries some family signal, but not enough to
+claim robust ontology-level modularity.
 
 ## Answer To The Head-Count Concern
 

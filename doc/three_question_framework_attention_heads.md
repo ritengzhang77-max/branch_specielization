@@ -149,17 +149,32 @@ induction_short and induction_long use similar heads;
 different families use different head patterns.
 ```
 
-Metrics:
+Old first-pass metrics:
 
 ```text
 family_gap = within_family_similarity - between_family_similarity
 family_cluster_ari = clustering agreement with role-family labels
 ```
 
+Current preferred metric:
+
+```text
+ontology_alignment_score =
+  Spearman correlation between pairwise head-usage similarity and pairwise
+  ontology similarity
+```
+
+For Toy Ontology v2, ontology similarity is currently binary: `1` for
+same-family pairs and `0` for different-family pairs. Future ontologies can make
+this hierarchical with subfamily labels. ARI should not be used as the main
+metric because the ontology families are hypotheses, not guaranteed discovered
+clusters.
+
 Short definition:
 
 ```text
-Modularity asks: do related roles form stable groups across heads?
+Modularity asks: does the geometry of role usage over ordinary attention heads
+respect the predefined role ontology better than chance?
 ```
 
 ## Why These Are Different

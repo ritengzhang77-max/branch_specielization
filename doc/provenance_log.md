@@ -2505,3 +2505,37 @@ computations to consolidate.
     in ordinary pretrained heads;
   - this validates the role-measurement side of the project, but does not test
     heterogeneous head dimensions because Pythia heads are uniform.
+
+## 2026-05-24 - Ontology alignment metric replaces ARI as main modularity diagnostic
+
+- User raised a conceptual issue: ontology families are predefined hypotheses,
+  not guaranteed discovered clusters, so ARI is too brittle as the primary
+  modularity metric.
+- Updated `scripts/analyze_role_ontology_v2.py` to emit:
+  - `ontology_alignment_table.csv`;
+  - `ontology_alignment_per_seed.csv`;
+  - `role_ontology_neighbor_table.csv`;
+  - `dimension_ontology_alignment_table.csv`;
+  - `dimension_ontology_alignment_per_seed.csv`.
+- Added metric documentation:
+  `doc/ontology_alignment_metric.md`.
+- Updated framework/report docs:
+  - `doc/three_question_framework_attention_heads.md`;
+  - `doc/experiments/phase3/phase3_large_head_count_and_real_validation.md`.
+- Re-ran analysis on:
+  - `results/phase3_toy_role_ontology_v2_large_heads_2layer_2000_20260523`;
+  - `results/phase3_toy_role_ontology_v2_large_heads_1000_20260523`;
+  - `results/phase3_toy_role_ontology_v2_full_1600_20260523`.
+- Clean 16-slot result with the new metric:
+  - `uniform8`: family gap `0.132`, ontology alignment `0.130`,
+    shuffled-label p `0.173`;
+  - `hetero8_unique_spread`: family gap `0.079`, ontology alignment `0.087`,
+    shuffled-label p `0.192`;
+  - `hetero8_unique_extreme`: family gap `0.081`, ontology alignment `0.087`,
+    shuffled-label p `0.099`.
+- Interpretation:
+  - the stronger hetero specialization result still holds because accuracy is
+    matched or better;
+  - ontology-level functional modularity remains only modest and uneven;
+  - use family gap plus ontology alignment and per-role neighbor margins, not
+    ARI, in main result tables.
