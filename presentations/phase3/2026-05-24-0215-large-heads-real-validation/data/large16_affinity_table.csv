@@ -1,0 +1,4 @@
+config,head_dims,n_role_rows,uniform,largest_dim,smallest_dim,largest_dim_top_rate,smallest_dim_top_rate,mean_top_dim_mass
+uniform8,"[48, 48, 48, 48, 48, 48, 48, 48]",100,True,48,48,1.0,1.0,1.0
+hetero8_unique_spread,"[16, 24, 32, 40, 48, 56, 72, 96]",100,False,96,16,0.62,0.0,0.6224016404951602
+hetero8_unique_extreme,"[8, 16, 24, 32, 40, 48, 64, 152]",100,False,152,8,0.76,0.0,0.798867965866212

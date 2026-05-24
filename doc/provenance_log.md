@@ -2447,3 +2447,61 @@ computations to consolidate.
     specialization;
   - functional modularity is real as a question but should not yet be claimed
     as automatic from heterogeneous head dimensions.
+
+## 2026-05-24 - Larger head-count control and real-model role validation
+
+- Added larger-head presets to
+  `scripts/toy_role_ontology_v2_head_dim_intervention.py`:
+  - `uniform8 = [48,48,48,48,48,48,48,48]`;
+  - `hetero8_unique_spread = [16,24,32,40,48,56,72,96]`;
+  - `hetero8_unique_extreme = [8,16,24,32,40,48,64,152]`.
+- Extended `scripts/analyze_role_ontology_v2.py` with
+  dimension-level family-modularity tables.
+- Added memo:
+  `doc/experiments/phase3/phase3_large_head_count_and_real_validation.md`.
+- User concern tested:
+  - previous Toy Ontology v2 configs had only 4 or 8 total ordinary head slots;
+  - maybe modularity was weak because there were too few heads.
+- 32-slot sweep:
+  - result root:
+    `results/phase3_toy_role_ontology_v2_large_heads_1000_20260523`;
+  - setting: 8 heads per layer x 4 layers;
+  - `uniform8` family gap `0.048`, ARI `0.060`;
+  - `hetero8_unique_spread` family gap `0.050`, ARI `0.051`;
+  - `hetero8_unique_extreme` family gap `0.038`, ARI `0.025`;
+  - largest-head top rates were `0.50` and `0.72` for spread/extreme vs
+    8-way chance `0.125`.
+- 16-slot 2000-step sweep:
+  - result root:
+    `results/phase3_toy_role_ontology_v2_large_heads_2layer_2000_20260523`;
+  - setting: 8 heads per layer x 2 layers;
+  - `uniform8` family gap `0.132`, ARI `0.130`;
+  - `hetero8_unique_spread` family gap `0.079`, ARI `0.046`;
+  - `hetero8_unique_extreme` family gap `0.081`, ARI `0.058`;
+  - largest-head top rates were `0.62` and `0.76` for spread/extreme vs
+    8-way chance `0.125`.
+- Failure-analysis result:
+  - more heads did not rescue the family-modularity claim;
+  - heterogeneity still strongly supports structural role affinity and
+    specialization;
+  - family-level modularity remains mixed and is not automatically created by
+    heterogeneous head dimensions.
+- Real-model validation:
+  - ran Pythia-160M-deduped, revision `step143000`, float32 attention-role
+    probe:
+    `results/phase3_real_model_role_probe_pythia160m_deduped_float32_20260524`;
+  - `repeat_match` had strong attention specialization: best layer/head
+    `L0H7`, specialization `0.834`, effective heads `2.088`;
+  - `previous_token` was measurable but more distributed: best layer/head
+    `L10H9`, specialization `0.332`;
+  - `bos` was diffuse: best specialization `0.140`;
+  - initial float16 run produced NaNs in later-layer attention summaries, so it
+    was not used.
+- Existing causal Pythia result roots reused:
+  - `results/phase1_pythia160m_local_copy_candidate_pool_layers2_4_top2`;
+  - `results/phase1_pythia160m_wikitext103_natural_repeat_8gram_task_alignment_seed9_n128`.
+- Real-model interpretation:
+  - local-copy and repeat/induction roles are measurable and causally important
+    in ordinary pretrained heads;
+  - this validates the role-measurement side of the project, but does not test
+    heterogeneous head dimensions because Pythia heads are uniform.

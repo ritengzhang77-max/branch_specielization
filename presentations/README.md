@@ -18,6 +18,13 @@ compiled PDF, copied data, and provenance notes when available.
   and stronger role-level specialization under heterogeneous head dimensions,
   with family-level modularity remaining mixed and layout-sensitive.
 
+## 2026-05-24
+
+- `phase3/2026-05-24-0215-large-heads-real-validation/`: larger-head-count
+  control plus first real-model role validation. The main result is that more
+  head slots do not rescue family-level modularity, while structural role
+  affinity and specialization remain strong.
+
 ## 2026-05-22
 
 - `phase1/2026-05-22-2032-pythia160m-seed9-alignment/`: all-seed Pythia-160M

@@ -35,12 +35,15 @@ from toy_head_dim_intervention import TinyTransformer, resolve_device, specializ
 CONFIG_PRESETS = {
     "uniform4": [32, 32, 32, 32],
     "uniform2": [64, 64],
+    "uniform8": [48, 48, 48, 48, 48, 48, 48, 48],
     "hetero4_unique_mild": [16, 24, 40, 48],
     "hetero4_unique_64": [8, 16, 40, 64],
     "hetero4_unique_extreme": [8, 16, 24, 80],
     "hetero2_unique_mild": [48, 80],
     "hetero2_unique_mid": [32, 96],
     "hetero2_unique_extreme": [16, 112],
+    "hetero8_unique_spread": [16, 24, 32, 40, 48, 56, 72, 96],
+    "hetero8_unique_extreme": [8, 16, 24, 32, 40, 48, 64, 152],
 }
 
 

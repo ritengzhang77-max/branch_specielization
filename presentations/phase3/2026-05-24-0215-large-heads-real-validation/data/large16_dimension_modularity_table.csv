@@ -1,0 +1,4 @@
+config,n,n_dims,dimension_family_gap_mean,dimension_family_gap_std,dimension_family_cluster_ari_mean,dimension_family_cluster_ari_std
+uniform8,5,1,0.0,0.0,0.0,0.0
+hetero8_unique_spread,5,8,0.04204167959817092,0.050494456699888716,0.04449564570754798,0.054153733357585596
+hetero8_unique_extreme,5,8,0.04626767735683236,0.023663282787786316,0.06335008421942247,0.04895552134805776

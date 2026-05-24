@@ -5,10 +5,15 @@ from __future__ import annotations
 
 import argparse
 import json
+from collections import Counter
+from itertools import combinations
 from pathlib import Path
 
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
+from scipy.cluster.hierarchy import fcluster, linkage
+from scipy.spatial.distance import squareform
 
 
 def parse_args() -> argparse.Namespace:
@@ -114,6 +119,105 @@ def role_affinity_counts(role: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
+def adjusted_rand_index(true_labels: list[str], pred_labels: list[int]) -> float:
+    def comb2(n: int) -> float:
+        return n * (n - 1) / 2.0
+
+    n = len(true_labels)
+    if n < 2:
+        return 0.0
+
+    contingency = Counter(zip(true_labels, pred_labels))
+    true_counts = Counter(true_labels)
+    pred_counts = Counter(pred_labels)
+    sum_comb = sum(comb2(count) for count in contingency.values())
+    sum_true = sum(comb2(count) for count in true_counts.values())
+    sum_pred = sum(comb2(count) for count in pred_counts.values())
+    total = comb2(n)
+    expected = sum_true * sum_pred / total if total else 0.0
+    max_index = 0.5 * (sum_true + sum_pred)
+    denom = max_index - expected
+    if abs(denom) < 1e-12:
+        return 0.0
+    return float((sum_comb - expected) / denom)
+
+
+def distribution_tv_distance(first: np.ndarray, second: np.ndarray) -> float:
+    return float(0.5 * np.abs(first - second).sum())
+
+
+def cluster_ari(role_names: list[str], role_families: dict[str, str], distributions: dict[str, np.ndarray]) -> float:
+    n_roles = len(role_names)
+    if n_roles < 2:
+        return 0.0
+    distance = np.zeros((n_roles, n_roles), dtype=np.float64)
+    for i, role_a in enumerate(role_names):
+        for j, role_b in enumerate(role_names):
+            distance[i, j] = distribution_tv_distance(distributions[role_a], distributions[role_b])
+    if np.allclose(distance, 0.0):
+        return 0.0
+    condensed = squareform(distance, checks=False)
+    n_families = len(set(role_families[role] for role in role_names))
+    clusters = fcluster(linkage(condensed, method="average"), t=n_families, criterion="maxclust")
+    return adjusted_rand_index([role_families[role] for role in role_names], [int(item) for item in clusters])
+
+
+def dimension_modularity_table(summary: dict, role: pd.DataFrame) -> pd.DataFrame:
+    role_families = summary["role_families"]
+    rows = []
+    for (config, seed), group in role.groupby(["config", "seed"], sort=False):
+        dims = sorted(set(summary["head_dims_by_config"][config]))
+        dim_index = {int(dim): idx for idx, dim in enumerate(dims)}
+        distributions = {}
+        role_names = []
+        for _, item in group.iterrows():
+            role_name = str(item["role"])
+            role_names.append(role_name)
+            affinity = json.loads(item["head_dim_affinity_json"])
+            vector = np.zeros(len(dims), dtype=np.float64)
+            for dim, mass in affinity.items():
+                vector[dim_index[int(dim)]] = float(mass)
+            total = vector.sum()
+            if total > 1e-12:
+                vector = vector / total
+            distributions[role_name] = vector
+
+        within = []
+        between = []
+        for role_a, role_b in combinations(role_names, 2):
+            similarity = 1.0 - distribution_tv_distance(distributions[role_a], distributions[role_b])
+            if role_families[role_a] == role_families[role_b]:
+                within.append(similarity)
+            else:
+                between.append(similarity)
+        rows.append(
+            {
+                "config": config,
+                "seed": int(seed),
+                "n_dims": len(dims),
+                "dimension_within_family_similarity": float(np.mean(within)) if within else 0.0,
+                "dimension_between_family_similarity": float(np.mean(between)) if between else 0.0,
+                "dimension_family_gap": (float(np.mean(within)) - float(np.mean(between))) if within and between else 0.0,
+                "dimension_family_cluster_ari": cluster_ari(role_names, role_families, distributions),
+            }
+        )
+
+    aggregate_rows = []
+    for config, group in pd.DataFrame(rows).groupby("config", sort=False):
+        aggregate_rows.append(
+            {
+                "config": config,
+                "n": len(group),
+                "n_dims": int(group["n_dims"].iloc[0]),
+                "dimension_family_gap_mean": group["dimension_family_gap"].mean(),
+                "dimension_family_gap_std": group["dimension_family_gap"].std(ddof=0),
+                "dimension_family_cluster_ari_mean": group["dimension_family_cluster_ari"].mean(),
+                "dimension_family_cluster_ari_std": group["dimension_family_cluster_ari"].std(ddof=0),
+            }
+        )
+    return pd.DataFrame(aggregate_rows)
+
+
 def write_markdown(
     path: Path,
     title: str,
@@ -122,6 +226,7 @@ def write_markdown(
     affinity: pd.DataFrame,
     family_table: pd.DataFrame,
     role_counts: pd.DataFrame,
+    dimension_modularity: pd.DataFrame,
 ) -> None:
     args = summary["args"]
     lines = [
@@ -153,6 +258,10 @@ def write_markdown(
         "## Per-Role Top-Dimension Counts",
         "",
         role_counts.to_markdown(index=False, floatfmt=".3f"),
+        "",
+        "## Dimension-Level Family Modularity",
+        "",
+        dimension_modularity.to_markdown(index=False, floatfmt=".3f"),
         "",
     ]
     path.write_text("\n".join(lines))
@@ -203,12 +312,23 @@ def main() -> None:
     affinity = affinity_table(summary, role)
     family_table = family_metric_table(family)
     role_counts = role_affinity_counts(role)
+    dimension_modularity = dimension_modularity_table(summary, role)
 
     model_table.to_csv(output_dir / "model_metric_table.csv", index=False)
     affinity.to_csv(output_dir / "affinity_table.csv", index=False)
     family_table.to_csv(output_dir / "family_metric_table.csv", index=False)
     role_counts.to_csv(output_dir / "role_top_dim_counts.csv", index=False)
-    write_markdown(output_dir / "analysis_report.md", args.title, summary, model_table, affinity, family_table, role_counts)
+    dimension_modularity.to_csv(output_dir / "dimension_modularity_table.csv", index=False)
+    write_markdown(
+        output_dir / "analysis_report.md",
+        args.title,
+        summary,
+        model_table,
+        affinity,
+        family_table,
+        role_counts,
+        dimension_modularity,
+    )
     plot_metric_bars(model_table, output_dir)
     plot_family_heatmap(family_table, output_dir)
     print(f"wrote {output_dir}")

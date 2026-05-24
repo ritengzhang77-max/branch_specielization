@@ -116,6 +116,23 @@ Last updated: 2026-05-23
     affinity and increase role-level specialization in this toy setting;
   - functional modularity should be treated as a separate open question.
 
+### Larger-Head Control Snapshot
+
+- Artifact: `doc/experiments/phase3/phase3_large_head_count_and_real_validation.md`
+- 32-slot result root: `results/phase3_toy_role_ontology_v2_large_heads_1000_20260523`
+- 16-slot clean result root:
+  `results/phase3_toy_role_ontology_v2_large_heads_2layer_2000_20260523`
+- Answer to the head-count concern:
+  - previous Toy Ontology v2 had only 4 or 8 total ordinary head slots;
+  - larger 16-slot and 32-slot controls do not make heterogeneous models beat
+    matched uniform baselines on family-level modularity;
+  - structural role affinity remains strong;
+  - specialization remains strong, especially in extreme hetero8.
+- Current interpretation:
+  - more heads do not rescue the modularity claim;
+  - the project should keep structural role affinity and specialization
+    separate from functional modularity.
+
 ## Level 3: Broader Toy Task Expansion
 
 - [x] Build an expanded role ontology proposal.
@@ -137,6 +154,14 @@ Last updated: 2026-05-23
 
 ## Level 4: Real-Model Validation
 
+- [x] Run first real-model role probe validation on Pythia-160M-deduped.
+  - Artifact:
+    `results/phase3_real_model_role_probe_pythia160m_deduped_float32_20260524`
+  - Result:
+    - `repeat_match` is strongly specialized (`L0H7`, specialization `0.834`);
+    - `previous_token` is measurable but distributed (`L10H9`, specialization
+      `0.332`);
+    - `bos` is diffuse (best specialization `0.140`).
 - [ ] Translate the strongest toy probes to real pretrained ordinary heads.
   - Pythia local-copy probes
   - Pythia induction/repeated-ngram probes
