@@ -1,0 +1,9 @@
+config,head_dims,n_role_rows,uniform,largest_dim,smallest_dim,largest_dim_top_rate,smallest_dim_top_rate,mean_top_dim_mass
+uniform4,"[32, 32, 32, 32]",100,True,32,32,1.0,1.0,1.0
+uniform2,"[64, 64]",100,True,64,64,1.0,1.0,1.0
+hetero4_unique_mild,"[16, 24, 40, 48]",100,False,48,16,0.5,0.08,0.7586002558212437
+hetero4_unique_64,"[8, 16, 40, 64]",100,False,64,8,0.65,0.07,0.8214872601037203
+hetero4_unique_extreme,"[8, 16, 24, 80]",100,False,80,8,0.82,0.04,0.9117204772466809
+hetero2_unique_mild,"[48, 80]",100,False,80,48,0.66,0.34,0.8386195740811841
+hetero2_unique_mid,"[32, 96]",100,False,96,32,0.82,0.18,0.8712041678639796
+hetero2_unique_extreme,"[16, 112]",100,False,112,16,0.94,0.06,0.9369375957767384

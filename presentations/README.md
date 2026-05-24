@@ -8,6 +8,15 @@ compiled PDF, copied data, and provenance notes when available.
 
 - `phase1/`: existing multi-seed transformer analyses and alignment-transfer
   checkpoints.
+- `phase3/`: toy ordinary-attention-head intervention, role ontology, and
+  structural-role-affinity checkpoints.
+
+## 2026-05-23
+
+- `phase3/2026-05-23-2130-toy-ontology-v2/`: Toy Ontology v2 20-role ordinary
+  attention-head checkpoint. The main result is strong structural role affinity
+  and stronger role-level specialization under heterogeneous head dimensions,
+  with family-level modularity remaining mixed and layout-sensitive.
 
 ## 2026-05-22
 

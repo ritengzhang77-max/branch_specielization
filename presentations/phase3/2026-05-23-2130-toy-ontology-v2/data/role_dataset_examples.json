@@ -1,0 +1,692 @@
+{
+  "full_sequence": [
+    167,
+    1,
+    167,
+    220,
+    166,
+    2,
+    166,
+    3,
+    196,
+    104,
+    192,
+    99,
+    160,
+    40,
+    183,
+    177,
+    160,
+    40,
+    4,
+    130,
+    94,
+    165,
+    130,
+    4,
+    130,
+    5,
+    199,
+    193,
+    112,
+    194,
+    186,
+    214,
+    199,
+    193,
+    112,
+    194,
+    186,
+    214,
+    6,
+    36,
+    225,
+    176,
+    45,
+    188,
+    182,
+    181,
+    158,
+    204,
+    124,
+    104,
+    50,
+    36,
+    225,
+    176,
+    45,
+    188,
+    182,
+    181,
+    158,
+    204,
+    124,
+    104,
+    50,
+    7,
+    172,
+    193,
+    236,
+    80,
+    219,
+    45,
+    110,
+    214,
+    145,
+    172,
+    193,
+    236,
+    80,
+    219,
+    45,
+    110,
+    214,
+    145,
+    8,
+    236,
+    202,
+    216,
+    236,
+    216,
+    56,
+    83,
+    168,
+    226,
+    9,
+    56,
+    10,
+    156,
+    194,
+    251,
+    10,
+    156,
+    107,
+    111,
+    75,
+    200,
+    11,
+    111,
+    254,
+    21,
+    196,
+    54,
+    12,
+    196,
+    13,
+    135,
+    167,
+    167,
+    13,
+    135,
+    61,
+    205,
+    255,
+    61,
+    14,
+    255,
+    15,
+    71,
+    78,
+    199,
+    142,
+    199,
+    108,
+    71,
+    78,
+    16,
+    112,
+    77,
+    112,
+    250,
+    112,
+    77,
+    17,
+    241,
+    178,
+    241,
+    17,
+    241,
+    81,
+    22,
+    191,
+    165,
+    18,
+    81,
+    90,
+    211,
+    90,
+    19,
+    211,
+    107,
+    33,
+    33,
+    20,
+    107
+  ],
+  "role_examples": {
+    "local_copy": {
+      "family": "copy_transport",
+      "scene": "[x, LOCAL_SEP, x]",
+      "target": "At LOCAL_SEP, predict the token just before the separator.",
+      "control": "The target token is random per example, so a constant separator shortcut fails.",
+      "segment_start": 0,
+      "segment_end_exclusive": 3,
+      "segment_tokens": [
+        167,
+        1,
+        167
+      ],
+      "score_positions": [
+        1
+      ],
+      "target_tokens": [
+        167
+      ]
+    },
+    "previous_token": {
+      "family": "copy_transport",
+      "scene": "[x, y, PREV_SEP, y]",
+      "target": "At PREV_SEP, copy the immediately previous token y.",
+      "control": "The target is not fixed and changes independently of the separator.",
+      "segment_start": 3,
+      "segment_end_exclusive": 7,
+      "segment_tokens": [
+        220,
+        166,
+        2,
+        166
+      ],
+      "score_positions": [
+        5
+      ],
+      "target_tokens": [
+        166
+      ]
+    },
+    "kv_lookup": {
+      "family": "copy_transport",
+      "scene": "[KV_SEP, k1,v1,...,kq,vq]",
+      "target": "At the query key kq, predict its paired value vq.",
+      "control": "Keys and values are resampled; the query index varies per example.",
+      "segment_start": 7,
+      "segment_end_exclusive": 18,
+      "segment_tokens": [
+        3,
+        196,
+        104,
+        192,
+        99,
+        160,
+        40,
+        183,
+        177,
+        160,
+        40
+      ],
+      "score_positions": [
+        16
+      ],
+      "target_tokens": [
+        40
+      ]
+    },
+    "duplicate_token": {
+      "family": "copy_transport",
+      "scene": "[DUP_SEP, a,b,c,a,DUP_QUERY,a]",
+      "target": "At DUP_QUERY, predict the repeated token a.",
+      "control": "Distractor tokens b and c appear once.",
+      "segment_start": 18,
+      "segment_end_exclusive": 25,
+      "segment_tokens": [
+        4,
+        130,
+        94,
+        165,
+        130,
+        4,
+        130
+      ],
+      "score_positions": [
+        23
+      ],
+      "target_tokens": [
+        130
+      ]
+    },
+    "induction_short": {
+      "family": "induction",
+      "scene": "[IND_SHORT_SEP, x1,...,x6,x1,...,x6]",
+      "target": "On the second copy, predict the token that followed the first occurrence.",
+      "control": "The base sequence is random per example.",
+      "segment_start": 25,
+      "segment_end_exclusive": 38,
+      "segment_tokens": [
+        5,
+        199,
+        193,
+        112,
+        194,
+        186,
+        214,
+        199,
+        193,
+        112,
+        194,
+        186,
+        214
+      ],
+      "score_positions": [
+        32,
+        33,
+        34,
+        35,
+        36
+      ],
+      "target_tokens": [
+        193,
+        112,
+        194,
+        186,
+        214
+      ]
+    },
+    "induction_long": {
+      "family": "induction",
+      "scene": "[IND_LONG_SEP, x1,...,x12,x1,...,x12]",
+      "target": "Same induction rule over a longer context.",
+      "control": "Length differs from the short induction role.",
+      "segment_start": 38,
+      "segment_end_exclusive": 63,
+      "segment_tokens": [
+        6,
+        36,
+        225,
+        176,
+        45,
+        188,
+        182,
+        181,
+        158,
+        204,
+        124,
+        104,
+        50,
+        36,
+        225,
+        176,
+        45,
+        188,
+        182,
+        181,
+        158,
+        204,
+        124,
+        104,
+        50
+      ],
+      "score_positions": [
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61
+      ],
+      "target_tokens": [
+        225,
+        176,
+        45,
+        188,
+        182,
+        181,
+        158,
+        204,
+        124,
+        104,
+        50
+      ]
+    },
+    "induction_ngram": {
+      "family": "induction",
+      "scene": "[IND_NGRAM_SEP, x1,...,x9,x1,...,x9]",
+      "target": "Repeated n-gram continuation over an intermediate length.",
+      "control": "Uses a distinct marker and length from short/long induction.",
+      "segment_start": 63,
+      "segment_end_exclusive": 82,
+      "segment_tokens": [
+        7,
+        172,
+        193,
+        236,
+        80,
+        219,
+        45,
+        110,
+        214,
+        145,
+        172,
+        193,
+        236,
+        80,
+        219,
+        45,
+        110,
+        214,
+        145
+      ],
+      "score_positions": [
+        73,
+        74,
+        75,
+        76,
+        77,
+        78,
+        79,
+        80
+      ],
+      "target_tokens": [
+        193,
+        236,
+        80,
+        219,
+        45,
+        110,
+        214,
+        145
+      ]
+    },
+    "false_induction_control": {
+      "family": "induction",
+      "scene": "[FALSE_IND_SEP, a,b,c,a,c]",
+      "target": "At the second a, predict c, not the previous continuation b.",
+      "control": "The earlier a->b continuation is a deliberate induction trap.",
+      "segment_start": 82,
+      "segment_end_exclusive": 88,
+      "segment_tokens": [
+        8,
+        236,
+        202,
+        216,
+        236,
+        216
+      ],
+      "score_positions": [
+        86
+      ],
+      "target_tokens": [
+        216
+      ]
+    },
+    "bos_sink": {
+      "family": "position_boundary",
+      "scene": "[anchor,n1,n2,n3,BOS_QUERY,anchor]",
+      "target": "At BOS_QUERY, retrieve the first token of the segment.",
+      "control": "The first token is random, so this is not constant BOS prediction.",
+      "segment_start": 88,
+      "segment_end_exclusive": 94,
+      "segment_tokens": [
+        56,
+        83,
+        168,
+        226,
+        9,
+        56
+      ],
+      "score_positions": [
+        92
+      ],
+      "target_tokens": [
+        56
+      ]
+    },
+    "sep_sink": {
+      "family": "position_boundary",
+      "scene": "[SEP_ANCHOR,value,n1,n2,SEP_QUERY,value]",
+      "target": "At SEP_QUERY, retrieve the token after the earlier separator.",
+      "control": "Noise tokens intervene between separator and query.",
+      "segment_start": 94,
+      "segment_end_exclusive": 100,
+      "segment_tokens": [
+        10,
+        156,
+        194,
+        251,
+        10,
+        156
+      ],
+      "score_positions": [
+        98
+      ],
+      "target_tokens": [
+        156
+      ]
+    },
+    "fixed_offset_prev": {
+      "family": "position_boundary",
+      "scene": "[a,b,c,d,OFFSET_QUERY,b]",
+      "target": "At OFFSET_QUERY, retrieve the token three positions back.",
+      "control": "Nearby tokens a/c/d are distractors.",
+      "segment_start": 100,
+      "segment_end_exclusive": 106,
+      "segment_tokens": [
+        107,
+        111,
+        75,
+        200,
+        11,
+        111
+      ],
+      "score_positions": [
+        104
+      ],
+      "target_tokens": [
+        111
+      ]
+    },
+    "punctuation_boundary": {
+      "family": "position_boundary",
+      "scene": "[n1,PUNCT,value,n2,PUNCT_QUERY,value]",
+      "target": "At PUNCT_QUERY, retrieve the token after punctuation.",
+      "control": "The punctuation value changes each example.",
+      "segment_start": 106,
+      "segment_end_exclusive": 112,
+      "segment_tokens": [
+        254,
+        21,
+        196,
+        54,
+        12,
+        196
+      ],
+      "score_positions": [
+        110
+      ],
+      "target_tokens": [
+        196
+      ]
+    },
+    "distractor_suppression": {
+      "family": "suppression_conflict",
+      "scene": "[SUPPRESS_SEP,target,distractor,distractor,SUPPRESS_QUERY,target]",
+      "target": "At SUPPRESS_QUERY, predict target while ignoring the repeated distractor.",
+      "control": "The repeated distractor is closer and more frequent than the target.",
+      "segment_start": 112,
+      "segment_end_exclusive": 118,
+      "segment_tokens": [
+        13,
+        135,
+        167,
+        167,
+        13,
+        135
+      ],
+      "score_positions": [
+        116
+      ],
+      "target_tokens": [
+        135
+      ]
+    },
+    "anti_copy": {
+      "family": "suppression_conflict",
+      "scene": "[a,b,c,a,ANTI_COPY_QUERY,c]",
+      "target": "At ANTI_COPY_QUERY, predict c and ignore the misleading a->b continuation.",
+      "control": "Combines a repeated-token trap with a non-induction target.",
+      "segment_start": 118,
+      "segment_end_exclusive": 124,
+      "segment_tokens": [
+        61,
+        205,
+        255,
+        61,
+        14,
+        255
+      ],
+      "score_positions": [
+        122
+      ],
+      "target_tokens": [
+        255
+      ]
+    },
+    "wrong_key_suppression": {
+      "family": "suppression_conflict",
+      "scene": "[WK_SEP,key,right,wrong,wrong_value,wrong,trap,key,right]",
+      "target": "At the final key, predict right while ignoring wrong-key decoys.",
+      "control": "Wrong-key tokens and values are repeated near the query.",
+      "segment_start": 124,
+      "segment_end_exclusive": 133,
+      "segment_tokens": [
+        15,
+        71,
+        78,
+        199,
+        142,
+        199,
+        108,
+        71,
+        78
+      ],
+      "score_positions": [
+        131
+      ],
+      "target_tokens": [
+        78
+      ]
+    },
+    "recency_conflict": {
+      "family": "suppression_conflict",
+      "scene": "[RECENCY_SEP,key,old,key,recent,key,old]",
+      "target": "At the final key, predict the older value rather than the recent value.",
+      "control": "The recent value is closer and shares the same key.",
+      "segment_start": 133,
+      "segment_end_exclusive": 140,
+      "segment_tokens": [
+        16,
+        112,
+        77,
+        112,
+        250,
+        112,
+        77
+      ],
+      "score_positions": [
+        138
+      ],
+      "target_tokens": [
+        77
+      ]
+    },
+    "repeated_name_detection": {
+      "family": "entity_coreference",
+      "scene": "[REP_NAME_SEP,A,B,A,REP_NAME_QUERY,A]",
+      "target": "At REP_NAME_QUERY, identify the repeated name token A.",
+      "control": "The other name B appears only once.",
+      "segment_start": 140,
+      "segment_end_exclusive": 146,
+      "segment_tokens": [
+        17,
+        241,
+        178,
+        241,
+        17,
+        241
+      ],
+      "score_positions": [
+        144
+      ],
+      "target_tokens": [
+        241
+      ]
+    },
+    "pronoun_antecedent": {
+      "family": "entity_coreference",
+      "scene": "[name,PRONOUN,n1,n2,PRONOUN_QUERY,name]",
+      "target": "At PRONOUN_QUERY, retrieve the name before the pronoun marker.",
+      "control": "Noise tokens intervene between pronoun and query.",
+      "segment_start": 146,
+      "segment_end_exclusive": 152,
+      "segment_tokens": [
+        81,
+        22,
+        191,
+        165,
+        18,
+        81
+      ],
+      "score_positions": [
+        150
+      ],
+      "target_tokens": [
+        81
+      ]
+    },
+    "simple_ioi_name_mover": {
+      "family": "entity_coreference",
+      "scene": "[A,B,A,IOI_QUERY,B]",
+      "target": "At IOI_QUERY, predict the non-repeated name B.",
+      "control": "The repeated name A is the distractor.",
+      "segment_start": 152,
+      "segment_end_exclusive": 157,
+      "segment_tokens": [
+        90,
+        211,
+        90,
+        19,
+        211
+      ],
+      "score_positions": [
+        155
+      ],
+      "target_tokens": [
+        211
+      ]
+    },
+    "negative_name_control": {
+      "family": "entity_coreference",
+      "scene": "[A,B,B,NEG_NAME_QUERY,A]",
+      "target": "At NEG_NAME_QUERY, predict the non-repeated name A.",
+      "control": "The repeated name B is the distractor.",
+      "segment_start": 157,
+      "segment_end_exclusive": 162,
+      "segment_tokens": [
+        107,
+        33,
+        33,
+        20,
+        107
+      ],
+      "score_positions": [
+        160
+      ],
+      "target_tokens": [
+        107
+      ]
+    }
+  }
+}

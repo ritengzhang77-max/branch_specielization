@@ -2392,3 +2392,58 @@ computations to consolidate.
   - non-uniform configs should use all-distinct dimensions;
   - dimensions should be multiples of 8;
   - total attention dimension should stay matched when comparing configs.
+
+## 2026-05-23 - Toy Ontology v2 full 20-role sweep
+
+- Added `scripts/toy_role_ontology_v2_head_dim_intervention.py`.
+- Added `scripts/analyze_role_ontology_v2.py`.
+- Added memo:
+  `doc/experiments/phase3/phase3_toy_role_ontology_v2.md`.
+- Scope:
+  - unit is ordinary attention heads only;
+  - 20 role rows;
+  - five role families: `copy_transport`, `induction`,
+    `position_boundary`, `suppression_conflict`, and `entity_coreference`;
+  - all non-uniform configs use all-distinct head dimensions;
+  - total attention dimension is matched at 128.
+- Main full-sweep command:
+  `python scripts/toy_role_ontology_v2_head_dim_intervention.py --role-set v2_full --configs uniform4 uniform2 hetero4_unique_mild hetero4_unique_64 hetero4_unique_extreme hetero2_unique_mild hetero2_unique_mid hetero2_unique_extreme --seeds 1 2 3 4 5 --steps 1600 --batch-size 128 --eval-examples 512 --output-dir results/phase3_toy_role_ontology_v2_full_1600_20260523`
+- Main result root:
+  `results/phase3_toy_role_ontology_v2_full_1600_20260523`.
+- Layout control root:
+  `results/phase3_toy_role_ontology_v2_layout_1600_20260523`.
+- Main learnability result:
+  - all configs learned the expanded ontology;
+  - mean minimum-role accuracy stayed at or above `0.991`.
+- Main structural role-affinity result:
+  - heterogeneous four-head chance largest-top rate is `0.25`;
+  - observed largest-top rates were `0.50`, `0.65`, and `0.82` for
+    `[16,24,40,48]`, `[8,16,40,64]`, and `[8,16,24,80]`;
+  - heterogeneous two-head chance largest-top rate is `0.50`;
+  - observed rates were `0.66`, `0.82`, and `0.94` for `[48,80]`,
+    `[32,96]`, and `[16,112]`.
+- Main specialization result:
+  - `uniform4` specialization `0.733`, effective heads `2.400`;
+  - `uniform2` specialization `0.684`, effective heads `2.166`;
+  - best hetero4 specialization was `[8,16,24,80]` at `0.849`, effective
+    heads `1.522`;
+  - all hetero2 configs beat `uniform2` on specialization.
+- Main modularity result:
+  - `uniform4` family gap `0.153`, ARI `0.149`;
+  - `uniform2` family gap `0.117`, ARI `0.108`;
+  - `hetero2_unique_mid [32,96]` was best in the main grid on ARI
+    (`0.159`) and near-best on family gap (`0.151`);
+  - `hetero2_unique_extreme [16,112]` had low family gap `0.050` and ARI
+    `0.039`, showing specialization can collapse without useful modularity.
+- Layout control:
+  - permuted `[8,16,40,64]` across four head-index placements;
+  - local copy selected the moved 64-dim type in `20/20` cases;
+  - wrong-key suppression and recency conflict selected it in `19/20` cases;
+  - KV lookup selected it in `17/20` cases;
+  - induction and some boundary roles were less locked to 64.
+- Interpretation update:
+  - the project should continue;
+  - current strongest claim is structural role affinity plus role-level
+    specialization;
+  - functional modularity is real as a question but should not yet be claimed
+    as automatic from heterogeneous head dimensions.

@@ -1,0 +1,161 @@
+config,family,role,n,top_dim_counts,top_dim_mode,top_dim_mode_count,accuracy_mean,specialization_mean,effective_heads_mean
+uniform4,copy_transport,local_copy,5,32:5,32,5,1.0,0.30394056523650004,3.9342286574221745
+uniform4,copy_transport,previous_token,5,32:5,32,5,1.0,0.7101200541021954,2.3246851448214345
+uniform4,copy_transport,kv_lookup,5,32:5,32,5,0.998046875,0.5324977134853892,4.707709882961172
+uniform4,copy_transport,duplicate_token,5,32:5,32,5,1.0,0.6830577947100964,3.069681980265802
+uniform4,induction,induction_short,5,32:5,32,5,1.0,0.8564666155975218,1.6174703165888544
+uniform4,induction,induction_long,5,32:5,32,5,0.9996093899011612,0.780298043398699,1.9630280515814094
+uniform4,induction,induction_ngram,5,32:5,32,5,0.999951171875,0.8287487955923657,1.7347713794108426
+uniform4,induction,false_induction_control,5,32:5,32,5,1.0,0.8528306318498082,1.683473721262629
+uniform4,position_boundary,bos_sink,5,32:5,32,5,1.0,0.8727135865895546,1.64523656432082
+uniform4,position_boundary,sep_sink,5,32:5,32,5,1.0,0.9092205443919141,1.5175409426709854
+uniform4,position_boundary,fixed_offset_prev,5,32:5,32,5,1.0,0.912379759451315,1.4712980562205122
+uniform4,position_boundary,punctuation_boundary,5,32:5,32,5,1.0,0.8545815713487013,1.519627024075564
+uniform4,suppression_conflict,distractor_suppression,5,32:5,32,5,1.0,0.896052372686807,1.4530733033454566
+uniform4,suppression_conflict,anti_copy,5,32:5,32,5,1.0,0.8584154286565269,1.8703382768360057
+uniform4,suppression_conflict,wrong_key_suppression,5,32:5,32,5,1.0,0.5236918694125026,3.6026779642332385
+uniform4,suppression_conflict,recency_conflict,5,32:5,32,5,1.0,0.4296576377139235,3.8931933127522504
+uniform4,entity_coreference,repeated_name_detection,5,32:5,32,5,1.0,0.7437835399302449,2.3561717674832643
+uniform4,entity_coreference,pronoun_antecedent,5,32:5,32,5,1.0,0.8520090988888395,1.754318280862541
+uniform4,entity_coreference,simple_ioi_name_mover,5,32:5,32,5,1.0,0.72250756433835,2.415695575559963
+uniform4,entity_coreference,negative_name_control,5,32:5,32,5,1.0,0.5374728367269452,3.4642310433699044
+uniform2,copy_transport,local_copy,5,64:5,64,5,1.0,0.5583673780057083,1.9824523584336895
+uniform2,copy_transport,previous_token,5,64:5,64,5,1.0,0.6937169535116658,1.8684133426357221
+uniform2,copy_transport,kv_lookup,5,64:5,64,5,0.99375,0.6771391175521245,2.5699242082182105
+uniform2,copy_transport,duplicate_token,5,64:5,64,5,1.0,0.7535151630829625,2.0032336900693797
+uniform2,induction,induction_short,5,64:5,64,5,0.9983593821525574,0.7319922481014859,2.1887957487424563
+uniform2,induction,induction_long,5,64:5,64,5,0.9962003082036972,0.7055079551480861,2.405853863176169
+uniform2,induction,induction_ngram,5,64:5,64,5,0.99833984375,0.745437062032072,2.266751024760558
+uniform2,induction,false_induction_control,5,64:5,64,5,1.0,0.7323104427718595,2.2064457162457183
+uniform2,position_boundary,bos_sink,5,64:5,64,5,1.0,0.7022026539421321,1.9759874851411865
+uniform2,position_boundary,sep_sink,5,64:5,64,5,1.0,0.8572069316191844,1.6648921975631983
+uniform2,position_boundary,fixed_offset_prev,5,64:5,64,5,1.0,0.9415280145783511,1.30782468016862
+uniform2,position_boundary,punctuation_boundary,5,64:5,64,5,1.0,0.6855151713045105,2.3240485340349815
+uniform2,suppression_conflict,distractor_suppression,5,64:5,64,5,1.0,0.5611499530510162,2.7811741063860227
+uniform2,suppression_conflict,anti_copy,5,64:5,64,5,0.998828125,0.7683504049820663,1.8492105068058677
+uniform2,suppression_conflict,wrong_key_suppression,5,64:5,64,5,0.998046875,0.5688997793978497,2.2577960310045477
+uniform2,suppression_conflict,recency_conflict,5,64:5,64,5,1.0,0.5482485468721803,2.0901127176445513
+uniform2,entity_coreference,repeated_name_detection,5,64:5,64,5,1.0,0.5508777861338656,2.9699538540379264
+uniform2,entity_coreference,pronoun_antecedent,5,64:5,64,5,0.999609375,0.616290267433331,2.3266899463085657
+uniform2,entity_coreference,simple_ioi_name_mover,5,64:5,64,5,1.0,0.6300513425874362,2.2412765986413046
+uniform2,entity_coreference,negative_name_control,5,64:5,64,5,0.993359375,0.653684502254521,2.0331061961427785
+hetero4_unique_mild,copy_transport,local_copy,5,48:5,48,5,1.0,0.5163032514651714,2.7260594058991527
+hetero4_unique_mild,copy_transport,previous_token,5,"16:1, 24:1, 40:1, 48:2",48,2,1.0,0.6766494172237905,2.4108870300647984
+hetero4_unique_mild,copy_transport,kv_lookup,5,48:5,48,5,0.998828125,0.7075431846967986,2.552153037456855
+hetero4_unique_mild,copy_transport,duplicate_token,5,"24:1, 40:1, 48:3",48,3,1.0,0.7485629972224037,2.137099034755875
+hetero4_unique_mild,induction,induction_short,5,"40:4, 48:1",40,4,1.0,0.9320298865047361,1.4043404470859588
+hetero4_unique_mild,induction,induction_long,5,"40:4, 48:1",40,4,0.9999644905328751,0.8059766981710542,2.1047902572300012
+hetero4_unique_mild,induction,induction_ngram,5,"16:1, 40:3, 48:1",40,3,0.999951171875,0.7951528686280226,2.066376242597646
+hetero4_unique_mild,induction,false_induction_control,5,"16:1, 40:3, 48:1",40,3,1.0,0.7081366054963476,2.4896877018254884
+hetero4_unique_mild,position_boundary,bos_sink,5,"24:2, 40:2, 48:1",24,2,1.0,0.6501307975875507,2.5903250609450166
+hetero4_unique_mild,position_boundary,sep_sink,5,"16:2, 40:2, 48:1",16,2,1.0,0.8511280526583291,1.6398958762933464
+hetero4_unique_mild,position_boundary,fixed_offset_prev,5,"16:1, 40:2, 48:2",40,2,1.0,0.7755481685851128,1.9400583996413137
+hetero4_unique_mild,position_boundary,punctuation_boundary,5,"24:1, 40:2, 48:2",40,2,1.0,0.7931836859742927,1.9177260620705419
+hetero4_unique_mild,suppression_conflict,distractor_suppression,5,"16:1, 40:3, 48:1",40,3,1.0,0.890207365327124,1.4466799381904738
+hetero4_unique_mild,suppression_conflict,anti_copy,5,"24:1, 40:2, 48:2",40,2,1.0,0.7355661716206764,2.1076522632184207
+hetero4_unique_mild,suppression_conflict,wrong_key_suppression,5,"40:1, 48:4",48,4,1.0,0.6320720687017692,2.45512635626078
+hetero4_unique_mild,suppression_conflict,recency_conflict,5,48:5,48,5,1.0,0.6839533348604127,2.2059490135757764
+hetero4_unique_mild,entity_coreference,repeated_name_detection,5,"16:1, 24:1, 40:2, 48:1",40,2,1.0,0.6422071383594287,2.505800665605452
+hetero4_unique_mild,entity_coreference,pronoun_antecedent,5,"24:2, 40:1, 48:2",24,2,1.0,0.6454809194419009,2.5157353553488058
+hetero4_unique_mild,entity_coreference,simple_ioi_name_mover,5,48:5,48,5,1.0,0.6591320740061499,2.534957207298922
+hetero4_unique_mild,entity_coreference,negative_name_control,5,48:5,48,5,1.0,0.6650795791591643,2.372948695505707
+hetero4_unique_64,copy_transport,local_copy,5,64:5,64,5,1.0,0.8084197029402456,1.738579318688274
+hetero4_unique_64,copy_transport,previous_token,5,"8:1, 16:1, 40:1, 64:2",64,2,1.0,0.8658763950058332,1.539152200193746
+hetero4_unique_64,copy_transport,kv_lookup,5,64:5,64,5,0.99921875,0.5800379774856544,2.6311806524569574
+hetero4_unique_64,copy_transport,duplicate_token,5,"40:2, 64:3",64,3,1.0,0.8090360862648998,1.807366660566292
+hetero4_unique_64,induction,induction_short,5,"40:3, 64:2",40,3,0.9999218761920929,0.8178412215088613,1.7533575630256806
+hetero4_unique_64,induction,induction_long,5,"8:1, 40:3, 64:1",40,3,0.9995738804340363,0.6544902406923969,2.4922981981656136
+hetero4_unique_64,induction,induction_ngram,5,"40:3, 64:2",40,3,0.999951171875,0.6073589710110737,2.9020053495256275
+hetero4_unique_64,induction,false_induction_control,5,"16:1, 40:1, 64:3",64,3,1.0,0.7897476538278966,1.722947111317636
+hetero4_unique_64,position_boundary,bos_sink,5,"8:1, 64:4",64,4,1.0,0.7169287850137259,2.0663152119838593
+hetero4_unique_64,position_boundary,sep_sink,5,"8:2, 16:1, 40:1, 64:1",8,2,1.0,0.877535249329162,1.6046084142309198
+hetero4_unique_64,position_boundary,fixed_offset_prev,5,"16:1, 40:1, 64:3",64,3,1.0,0.7592506375274445,1.8319634629781543
+hetero4_unique_64,position_boundary,punctuation_boundary,5,"8:1, 16:1, 40:1, 64:2",64,2,1.0,0.7138006423377254,2.0874923559770586
+hetero4_unique_64,suppression_conflict,distractor_suppression,5,"8:1, 40:1, 64:3",64,3,1.0,0.7943732360178316,1.9194298587805236
+hetero4_unique_64,suppression_conflict,anti_copy,5,"16:2, 40:1, 64:2",16,2,1.0,0.6797075936726888,2.190805768960444
+hetero4_unique_64,suppression_conflict,wrong_key_suppression,5,64:5,64,5,1.0,0.8450050081528875,1.6185037225716261
+hetero4_unique_64,suppression_conflict,recency_conflict,5,64:5,64,5,1.0,0.8831958156844868,1.5752528420376373
+hetero4_unique_64,entity_coreference,repeated_name_detection,5,"16:2, 64:3",64,3,1.0,0.8104510866130579,1.7353700077541412
+hetero4_unique_64,entity_coreference,pronoun_antecedent,5,64:5,64,5,1.0,0.8682014941822869,1.6245229728810024
+hetero4_unique_64,entity_coreference,simple_ioi_name_mover,5,"40:1, 64:4",64,4,1.0,0.7893739008717773,1.6701191899945418
+hetero4_unique_64,entity_coreference,negative_name_control,5,64:5,64,5,1.0,0.8506271449942364,1.6177887991719413
+hetero4_unique_extreme,copy_transport,local_copy,5,80:5,80,5,1.0,0.9710611689137538,1.1596136729956545
+hetero4_unique_extreme,copy_transport,previous_token,5,"8:1, 24:1, 80:3",80,3,1.0,0.8932890474865667,1.3980040830881544
+hetero4_unique_extreme,copy_transport,kv_lookup,5,80:5,80,5,0.99921875,0.5739271856954268,2.114203412815832
+hetero4_unique_extreme,copy_transport,duplicate_token,5,80:5,80,5,1.0,0.8095401434733365,1.5343296558236312
+hetero4_unique_extreme,induction,induction_short,5,"24:2, 80:3",80,3,1.0,0.7042061258723361,2.0696503186648636
+hetero4_unique_extreme,induction,induction_long,5,"8:1, 24:2, 80:2",24,2,0.999857959151268,0.6323838095688232,2.5272741414064406
+hetero4_unique_extreme,induction,induction_ngram,5,"24:2, 80:3",80,3,1.0,0.6296442193343681,2.5471547824600123
+hetero4_unique_extreme,induction,false_induction_control,5,"24:1, 80:4",80,4,1.0,0.6804241421546882,1.8561451433991245
+hetero4_unique_extreme,position_boundary,bos_sink,5,"8:1, 80:4",80,4,1.0,0.8333927000148773,1.5741960558126298
+hetero4_unique_extreme,position_boundary,sep_sink,5,"8:1, 24:1, 80:3",80,3,1.0,0.7964184906043631,1.5620157912618609
+hetero4_unique_extreme,position_boundary,fixed_offset_prev,5,"24:1, 80:4",80,4,1.0,0.9475998166727138,1.231735249792369
+hetero4_unique_extreme,position_boundary,punctuation_boundary,5,"24:1, 80:4",80,4,1.0,0.893862822934002,1.3500998087462348
+hetero4_unique_extreme,suppression_conflict,distractor_suppression,5,"24:2, 80:3",80,3,1.0,0.9377503480489329,1.2671970539401727
+hetero4_unique_extreme,suppression_conflict,anti_copy,5,80:5,80,5,1.0,0.9068280569227196,1.4066732430630675
+hetero4_unique_extreme,suppression_conflict,wrong_key_suppression,5,80:5,80,5,1.0,0.952004791664723,1.236504086956876
+hetero4_unique_extreme,suppression_conflict,recency_conflict,5,80:5,80,5,1.0,0.9832436025154448,1.088981393985087
+hetero4_unique_extreme,entity_coreference,repeated_name_detection,5,"24:1, 80:4",80,4,1.0,0.909357651354566,1.2116364235352315
+hetero4_unique_extreme,entity_coreference,pronoun_antecedent,5,80:5,80,5,1.0,0.9891434036969372,1.0612608274691224
+hetero4_unique_extreme,entity_coreference,simple_ioi_name_mover,5,80:5,80,5,1.0,0.9293793836106803,1.220023387510107
+hetero4_unique_extreme,entity_coreference,negative_name_control,5,80:5,80,5,1.0,0.9975201822841788,1.0196964761026284
+hetero2_unique_mild,copy_transport,local_copy,5,80:5,80,5,1.0,0.9001479552679861,1.3765954287212865
+hetero2_unique_mild,copy_transport,previous_token,5,"48:3, 80:2",48,3,1.0,0.8981177793658087,1.3531889934918089
+hetero2_unique_mild,copy_transport,kv_lookup,5,80:5,80,5,0.998828125,0.7137098825510451,2.1162893067498456
+hetero2_unique_mild,copy_transport,duplicate_token,5,80:5,80,5,1.0,0.7955739022908769,1.6965610045329398
+hetero2_unique_mild,induction,induction_short,5,"48:2, 80:3",80,3,1.0,0.7276555224897943,2.0948752250673928
+hetero2_unique_mild,induction,induction_long,5,"48:3, 80:2",48,3,0.9997514307498931,0.5991695833667603,2.5737343285506866
+hetero2_unique_mild,induction,induction_ngram,5,"48:3, 80:2",48,3,1.0,0.6452464837059572,2.4750733986766686
+hetero2_unique_mild,induction,false_induction_control,5,"48:2, 80:3",80,3,1.0,0.6918763985344865,2.1784077521545067
+hetero2_unique_mild,position_boundary,bos_sink,5,"48:3, 80:2",48,3,1.0,0.8201706552790272,1.6327286425001457
+hetero2_unique_mild,position_boundary,sep_sink,5,"48:3, 80:2",48,3,1.0,0.8368182316518842,1.5345041587554888
+hetero2_unique_mild,position_boundary,fixed_offset_prev,5,"48:3, 80:2",48,3,1.0,0.7575161516980584,1.7541072204114698
+hetero2_unique_mild,position_boundary,punctuation_boundary,5,"48:3, 80:2",48,3,1.0,0.8555025385677075,1.5222066245547474
+hetero2_unique_mild,suppression_conflict,distractor_suppression,5,"48:4, 80:1",48,4,1.0,0.774915519301297,1.810382901304743
+hetero2_unique_mild,suppression_conflict,anti_copy,5,"48:2, 80:3",80,3,1.0,0.712289631508984,2.004757333258096
+hetero2_unique_mild,suppression_conflict,wrong_key_suppression,5,80:5,80,5,1.0,0.638555698214328,2.1514623928968524
+hetero2_unique_mild,suppression_conflict,recency_conflict,5,80:5,80,5,1.0,0.8960815204195157,1.3875794372219235
+hetero2_unique_mild,entity_coreference,repeated_name_detection,5,"48:2, 80:3",80,3,1.0,0.8726742696197377,1.5509701277783137
+hetero2_unique_mild,entity_coreference,pronoun_antecedent,5,"48:1, 80:4",80,4,1.0,0.7809345598226527,1.826490716488334
+hetero2_unique_mild,entity_coreference,simple_ioi_name_mover,5,80:5,80,5,1.0,0.7951031022089734,1.6949702799750077
+hetero2_unique_mild,entity_coreference,negative_name_control,5,80:5,80,5,1.0,0.9264341745682948,1.3080840722370553
+hetero2_unique_mid,copy_transport,local_copy,5,96:5,96,5,1.0,0.9910961059190868,1.05181817016256
+hetero2_unique_mid,copy_transport,previous_token,5,96:5,96,5,1.0,0.8357055283168234,1.4675948252306532
+hetero2_unique_mid,copy_transport,kv_lookup,5,96:5,96,5,0.998828125,0.551678630362231,2.057789734174598
+hetero2_unique_mid,copy_transport,duplicate_token,5,96:5,96,5,0.999609375,0.8951862959978115,1.332990655279652
+hetero2_unique_mid,induction,induction_short,5,96:5,96,5,0.9994531273841858,0.6752711830844487,2.196401113101678
+hetero2_unique_mid,induction,induction_long,5,96:5,96,5,0.9971946090459823,0.5027925633587634,2.632337026333624
+hetero2_unique_mid,induction,induction_ngram,5,"32:1, 96:4",96,4,0.998193359375,0.49234696852023624,2.7402931052309625
+hetero2_unique_mid,induction,false_induction_control,5,"32:1, 96:4",96,4,1.0,0.6401070036039258,2.05299289457418
+hetero2_unique_mid,position_boundary,bos_sink,5,"32:1, 96:4",96,4,1.0,0.8573109717894767,1.4720215634112734
+hetero2_unique_mid,position_boundary,sep_sink,5,32:5,32,5,1.0,0.7044232713774324,1.906520928978971
+hetero2_unique_mid,position_boundary,fixed_offset_prev,5,"32:1, 96:4",96,4,1.0,0.8197915735245822,1.5573860617706985
+hetero2_unique_mid,position_boundary,punctuation_boundary,5,"32:4, 96:1",32,4,1.0,0.6765606259544705,1.9081858073475875
+hetero2_unique_mid,suppression_conflict,distractor_suppression,5,"32:2, 96:3",96,3,1.0,0.690219872461547,1.9434343119302153
+hetero2_unique_mid,suppression_conflict,anti_copy,5,"32:1, 96:4",96,4,1.0,0.8310090887897645,1.4216086269478
+hetero2_unique_mid,suppression_conflict,wrong_key_suppression,5,"32:1, 96:4",96,4,0.999609375,0.866512495544456,1.4207215768685433
+hetero2_unique_mid,suppression_conflict,recency_conflict,5,96:5,96,5,1.0,0.9603173092592637,1.14495552628331
+hetero2_unique_mid,entity_coreference,repeated_name_detection,5,"32:1, 96:4",96,4,1.0,0.7745868368039113,1.6989504574490812
+hetero2_unique_mid,entity_coreference,pronoun_antecedent,5,96:5,96,5,1.0,0.961839420304919,1.1561562993493903
+hetero2_unique_mid,entity_coreference,simple_ioi_name_mover,5,96:5,96,5,1.0,0.8089143802425477,1.6152172031574146
+hetero2_unique_mid,entity_coreference,negative_name_control,5,96:5,96,5,1.0,0.9903619017657583,1.0554853881918942
+hetero2_unique_extreme,copy_transport,local_copy,5,112:5,112,5,1.0,0.9993996801942411,1.0051515352906268
+hetero2_unique_extreme,copy_transport,previous_token,5,112:5,112,5,1.0,0.9839459191431235,1.0718484823820909
+hetero2_unique_extreme,copy_transport,kv_lookup,5,112:5,112,5,0.997265625,0.5430055534596595,2.0090280505264206
+hetero2_unique_extreme,copy_transport,duplicate_token,5,112:5,112,5,1.0,0.7970994531913582,1.6375650888999356
+hetero2_unique_extreme,induction,induction_short,5,112:5,112,5,1.0,0.6615640746126433,2.0774978878240797
+hetero2_unique_extreme,induction,induction_long,5,112:5,112,5,0.9997869402170181,0.5259237280321509,2.3636178186610923
+hetero2_unique_extreme,induction,induction_ngram,5,112:5,112,5,0.999951171875,0.5201279502195553,2.518026588480012
+hetero2_unique_extreme,induction,false_induction_control,5,112:5,112,5,1.0,0.6722703834128219,1.9348917437913897
+hetero2_unique_extreme,position_boundary,bos_sink,5,112:5,112,5,1.0,0.851229298509202,1.4206965724027674
+hetero2_unique_extreme,position_boundary,sep_sink,5,"16:2, 112:3",112,3,1.0,0.6433637911730674,2.01892470471017
+hetero2_unique_extreme,position_boundary,fixed_offset_prev,5,"16:1, 112:4",112,4,1.0,0.8026015090405606,1.5243131612918746
+hetero2_unique_extreme,position_boundary,punctuation_boundary,5,"16:1, 112:4",112,4,1.0,0.8029437145518619,1.6040692362246276
+hetero2_unique_extreme,suppression_conflict,distractor_suppression,5,112:5,112,5,1.0,0.6799522223106633,1.9033269158010022
+hetero2_unique_extreme,suppression_conflict,anti_copy,5,112:5,112,5,1.0,0.8264949369151212,1.5565008141626362
+hetero2_unique_extreme,suppression_conflict,wrong_key_suppression,5,112:5,112,5,1.0,0.9318841830707001,1.2961676848239059
+hetero2_unique_extreme,suppression_conflict,recency_conflict,5,112:5,112,5,1.0,0.9962210291401513,1.024380231480949
+hetero2_unique_extreme,entity_coreference,repeated_name_detection,5,"16:2, 112:3",112,3,1.0,0.7453221478854154,1.6640917409730438
+hetero2_unique_extreme,entity_coreference,pronoun_antecedent,5,112:5,112,5,1.0,0.9318264214852221,1.2745261949910291
+hetero2_unique_extreme,entity_coreference,simple_ioi_name_mover,5,112:5,112,5,1.0,0.6901790193395682,1.7723246637030612
+hetero2_unique_extreme,entity_coreference,negative_name_control,5,112:5,112,5,1.0,0.9925470760517164,1.0450228208619436

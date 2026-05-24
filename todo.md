@@ -56,7 +56,7 @@ Last updated: 2026-05-23
 
 ## Level 2: Immediate Follow-Ups
 
-- [ ] Implement Toy Ontology v2 smoke test before any expensive sweep.
+- [x] Implement Toy Ontology v2 smoke test before any expensive sweep.
   - Proposed families:
     - `copy_transport`
     - `induction`
@@ -76,15 +76,15 @@ Last updated: 2026-05-23
     - all role families learn above chance;
     - causal role x head matrices are not degenerate;
     - baseline-vs-hetero tables are interpretable.
-- [ ] Use all-distinct dimensions for future non-uniform configs.
+- [x] Use all-distinct dimensions for future non-uniform configs.
   - Uniform baselines may repeat dimensions by definition.
   - Non-uniform configs should use distinct multiples of 8 unless there is an
     explicitly documented control reason.
-- [ ] Present every Toy Ontology v2 result as a baseline comparison table:
+- [x] Present every Toy Ontology v2 result as a baseline comparison table:
   - baseline result;
   - heterogeneous result;
   - interpretation.
-- [ ] Add more matched head-dimension controls.
+- [x] Add more matched head-dimension controls.
   - `[8, 16, 40, 64]` plus layout permutations
   - `[16, 24, 40, 48]`
   - `[8, 16, 24, 80]`
@@ -93,8 +93,28 @@ Last updated: 2026-05-23
   - more local-copy variants
   - more KV-lookup variants
   - more induction variants, especially because induction did not simply prefer the 64-dim head
-- [ ] Inspect per-role rows, not only aggregate metrics, before drawing the next conclusion.
-- [ ] Decide whether to pause toy capacity sweeps and move to broader task families, because hetero2 suggests capacity imbalance alone does not improve modularity over `uniform2`.
+- [x] Inspect per-role rows, not only aggregate metrics, before drawing the next conclusion.
+- [x] Decide whether to pause toy capacity sweeps and move to broader task families, because hetero2 suggests capacity imbalance alone does not improve modularity over `uniform2`.
+
+### Toy Ontology v2 Full Sweep Snapshot
+
+- Artifact: `doc/experiments/phase3/phase3_toy_role_ontology_v2.md`
+- Main result root: `results/phase3_toy_role_ontology_v2_full_1600_20260523`
+- Layout control root: `results/phase3_toy_role_ontology_v2_layout_1600_20260523`
+- Scope:
+  - 20 roles
+  - 5 families
+  - 5 seeds
+  - ordinary attention heads only
+  - all non-uniform configs use distinct multiples of 8
+- Main conclusions:
+  - structural role affinity is strong;
+  - role-level specialization is strong;
+  - family-level modularity is mixed and layout-sensitive.
+- Best current paper claim:
+  - heterogeneous ordinary attention-head dimensions induce structural role
+    affinity and increase role-level specialization in this toy setting;
+  - functional modularity should be treated as a separate open question.
 
 ## Level 3: Broader Toy Task Expansion
 
@@ -102,14 +122,14 @@ Last updated: 2026-05-23
   - Artifact: `doc/big_role_ontology_proposal.md`
 - [x] Define the role/task/dataset hierarchy.
   - Artifact: `doc/role_task_organization.md`
-- [ ] Turn the proposal into a runnable Toy Ontology v2 generator.
-- [ ] Rerun the expanded role ontology on:
+- [x] Turn the proposal into a runnable Toy Ontology v2 generator.
+- [x] Rerun the expanded role ontology on:
   - `uniform4`
   - `uniform2`
   - best hetero4 controls
   - best hetero2 controls
-- [ ] Test whether family clustering remains stable as the ontology gets larger.
-- [ ] Add more task families after v2 smoke if needed.
+- [x] Test whether family clustering remains stable as the ontology gets larger.
+- [ ] Add more task families after v2 full sweep if needed.
   - syntax/agreement templates
   - topic/header anchors
   - rare-word anchors
