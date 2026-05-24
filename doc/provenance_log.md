@@ -2620,3 +2620,5 @@ computations to consolidate.
 - Main modularity metrics going forward:
   - ontology alignment;
   - separation-adjusted clusterability.
+- Added the canonical metric-system document:
+  `doc/current_metric_system.md`.

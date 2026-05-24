@@ -100,6 +100,10 @@ Last updated: 2026-05-24
   - Artifact: `doc/ontology_alignment_metric.md`
   - Main rule: modularity measures alignment between head-usage geometry and a
     defensible ontology, not absolute proof of modularity.
+- [x] Consolidate the final agreed metric system into one document.
+  - Artifact: `doc/current_metric_system.md`
+  - Main modularity metrics: ontology alignment + shuffled-label p, and
+    separation-adjusted clusterability.
 - [x] Run ontology-refinement analysis on Toy Ontology v2.
   - Artifact:
     `doc/experiments/phase3/phase3_ontology_refinement_modularity.md`
