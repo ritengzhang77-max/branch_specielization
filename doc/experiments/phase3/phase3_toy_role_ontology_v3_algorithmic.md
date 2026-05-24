@@ -81,17 +81,16 @@ results/phase3_toy_role_ontology_v3_main_2000_20260524
 Accuracy is listed first because specialization or modularity is not meaningful
 if a model fails the task.
 
-| Config | Mean Acc | Min Acc | Largest-Top Rate | Specialization | Effective Heads | Family Gap | Ontology Align | Shuffle p |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|
-| `uniform8` | 0.9999 | 0.9983 | n/a | 0.660 | 3.586 | 0.150 | 0.139 | 0.044 |
-| `hetero8_unique_spread` | 1.0000 | 0.9995 | 0.34 | 0.670 | 3.174 | 0.122 | 0.142 | 0.059 |
-| `hetero8_unique_extreme` | 0.9999 | 0.9986 | 0.54 | 0.783 | 2.073 | 0.156 | 0.193 | 0.016 |
+| Config | Mean Acc | Min Acc | Specialization | Effective Heads | Ontology Align | Shuffle p | Sep-Adjusted Clusterability |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| `uniform8` | 0.9999 | 0.9983 | 0.660 | 3.586 | 0.139 | 0.044 | 0.417 |
+| `hetero8_unique_spread` | 1.0000 | 0.9995 | 0.670 | 3.174 | 0.142 | 0.059 | 0.450 |
+| `hetero8_unique_extreme` | 0.9999 | 0.9986 | 0.783 | 2.073 | 0.193 | 0.016 | 0.437 |
 
-Chance largest-top rate for hetero8 is:
-
-```text
-1 / 8 = 0.125
-```
+Head-dimension top counts are still saved in raw analysis files as a structural
+affinity diagnostic, but they are not a headline metric. The main project claim
+is not that the largest head is always best; it is that head structure affects
+function assignment, specialization, and possibly modularity.
 
 ## Seed-Level Comparisons Against `uniform8`
 
@@ -99,8 +98,8 @@ Chance largest-top rate for hetero8 is:
 |---|---:|---:|
 | Ontology alignment mean diff | +0.003 | +0.055 |
 | Ontology alignment wins | 2/5 seeds | 4/5 seeds |
-| Family gap mean diff | -0.028 | +0.006 |
-| Family gap wins | 2/5 seeds | 3/5 seeds |
+| Separation-adjusted clusterability mean diff | +0.033 | +0.020 |
+| Separation-adjusted clusterability wins | 5/5 seeds | 2/5 seeds |
 | Specialization mean diff | +0.010 | +0.122 |
 | Specialization wins | 4/5 seeds | 3/5 seeds |
 
@@ -108,8 +107,8 @@ Interpretation:
 
 - Extreme hetero gives the clearest ontology-alignment improvement.
 - Spread hetero is basically tied with uniform on ontology alignment.
-- Family gap is less positive than ontology alignment because it is a raw
-  within-minus-between effect; the extreme hetero gain is small there.
+- Spread hetero gives the cleanest separation-adjusted clusterability
+  improvement.
 
 ## Label-Free Clusterability
 

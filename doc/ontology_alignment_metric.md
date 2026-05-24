@@ -15,10 +15,9 @@ The modularity question is therefore better phrased as:
 Are roles that are closer in the ontology also closer in attention-head usage?
 ```
 
-This replaces ARI as the main modularity diagnostic. ARI can still be used as an
-appendix sanity check, but it is too brittle as the primary metric because the
-current ontology has only 20 roles, 5 families, and likely substructure inside
-some families.
+This replaces ARI and Family Gap as the main ontology-based modularity
+diagnostic. ARI and Family Gap can still be computed for debugging or appendix
+checks, but they are too easy to misread as primary evidence.
 
 ## Inputs
 
@@ -115,9 +114,9 @@ This gives a null mean, a z-score, and a one-sided permutation p-value. The null
 baseline is important because a small positive score can occur just from the
 number and size of families.
 
-## Family Gap
+## Family Gap, Appendix Only
 
-Family Gap is kept as the simplest effect-size version of the same idea:
+Family Gap is the simplest effect-size version of the same binary-family idea:
 
 ```text
 Family Gap =
@@ -134,8 +133,47 @@ Interpretation:
 | near zero | weak or no ontology-level modularity |
 | negative | same-family roles are less coherent than unrelated roles |
 
-Family Gap is easier to read than the correlation. Ontology Alignment Score is
-better for statistical comparison against shuffled ontology labels.
+Family Gap and Ontology Alignment are not independent evidence in the current
+binary-family setting. They both ask whether same-family role pairs have higher
+head-usage similarity than different-family pairs.
+
+The difference is:
+
+| Metric | What It Does |
+|---|---|
+| Family Gap | Raw mean difference: same-family similarity minus different-family similarity. |
+| Ontology Alignment | Correlation between ontology similarity and head-usage similarity, with a shuffled-label null. |
+
+Because they measure the same underlying signal, Family Gap should not be a
+main modularity metric. Keep it as an appendix/simple-effect-size check only.
+
+## Separation-Adjusted Clusterability
+
+This is the label-free modularity check. It does not use ontology labels.
+
+First, cluster roles using only their pairwise head-usage distances:
+
+```text
+TV(i, j) = 0.5 * sum_h |p_i(h) - p_j(h)|
+```
+
+Then compute silhouette score:
+
+```text
+silhouette = how much closer each role is to its discovered cluster than to the
+nearest other discovered cluster
+```
+
+Silhouette alone can be misleading if all roles collapse into a narrow part of
+head space. So the reported label-free metric is:
+
+```text
+separation_adjusted_clusterability =
+  silhouette_k5 * mean_pairwise_TV_distance
+```
+
+This rewards discovered clusters that are both internally coherent and
+meaningfully separated.
 
 ## Per-Role Neighbor Margin
 
@@ -168,12 +206,11 @@ matched or better than the uniform baseline.
 Recommended table order:
 
 1. `accuracy`
-2. `largest-dimension top rate`
-3. `specialization`
-4. `effective heads`
-5. `family gap`
-6. `ontology alignment score`
-7. `shuffled-label p-value`
+2. `specialization`
+3. `effective heads`
+4. `ontology alignment score`
+5. `shuffled-label p-value`
+6. `separation-adjusted clusterability`
 
 Per-role appendices should report:
 
@@ -181,12 +218,17 @@ Per-role appendices should report:
 accuracy
 specialization
 effective heads
-top dimension counts
 same-family neighbor similarity
 different-family neighbor similarity
 role margin
 top-1 / top-3 same-family neighbor rates
 ```
+
+Head-dimension top counts and largest-dimension top rate may remain in raw
+analysis files as structural-affinity diagnostics, but they should not be
+headline metrics because they can imply the wrong claim: "bigger head is better."
+The project claim is about non-random structure-function assignment, not a
+universal preference for the largest head.
 
 ## Current Artifacts
 
@@ -206,19 +248,20 @@ results/phase3_toy_role_ontology_v2_large_heads_2layer_2000_20260523/analysis/di
 
 ## Current Interpretation
 
-The latest clean 16-slot result supports:
+Toy Ontology v3 currently supports:
 
 ```text
 heterogeneous attention-head dimensions preserve task accuracy,
-increase role-level specialization,
-and create strong structural role affinity.
+increase role-level specialization, and give the first meaningful positive
+evidence for improved ontology-level modularity under a cleaner predeclared
+algorithmic ontology.
 ```
 
 It does not yet support:
 
 ```text
-heterogeneous attention-head dimensions clearly improve ontology-level
-functional modularity over a matched uniform-head baseline.
+heterogeneous attention-head dimensions always improve modularity across all
+ontology choices, layouts, and families.
 ```
 
 The reason is that same-family head-usage similarity is positive but uneven

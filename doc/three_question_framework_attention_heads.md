@@ -149,14 +149,14 @@ induction_short and induction_long use similar heads;
 different families use different head patterns.
 ```
 
-Old first-pass metrics:
+Old first-pass metrics, now appendix/debugging only:
 
 ```text
 family_gap = within_family_similarity - between_family_similarity
 family_cluster_ari = clustering agreement with role-family labels
 ```
 
-Current preferred metric:
+Current preferred ontology-based metric:
 
 ```text
 ontology_alignment_score =
@@ -169,6 +169,17 @@ same-family pairs and `0` for different-family pairs. Future ontologies can make
 this hierarchical with subfamily labels. ARI should not be used as the main
 metric because the ontology families are hypotheses, not guaranteed discovered
 clusters.
+
+Current preferred label-free metric:
+
+```text
+separation_adjusted_clusterability =
+  silhouette_k5(role clusters from head-usage distances)
+  *
+  mean pairwise TV distance between role head-usage distributions
+```
+
+This checks whether roles form separated clusters without using ontology labels.
 
 Short definition:
 

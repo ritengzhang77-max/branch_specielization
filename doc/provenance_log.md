@@ -2603,3 +2603,20 @@ computations to consolidate.
     seeds;
   - the effect is promising but not yet a final proof because family-gap gains
     are small and some families still weaken under heterogeneity.
+
+## 2026-05-24 - Main metric cleanup
+
+- Updated `doc/ontology_alignment_metric.md`,
+  `doc/experiments/phase3/phase3_toy_role_ontology_v3_algorithmic.md`, and
+  `todo.md` to reflect the user's metric preference.
+- Largest-head/top-dimension rate is no longer a headline metric. It remains a
+  raw structural-affinity diagnostic only, because presenting it centrally can
+  misleadingly imply "bigger head is better."
+- Family Gap is no longer a main modularity metric. In the current binary-family
+  setting it measures the same underlying signal as ontology alignment:
+  same-family pairs should have higher head-usage similarity than
+  different-family pairs. It is retained only as an appendix/simple-effect-size
+  check.
+- Main modularity metrics going forward:
+  - ontology alignment;
+  - separation-adjusted clusterability.

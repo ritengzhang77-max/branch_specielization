@@ -9,7 +9,8 @@ Last updated: 2026-05-24
 - [ ] Keep the three questions separate:
   - structural role affinity: which structural head type gets a role?
   - functional specialization: how concentrated is each role over heads?
-  - functional modularity: do related role families cluster together across heads?
+  - functional modularity: does head-usage geometry align with the predeclared
+    ontology, and do roles form label-free separated clusters?
 - [ ] When uncertain about a change in unit, claim, or experiment family, stop and ask.
 
 ## Level 1: Active Experiment
@@ -205,3 +206,9 @@ Last updated: 2026-05-24
   - add layout permutations of `[8,16,24,32,40,48,64,152]`;
   - add moderate layouts between spread and extreme;
   - rerun a 32-slot v3 control if the 10-seed result remains positive.
+- [ ] Future main tables should omit largest-top rate and Family Gap.
+  - Keep largest/top-dimension data in raw CSVs only as structural-affinity
+    diagnostics.
+  - Keep Family Gap only as an appendix effect-size check.
+  - Main modularity metrics: ontology alignment and separation-adjusted
+    clusterability.
