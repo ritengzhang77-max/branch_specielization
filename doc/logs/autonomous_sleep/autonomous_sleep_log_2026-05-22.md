@@ -52,7 +52,7 @@ or negative result would also be informative.
   completed. This is recorded as an infrastructure blocker, not as a model
   result.
 - Wrote pilot report:
-  `doc/phase1_pythia160m_local_copy_pilot.md`.
+  `doc/experiments/phase1/phase1_pythia160m_local_copy_pilot.md`.
 
 ## 2026-05-22 21:25-21:45 PDT
 
@@ -148,7 +148,7 @@ or negative result would also be informative.
   - seeds 1, 2, 3, 7, and 9 are genuinely layer-3 local-copy seeds.
 - Added `scripts/analyze_local_copy_layer_sweeps.py` and wrote the layer
   selection memo:
-  `doc/phase1_pythia160m_local_copy_layer_selection.md`.
+  `doc/experiments/phase1/phase1_pythia160m_local_copy_layer_selection.md`.
 - Current interpretation: local-copy functional specialization exists in all
   seeds, but its structural layer is seed-dependent. Fixed-slot specialization
   is therefore too brittle; the next test should use a cross-layer candidate
@@ -174,7 +174,7 @@ or negative result would also be informative.
 - Per-target aligned-minus-same was positive for `9/9` seeds. Pair-level
   two-sided sign `p ~= 7.3e-14`; target-level sign `p=0.0039`.
 - Wrote the candidate-pool memo:
-  `doc/phase1_pythia160m_local_copy_candidate_pool.md`.
+  `doc/experiments/phase1/phase1_pythia160m_local_copy_candidate_pool.md`.
 - Current interpretation: the local-copy role is functionally stable across
   seeds after cross-layer role relabeling. The earlier weak result was caused by
   fixed structural-slot assumptions, not absence of a reusable function.

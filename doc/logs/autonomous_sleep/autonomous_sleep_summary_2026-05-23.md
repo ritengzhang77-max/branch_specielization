@@ -6,7 +6,7 @@ Window covered: 2026-05-23 00:15:59 PDT to late morning PDT.
 
 This summary covers the later SwitchHead work completed after the seed-robustness
 checkpoint. The detailed running log is
-`doc/autonomous_sleep_log_2026-05-23.md`.
+`doc/logs/autonomous_sleep/autonomous_sleep_log_2026-05-23.md`.
 
 ## Main Result
 
@@ -54,7 +54,7 @@ Mean over 5 seeds:
 Memo:
 
 ```text
-doc/phase3_toy_switchhead_swap_interventions.md
+doc/experiments/phase3/phase3_toy_switchhead_swap_interventions.md
 ```
 
 ### Two-Layer Layer-Grouped Swap Grid
@@ -88,7 +88,7 @@ but its fragility is mostly local-role support, not the final induction module.
 Memo:
 
 ```text
-doc/phase3_toy_switchhead_two_layer_swap_interventions.md
+doc/experiments/phase3/phase3_toy_switchhead_two_layer_swap_interventions.md
 ```
 
 ### Attention-Weighted Value-Gate Diagnostic
@@ -165,7 +165,7 @@ Added:
 
 ```text
 scripts/switchhead_checkpoint_parameter_diagnostics.py
-doc/phase3_switchhead_activation_patching_plan.md
+doc/experiments/phase3/phase3_switchhead_activation_patching_plan.md
 ```
 
 ## Pushed Commits
@@ -202,7 +202,7 @@ Add activation-patching utilities on top of checkpoint loading.
 Planning doc:
 
 ```text
-doc/phase3_switchhead_activation_patching_plan.md
+doc/experiments/phase3/phase3_switchhead_activation_patching_plan.md
 ```
 
 The most direct next test is:

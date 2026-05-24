@@ -30,6 +30,14 @@ Last updated: 2026-05-23
   - Scope: ordinary attention heads only.
   - New ontology target: about 20 roles across copy/transport, induction,
     positional/boundary, suppression/conflict, and entity/coreference families.
+- [x] Add explicit role/dataset organization rules.
+  - Artifact: `doc/role_task_organization.md`
+  - Key rule: every role must have a scene/dataset, target positions, controls,
+    and a role x head attribution row.
+- [x] Organize time-variant reports into subfolders.
+  - Experiment reports: `doc/experiments/`
+  - Autonomous logs: `doc/logs/`
+  - Side-branch SwitchHead notes: `doc/side_branches/`
 
 ### Hetero2 Result Snapshot
 
@@ -54,25 +62,32 @@ Last updated: 2026-05-23
     - `induction`
     - `position_boundary`
     - `suppression_conflict`
-    - `entity_coreference`
+  - Smoke-test size:
+    - 4 families x 4 subroles = 16 role rows.
+    - Add `entity_coreference` afterward for the full 20-role ontology if the
+      synthetic templates are stable.
   - Proposed configs:
     - `uniform4 = [32,32,32,32]`
     - `uniform2 = [64,64]`
-    - best one-64 hetero4 layout
-    - `hetero2_best = [48,80]`
-    - `hetero2_extreme = [16,112]`
+    - `hetero4_unique_mild = [16,24,40,48]`
+    - `hetero4_unique_64 = [8,16,40,64]`
+    - `hetero2_unique_mild = [48,80]`
   - Smoke-test criterion:
     - all role families learn above chance;
     - causal role x head matrices are not degenerate;
     - baseline-vs-hetero tables are interpretable.
+- [ ] Use all-distinct dimensions for future non-uniform configs.
+  - Uniform baselines may repeat dimensions by definition.
+  - Non-uniform configs should use distinct multiples of 8 unless there is an
+    explicitly documented control reason.
 - [ ] Present every Toy Ontology v2 result as a baseline comparison table:
   - baseline result;
   - heterogeneous result;
   - interpretation.
 - [ ] Add more matched head-dimension controls.
-  - `[24, 24, 40, 40]`
-  - `[16, 48, 16, 48]`
-  - `[8, 40, 40, 40]`
+  - `[8, 16, 40, 64]` plus layout permutations
+  - `[16, 24, 40, 48]`
+  - `[8, 16, 24, 80]`
   - goal: separate large-head capacity from heterogeneity shape.
 - [ ] Add more subroles inside the existing ontology.
   - more local-copy variants
@@ -85,6 +100,8 @@ Last updated: 2026-05-23
 
 - [x] Build an expanded role ontology proposal.
   - Artifact: `doc/big_role_ontology_proposal.md`
+- [x] Define the role/task/dataset hierarchy.
+  - Artifact: `doc/role_task_organization.md`
 - [ ] Turn the proposal into a runnable Toy Ontology v2 generator.
 - [ ] Rerun the expanded role ontology on:
   - `uniform4`

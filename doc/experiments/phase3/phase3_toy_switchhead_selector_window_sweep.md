@@ -98,7 +98,7 @@ A direct checkpointed SwitchHead trajectory confirms the same ordering within a
 single training run. With selector pressure ending after step 450, reliable gate
 separation appears by checkpoint 425 and reliable causal expert separation
 appears by checkpoint 500. See
-`doc/phase3_toy_switchhead_checkpoint_trajectory.md`.
+`doc/experiments/phase3/phase3_toy_switchhead_checkpoint_trajectory.md`.
 
 ## Caveats
 

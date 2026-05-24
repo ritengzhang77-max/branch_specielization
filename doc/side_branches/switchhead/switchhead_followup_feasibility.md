@@ -200,4 +200,4 @@ single-expert loss deltas: about 0.024
 
 This looks like redundant shared active experts, not role-specific experts.
 
-See `doc/phase3_toy_switchhead_competition.md`.
+See `doc/experiments/phase3/phase3_toy_switchhead_competition.md`.

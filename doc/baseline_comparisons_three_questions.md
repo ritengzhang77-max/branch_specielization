@@ -301,7 +301,7 @@ uniform2 [64,64] vs hetero2 [32,96] or [48,80]
 This has now been run:
 
 ```text
-doc/phase3_toy_role_ontology_hetero2.md
+doc/experiments/phase3/phase3_toy_role_ontology_hetero2.md
 results/phase3_toy_role_ontology_hetero2_20260523
 ```
 

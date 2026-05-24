@@ -102,7 +102,7 @@ A layer-specific supervision follow-up found that supervising layer 0 only is
 not enough (`routed match=0.40`), supervising layer 1 only is closer but still
 partial (`routed match=0.80`), and supervising both layers is reliable
 (`routed match=1.00`). See
-`doc/phase3_toy_switchhead_layer_specific_supervision.md`.
+`doc/experiments/phase3/phase3_toy_switchhead_layer_specific_supervision.md`.
 
 ## Caveats
 

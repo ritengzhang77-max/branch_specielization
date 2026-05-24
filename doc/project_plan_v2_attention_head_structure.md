@@ -224,7 +224,7 @@ useful diagnostic but too small to carry the word "modularity" by itself.
 The first toy role-ontology experiment was run on 2026-05-23:
 
 ```text
-doc/phase3_toy_role_ontology_head_dim.md
+doc/experiments/phase3/phase3_toy_role_ontology_head_dim.md
 results/phase3_toy_role_ontology_head_dim_20260523
 ```
 

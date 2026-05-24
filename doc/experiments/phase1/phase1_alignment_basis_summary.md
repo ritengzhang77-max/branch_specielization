@@ -114,12 +114,12 @@ That distinction should be explicit in any paper draft.
 ## Files
 
 - Synthetic local-copy memo:
-  `doc/phase1_pythia160m_local_copy_candidate_pool.md`.
+  `doc/experiments/phase1/phase1_pythia160m_local_copy_candidate_pool.md`.
 - Inserted WikiText repeated-span memo:
-  `doc/phase1_naturalistic_span_candidate_pool.md`.
+  `doc/experiments/phase1/phase1_naturalistic_span_candidate_pool.md`.
 - Naturally occurring repeat-ngram memo:
-  `doc/phase1_natural_repeat_ngram_candidate_pool.md`.
+  `doc/experiments/phase1/phase1_natural_repeat_ngram_candidate_pool.md`.
 - Natural-repeat heterogeneity memo:
-  `doc/phase1_natural_repeat_heterogeneity.md`.
+  `doc/experiments/phase1/phase1_natural_repeat_heterogeneity.md`.
 - Paper-facing Phase 1 claims/methods memo:
-  `doc/phase1_paper_claims_and_methods.md`.
+  `doc/experiments/phase1/phase1_paper_claims_and_methods.md`.

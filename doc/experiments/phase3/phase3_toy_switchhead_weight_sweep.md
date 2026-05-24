@@ -81,7 +81,7 @@ modularity.
 A follow-up strength-duration check found that the reliable weight threshold
 drops when the selector cue lasts longer: at end step 450, the first tested
 reliable weight was `0.05`; at end step 800, the first tested reliable weight was
-`0.025`. See `doc/phase3_toy_switchhead_strength_duration_tradeoff.md`.
+`0.025`. See `doc/experiments/phase3/phase3_toy_switchhead_strength_duration_tradeoff.md`.
 
 ## Result Directories
 

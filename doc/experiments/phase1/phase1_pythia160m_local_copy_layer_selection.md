@@ -115,7 +115,7 @@ pool produced:
 
 This is substantially stronger than either fixed layer 3 or fixed layers 2+4.
 The detailed memo is
-`doc/phase1_pythia160m_local_copy_candidate_pool.md`.
+`doc/experiments/phase1/phase1_pythia160m_local_copy_candidate_pool.md`.
 
 ## Files
 

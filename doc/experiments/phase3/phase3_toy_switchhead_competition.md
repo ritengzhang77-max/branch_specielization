@@ -316,54 +316,54 @@ expert separation persist in 5/5 seeds.
 A follow-up selector-window sweep narrowed the provisional threshold. With the
 same weight, end step 400 was partial (`routed expert match=0.80`), end step 425
 had reliable gate splitting but one causal failure, and end step 450 was reliable
-in 5/5 seeds. See `doc/phase3_toy_switchhead_selector_window_sweep.md`.
+in 5/5 seeds. See `doc/experiments/phase3/phase3_toy_switchhead_selector_window_sweep.md`.
 
 A direct checkpointed trajectory with end step 450 confirmed the temporal
 ordering: reliable gate separation appeared by checkpoint 425, while reliable
 causal expert separation appeared by checkpoint 500. See
-`doc/phase3_toy_switchhead_checkpoint_trajectory.md`.
+`doc/experiments/phase3/phase3_toy_switchhead_checkpoint_trajectory.md`.
 
 At the same 450-step window, a selector-weight sweep found that weights `0.02`,
 `0.03`, `0.04`, and `0.045` all solved the task but remained only `4/5` on
 routed expert match. The first tested reliable 5/5 weight was `0.05`. See
-`doc/phase3_toy_switchhead_weight_sweep.md`.
+`doc/experiments/phase3/phase3_toy_switchhead_weight_sweep.md`.
 
 An additional strength-duration check showed that longer selector pressure lowers
 the reliable weight threshold. At an 800-step window, `0.02` was still partial
 but `0.025` and `0.03` were reliable in 5/5 seeds. See
-`doc/phase3_toy_switchhead_strength_duration_tradeoff.md`.
+`doc/experiments/phase3/phase3_toy_switchhead_strength_duration_tradeoff.md`.
 
 A label-symmetry control reversed the selector target to local -> expert 1 and
 induction -> expert 0. The reversed assignment was only `4/5` reliable at end
 step 450, but was `5/5` reliable at end step 800 with the causal roles reversed.
-See `doc/phase3_toy_switchhead_label_control.md`.
+See `doc/experiments/phase3/phase3_toy_switchhead_label_control.md`.
 
 A two-layer SwitchHead follow-up showed that depth does not rescue spontaneous
 modularity: the spontaneous two-layer model solved the task but had gate same-top
 `1.00` and routed match `0.20`. The induced two-layer condition restored 5/5
 role modularity, with the top causal modules localized in layer 1. See
-`doc/phase3_toy_switchhead_two_layer.md`.
+`doc/experiments/phase3/phase3_toy_switchhead_two_layer.md`.
 
 A layer-specific follow-up showed that the selector cue must reach the relevant
 layer: supervising layer 0 only was not enough, layer 1 only was partial, and
 both-layer supervision was reliable. See
-`doc/phase3_toy_switchhead_layer_specific_supervision.md`.
+`doc/experiments/phase3/phase3_toy_switchhead_layer_specific_supervision.md`.
 
 A selector-type control separated SwitchHead's output and value selectors. Output
 selector supervision alone was sufficient for 5/5 causal role modularity; value
 selector supervision alone strongly split value gates but produced no causal role
-modularity. See `doc/phase3_toy_switchhead_selector_type.md`.
+modularity. See `doc/experiments/phase3/phase3_toy_switchhead_selector_type.md`.
 
 The two-layer selector-type extension preserved the same ordering at the causal
 layer: output-only layer-1 supervision was 5/5 reliable, while value-only and
 both-selector layer-1 supervision were both 4/5. See
-`doc/phase3_toy_switchhead_two_layer_selector_type.md`.
+`doc/experiments/phase3/phase3_toy_switchhead_two_layer_selector_type.md`.
 
 An expanded-seed robustness pass confirmed the core induced results. One-layer
 output-selector supervision was reliable across seeds 1-10, and two-layer
 all-layer output-selector supervision was also reliable across seeds 1-10 with
 local top `L1E0` and induction top `L1E1` in every two-layer seed. See
-`doc/phase3_toy_switchhead_seed_robustness.md`.
+`doc/experiments/phase3/phase3_toy_switchhead_seed_robustness.md`.
 
 So the best interpretation is:
 
@@ -412,8 +412,8 @@ one-layer induced computation is fragile on the value side. Swapping `v` or
 performance; swapping `o` or `sel_o` alone is tolerated.
 ```
 
-See `doc/phase3_toy_switchhead_selector_type.md` and
-`doc/phase3_toy_switchhead_swap_interventions.md`.
+See `doc/experiments/phase3/phase3_toy_switchhead_selector_type.md` and
+`doc/experiments/phase3/phase3_toy_switchhead_swap_interventions.md`.
 
 The two-layer swap follow-up adds:
 
@@ -422,7 +422,7 @@ the layer-1 causal module has the same value-side codebook fragility, while
 layer-0 swaps mainly damage local-role support.
 ```
 
-See `doc/phase3_toy_switchhead_two_layer_swap_interventions.md`.
+See `doc/experiments/phase3/phase3_toy_switchhead_two_layer_swap_interventions.md`.
 
 ## Caveats
 
@@ -462,28 +462,28 @@ SwitchHead-specific tests are now:
 - Transient weak-selection result directory:
   `results/phase3_toy_switchhead_competition_weak_w005_end800_seed5_steps2000/`
 - Selector-window sweep memo:
-  `doc/phase3_toy_switchhead_selector_window_sweep.md`
+  `doc/experiments/phase3/phase3_toy_switchhead_selector_window_sweep.md`
 - Checkpoint trajectory memo:
-  `doc/phase3_toy_switchhead_checkpoint_trajectory.md`
+  `doc/experiments/phase3/phase3_toy_switchhead_checkpoint_trajectory.md`
 - Selector-weight sweep memo:
-  `doc/phase3_toy_switchhead_weight_sweep.md`
+  `doc/experiments/phase3/phase3_toy_switchhead_weight_sweep.md`
 - Strength-duration tradeoff memo:
-  `doc/phase3_toy_switchhead_strength_duration_tradeoff.md`
+  `doc/experiments/phase3/phase3_toy_switchhead_strength_duration_tradeoff.md`
 - Expert-label control memo:
-  `doc/phase3_toy_switchhead_label_control.md`
+  `doc/experiments/phase3/phase3_toy_switchhead_label_control.md`
 - Two-layer SwitchHead memo:
-  `doc/phase3_toy_switchhead_two_layer.md`
+  `doc/experiments/phase3/phase3_toy_switchhead_two_layer.md`
 - Layer-specific supervision memo:
-  `doc/phase3_toy_switchhead_layer_specific_supervision.md`
+  `doc/experiments/phase3/phase3_toy_switchhead_layer_specific_supervision.md`
 - Selector-type control memo:
-  `doc/phase3_toy_switchhead_selector_type.md`
+  `doc/experiments/phase3/phase3_toy_switchhead_selector_type.md`
 - Two-layer selector-type memo:
-  `doc/phase3_toy_switchhead_two_layer_selector_type.md`
+  `doc/experiments/phase3/phase3_toy_switchhead_two_layer_selector_type.md`
 - Seed robustness memo:
-  `doc/phase3_toy_switchhead_seed_robustness.md`
+  `doc/experiments/phase3/phase3_toy_switchhead_seed_robustness.md`
 - Expert-swap intervention memo:
-  `doc/phase3_toy_switchhead_swap_interventions.md`
+  `doc/experiments/phase3/phase3_toy_switchhead_swap_interventions.md`
 - Two-layer expert-swap intervention memo:
-  `doc/phase3_toy_switchhead_two_layer_swap_interventions.md`
+  `doc/experiments/phase3/phase3_toy_switchhead_two_layer_swap_interventions.md`
 - Feasibility memo:
-  `doc/switchhead_followup_feasibility.md`
+  `doc/side_branches/switchhead/switchhead_followup_feasibility.md`

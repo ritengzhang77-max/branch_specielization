@@ -254,7 +254,7 @@ directory contains all target chunks.
   This includes `target_diagnostic_summary.csv` for the target-level
   heterogeneity check.
 - Chunk combiner: `scripts/analyze_local_copy_chunks.py`.
-- Sleep-run log: `doc/autonomous_sleep_log_2026-05-22.md`.
+- Sleep-run log: `doc/logs/autonomous_sleep/autonomous_sleep_log_2026-05-22.md`.
 
 ## Current Interpretation
 
@@ -291,8 +291,8 @@ layer 3). A cross-layer candidate-pool follow-up then fixed the structural-slot
 problem: selecting the top 2 local-copy heads across layers 2-4 and matching
 over the full cross-layer candidate pool produced `aligned-minus-same=1.7838`,
 with aligned transfer better in `66/72` ordered pairs. Details are in
-`doc/phase1_pythia160m_local_copy_layer_selection.md` and
-`doc/phase1_pythia160m_local_copy_candidate_pool.md`.
+`doc/experiments/phase1/phase1_pythia160m_local_copy_layer_selection.md` and
+`doc/experiments/phase1/phase1_pythia160m_local_copy_candidate_pool.md`.
 
 ## Recommended Next Step
 

@@ -380,7 +380,7 @@ negative outlier; the 160M effect remains large.
 
 ## Progress: Alignment-Basis Summary Memo
 
-Wrote `doc/phase1_alignment_basis_summary.md`.
+Wrote `doc/experiments/phase1/phase1_alignment_basis_summary.md`.
 
 Current consolidated conclusion:
 
@@ -583,7 +583,7 @@ heterogeneous and alignment-basis dependent."
 
 ## Progress: Natural-Repeat Heterogeneity Inspection
 
-Wrote `doc/phase1_natural_repeat_heterogeneity.md`.
+Wrote `doc/experiments/phase1/phase1_natural_repeat_heterogeneity.md`.
 
 Main diagnostic points:
 
@@ -723,7 +723,7 @@ Generic Phase 0 matching remains neutral.
 
 ## Progress: Phase 1 Paper-Facing Claims Memo
 
-Wrote `doc/phase1_paper_claims_and_methods.md`.
+Wrote `doc/experiments/phase1/phase1_paper_claims_and_methods.md`.
 
 Current consolidated claim:
 
@@ -744,7 +744,7 @@ and then explicit branch/heterogeneous architectures as the next stage.
 
 ## Progress: Phase 3 Structural-to-Functional Synthesis
 
-Wrote `doc/phase3_structural_to_functional_synthesis.md`.
+Wrote `doc/experiments/phase3/phase3_structural_to_functional_synthesis.md`.
 
 Current answer to the main framing:
 
@@ -783,7 +783,7 @@ Ran the planned dense weak-token-router trajectory:
 - analysis:
   `results/phase3_toy_trajectory_consolidation_end800_analysis/`;
 - memo:
-  `doc/phase3_toy_router_consolidation_window.md`.
+  `doc/experiments/phase3/phase3_toy_router_consolidation_window.md`.
 
 Key milestones in the solved regime:
 
@@ -1028,7 +1028,7 @@ gate specialization can precede causal functional modularity.
 Wrote:
 
 ```text
-doc/phase3_toy_switchhead_selector_window_sweep.md
+doc/experiments/phase3/phase3_toy_switchhead_selector_window_sweep.md
 ```
 
 ## Progress: SwitchHead Checkpoint Trajectory
@@ -1075,7 +1075,7 @@ functional modularity.
 Wrote:
 
 ```text
-doc/phase3_toy_switchhead_checkpoint_trajectory.md
+doc/experiments/phase3/phase3_toy_switchhead_checkpoint_trajectory.md
 ```
 
 ## Progress: SwitchHead Selector-Weight Sweep
@@ -1107,7 +1107,7 @@ decomposition, not task competence.
 Wrote:
 
 ```text
-doc/phase3_toy_switchhead_weight_sweep.md
+doc/experiments/phase3/phase3_toy_switchhead_weight_sweep.md
 ```
 
 ## Progress: SwitchHead Strength-Duration Tradeoff
@@ -1135,7 +1135,7 @@ duration compensates for cue strength: the reliable boundary moves from between
 Wrote:
 
 ```text
-doc/phase3_toy_switchhead_strength_duration_tradeoff.md
+doc/experiments/phase3/phase3_toy_switchhead_strength_duration_tradeoff.md
 ```
 
 ## Progress: SwitchHead Expert-Label Control
@@ -1173,7 +1173,7 @@ The short-window threshold is label/optimization sensitive.
 Wrote:
 
 ```text
-doc/phase3_toy_switchhead_label_control.md
+doc/experiments/phase3/phase3_toy_switchhead_label_control.md
 ```
 
 ## Progress: Phase 3 Synthesis Updated
@@ -1181,7 +1181,7 @@ doc/phase3_toy_switchhead_label_control.md
 Updated:
 
 ```text
-doc/phase3_structural_to_functional_synthesis.md
+doc/experiments/phase3/phase3_structural_to_functional_synthesis.md
 ```
 
 Current synthesis:
@@ -1245,7 +1245,7 @@ modularity survives and localizes causally to the later layer.
 Wrote:
 
 ```text
-doc/phase3_toy_switchhead_two_layer.md
+doc/experiments/phase3/phase3_toy_switchhead_two_layer.md
 ```
 
 ## Progress: Layer-Specific SwitchHead Supervision
@@ -1280,7 +1280,7 @@ layers are needed for the robust 5/5 result in this setup.
 Wrote:
 
 ```text
-doc/phase3_toy_switchhead_layer_specific_supervision.md
+doc/experiments/phase3/phase3_toy_switchhead_layer_specific_supervision.md
 ```
 
 Updated the Phase 3 synthesis again with the two-layer and layer-specific
@@ -1319,7 +1319,7 @@ splits value routing but does not induce causal role modularity.
 Wrote:
 
 ```text
-doc/phase3_toy_switchhead_selector_type.md
+doc/experiments/phase3/phase3_toy_switchhead_selector_type.md
 ```
 
 ## Progress: Two-Layer SwitchHead Selector-Type Control
@@ -1344,7 +1344,7 @@ but output selector pressure remains the clean sufficient cue.
 Wrote:
 
 ```text
-doc/phase3_toy_switchhead_two_layer_selector_type.md
+doc/experiments/phase3/phase3_toy_switchhead_two_layer_selector_type.md
 ```
 
 ## Progress: SwitchHead Expanded-Seed Robustness
@@ -1376,7 +1376,7 @@ two-layer spontaneous condition: only 1/10 routed match, shared gates
 Wrote:
 
 ```text
-doc/phase3_toy_switchhead_seed_robustness.md
+doc/experiments/phase3/phase3_toy_switchhead_seed_robustness.md
 ```
 
 ## Progress: SwitchHead Expert-Swap Interventions
@@ -1431,7 +1431,7 @@ swapping both together restores it.
 Wrote:
 
 ```text
-doc/phase3_toy_switchhead_swap_interventions.md
+doc/experiments/phase3/phase3_toy_switchhead_swap_interventions.md
 ```
 
 ## Progress: Two-Layer SwitchHead Expert-Swap Interventions
@@ -1487,7 +1487,7 @@ induction module.
 Wrote:
 
 ```text
-doc/phase3_toy_switchhead_two_layer_swap_interventions.md
+doc/experiments/phase3/phase3_toy_switchhead_two_layer_swap_interventions.md
 ```
 
 ## Progress: Attention-Weighted Value-Gate Diagnostic

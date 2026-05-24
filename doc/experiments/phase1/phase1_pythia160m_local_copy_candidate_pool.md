@@ -242,4 +242,4 @@ was evidence that fixed structural slots are too brittle.
 - Pythia-410M task-local `step0` control:
   `results/phase1_pythia410m_local_copy_task_alignment_layers2_6_top2_step0/`.
 - Prior layer-selection memo:
-  `doc/phase1_pythia160m_local_copy_layer_selection.md`.
+  `doc/experiments/phase1/phase1_pythia160m_local_copy_layer_selection.md`.

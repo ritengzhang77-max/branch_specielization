@@ -77,7 +77,7 @@ moving the 64-dim head moved the role in 5/5 seeds
 Memo:
 
 ```text
-doc/phase3_toy_head_dim_intervention.md
+doc/experiments/phase3/phase3_toy_head_dim_intervention.md
 ```
 
 2. Toy induction / repeated-sequence continuation:
@@ -95,7 +95,7 @@ moving the 64-dim head moved the role in 5/5 seeds
 Memo:
 
 ```text
-doc/phase3_toy_induction_head_dim_intervention.md
+doc/experiments/phase3/phase3_toy_induction_head_dim_intervention.md
 ```
 
 These are the strongest current results for the user's intended project.
@@ -107,7 +107,7 @@ A larger ordinary-attention-head local-vs-induction sweep was run on
 
 ```text
 results/phase3_toy_competition_head_dim_modularity_sweep_20260523
-doc/phase3_attention_head_specialization_modularity_sweep.md
+doc/experiments/phase3/phase3_attention_head_specialization_modularity_sweep.md
 ```
 
 The experiment used 10 seeds across nine matched-budget head-dimension layouts.

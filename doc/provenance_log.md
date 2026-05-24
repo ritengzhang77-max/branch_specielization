@@ -32,14 +32,14 @@ functional modularity?
   - raw same-index similarity mean: 0.5813;
   - Hungarian-matched similarity mean: 0.6828;
   - matched-minus-random mean: 0.1115.
-- Recorded the smoke result in `doc/phase0_smoke_report.md`.
+- Recorded the smoke result in `doc/experiments/phase0/phase0_smoke_report.md`.
 - Ran a successful Pythia-160M two-seed Phase 0 pilot:
   - seeds: 1, 2;
   - probe texts: 8;
   - raw same-index similarity mean: 0.7082;
   - Hungarian-matched similarity mean: 0.8220;
   - matched-minus-random mean: 0.0989.
-- Added `doc/phase0_pythia160m_pilot.md`.
+- Added `doc/experiments/phase0/phase0_pythia160m_pilot.md`.
 - Updated `scripts/attention_stability.py` to write `layer_summary.csv` in
   addition to pairwise layer metrics.
 - Ran the all-seed Pythia-160M Phase 0 baseline:
@@ -50,7 +50,7 @@ functional modularity?
   - Hungarian-matched similarity mean: 0.8127;
   - matched-minus-random mean: 0.0998;
   - all layers had positive matched-minus-random gaps.
-- Recorded the all-seed result in `doc/phase0_pythia160m_all_seed_baseline.md`.
+- Recorded the all-seed result in `doc/experiments/phase0/phase0_pythia160m_all_seed_baseline.md`.
 - Noted an important limitation: current extraction compares Hugging Face
   returned attention probabilities, not pre-softmax raw attention scores.
 - Updated `scripts/attention_stability.py` to support:
@@ -62,7 +62,7 @@ functional modularity?
   - raw same-index similarity mean: 0.3342;
   - Hungarian-matched similarity mean: 0.6831;
   - matched-minus-random mean: 0.3444.
-- Recorded this result in `doc/phase0_pythia160m_raw_score_pilot.md`.
+- Recorded this result in `doc/experiments/phase0/phase0_pythia160m_raw_score_pilot.md`.
 - Ran the all-seed Pythia-160M raw-score baseline:
   - seeds: 1 through 9;
   - revision: `step143000`;
@@ -71,7 +71,7 @@ functional modularity?
   - Hungarian-matched similarity mean: 0.6692;
   - matched-minus-random mean: 0.2982.
 - Recorded this result in
-  `doc/phase0_pythia160m_raw_score_all_seed_baseline.md`.
+  `doc/experiments/phase0/phase0_pythia160m_raw_score_all_seed_baseline.md`.
 - Created checkpoint deck:
   `presentations/2026-05-21-1535-raw-score-checkpoint/raw_score_checkpoint.pdf`.
 
@@ -94,7 +94,7 @@ functional modularity?
   - layer 1 raw top-head match rate is 0.0833;
   - layer 1 aligned top-head match rate is 0.7778.
 - Recorded the result in
-  `doc/phase1_pythia160m_attention_role_specialization.md`.
+  `doc/experiments/phase1/phase1_pythia160m_attention_role_specialization.md`.
 - Created checkpoint deck:
   `presentations/2026-05-21-1553-role-specialization-checkpoint/role_specialization_checkpoint.pdf`.
 
@@ -120,7 +120,7 @@ functional modularity?
   - raw-score alignment transfers the causal role across seeds much better than
     same-index transfer.
 - Recorded the result in
-  `doc/phase1_repeat_match_ablation_pythia160m.md`.
+  `doc/experiments/phase1/phase1_repeat_match_ablation_pythia160m.md`.
 - Created checkpoint deck:
   `presentations/2026-05-21-1603-repeat-match-ablation-checkpoint/repeat_match_ablation_checkpoint.pdf`.
 
@@ -161,7 +161,7 @@ functional modularity?
     functional specialization;
   - the position control suggests the role followed head dimension, not fixed
     head index.
-- Recorded the result in `doc/phase3_toy_head_dim_intervention.md`.
+- Recorded the result in `doc/experiments/phase3/phase3_toy_head_dim_intervention.md`.
 - Created checkpoint deck:
   `presentations/2026-05-21-2248-toy-head-dim-intervention/toy_head_dim_intervention_checkpoint.pdf`.
 
@@ -202,7 +202,7 @@ functional modularity?
     an induction-style repeated-token task;
   - heterogeneous head dimensions appear to turn the high-capacity head into a
     stable causal role slot.
-- Recorded the result in `doc/phase3_toy_induction_head_dim_intervention.md`.
+- Recorded the result in `doc/experiments/phase3/phase3_toy_induction_head_dim_intervention.md`.
 - Created checkpoint deck:
   `presentations/2026-05-22-0818-toy-induction-head-dim/toy_induction_head_dim_checkpoint.pdf`.
 
@@ -241,7 +241,7 @@ functional modularity?
   - the project should avoid claiming that head dimension alone automatically
     allocates semantic role classes.
 - Recorded the result in
-  `doc/phase3_toy_competition_head_dim_intervention.md`.
+  `doc/experiments/phase3/phase3_toy_competition_head_dim_intervention.md`.
 - Created checkpoint deck:
   `presentations/2026-05-22-0845-toy-competition-head-dim/toy_competition_head_dim_checkpoint.pdf`.
 
@@ -277,7 +277,7 @@ functional modularity?
   - heterogeneous head dimensions support a symmetry-breaking / slot-formation
     claim, not an automatic semantic role taxonomy claim.
 - Recorded the result in
-  `doc/phase3_toy_competition_layout_permutations.md`.
+  `doc/experiments/phase3/phase3_toy_competition_layout_permutations.md`.
 - Created checkpoint deck:
   `presentations/2026-05-22-0858-layout-permutation/layout_permutation_checkpoint.pdf`.
 
@@ -313,7 +313,7 @@ functional modularity?
     secondary slots;
   - the best current mechanism is capacity-slot competition, not fixed
     dimension-to-function semantics.
-- Recorded the result in `doc/phase3_toy_competition_weight_sweep.md`.
+- Recorded the result in `doc/experiments/phase3/phase3_toy_competition_weight_sweep.md`.
 - Created checkpoint deck:
   `presentations/2026-05-22-0921-weight-sweep/weight_sweep_checkpoint.pdf`.
 
@@ -351,7 +351,7 @@ functional modularity?
   - the best mechanism is capacity-attractor slots plus task-pressure,
     layout-sensitive, and optimization-basin-sensitive role allocation.
 - Recorded the result in
-  `doc/phase3_toy_competition_all_layout_weight_sweep.md`.
+  `doc/experiments/phase3/phase3_toy_competition_all_layout_weight_sweep.md`.
 - Created checkpoint deck:
   `presentations/2026-05-22-1135-all-layout-weight-sweep/all_layout_weight_sweep_checkpoint.pdf`.
 
@@ -383,7 +383,7 @@ functional modularity?
     role separation;
   - structural heterogeneity can stabilize functional specialization, but
     functional modularity requires more than differentiated capacity.
-- Recorded the result in `doc/phase3_toy_competition_two_attractor.md`.
+- Recorded the result in `doc/experiments/phase3/phase3_toy_competition_two_attractor.md`.
 - Created checkpoint deck:
   `presentations/2026-05-22-1152-two-attractor/two_attractor_checkpoint.pdf`.
 
@@ -424,7 +424,7 @@ functional modularity?
   - the project should split the architectural claim into capacity
     heterogeneity for stable specialization and routing/separation for
     modularity.
-- Recorded the result in `doc/phase3_toy_branch_isolation.md`.
+- Recorded the result in `doc/experiments/phase3/phase3_toy_branch_isolation.md`.
 - Created checkpoint deck:
   `presentations/2026-05-22-1230-branch-isolation/branch_isolation_checkpoint.pdf`.
 
@@ -485,7 +485,7 @@ functional modularity?
   - in this setup, they did not discover role-specific functional modularity;
   - explicit oracle routing remains a positive upper bound showing that
     branch-level functional modularity is possible.
-- Recorded the result in `doc/phase3_toy_learned_router.md`.
+- Recorded the result in `doc/experiments/phase3/phase3_toy_learned_router.md`.
 - Created checkpoint deck:
   `presentations/2026-05-22-1249-learned-router/learned_router_checkpoint.pdf`.
 
@@ -524,7 +524,7 @@ functional modularity?
     functional modularity in this toy setup;
   - this is not evidence for spontaneous modularity, because the auxiliary loss
     directly names the desired role split.
-- Recorded the result in `doc/phase3_toy_weak_router.md`.
+- Recorded the result in `doc/experiments/phase3/phase3_toy_weak_router.md`.
 - Created checkpoint deck:
   `presentations/2026-05-22-1300-weak-router/weak_router_checkpoint.pdf`.
 
@@ -562,7 +562,7 @@ functional modularity?
   - the routing objective must be strong enough to reshape branch computations,
     not only gate probabilities;
   - induction routing is the limiting role.
-- Recorded the result in `doc/phase3_toy_weak_router_sweep.md`.
+- Recorded the result in `doc/experiments/phase3/phase3_toy_weak_router_sweep.md`.
 - Created checkpoint deck:
   `presentations/2026-05-22-1354-weak-router-sweep/weak_router_sweep_checkpoint.pdf`.
 
@@ -599,7 +599,7 @@ functional modularity?
   - generic unlabeled gate regularizers were not enough in this toy setting;
   - the next test should change task pressure or branch bottlenecks rather than
     only sweep more generic regularizer weights.
-- Recorded the result in `doc/phase3_toy_unlabeled_router_regularization.md`.
+- Recorded the result in `doc/experiments/phase3/phase3_toy_unlabeled_router_regularization.md`.
 - Created checkpoint deck:
   `presentations/2026-05-22-1551-unlabeled-router/unlabeled_router_checkpoint.pdf`.
 
@@ -634,7 +634,7 @@ functional modularity?
     regularizers discover causal functional modularity in this setup;
   - the next decisive test should change task conflict, not only capacity or
     entropy/balance weights.
-- Recorded the result in `doc/phase3_toy_bottleneck_router.md`.
+- Recorded the result in `doc/experiments/phase3/phase3_toy_bottleneck_router.md`.
 - Created checkpoint deck:
   `presentations/2026-05-22-1609-bottleneck-router/bottleneck_router_checkpoint.pdf`.
 
@@ -672,7 +672,7 @@ functional modularity?
     far;
   - the next test should anneal weak labels to see whether the role signal is
     needed only early as a symmetry breaker or throughout training.
-- Recorded the result in `doc/phase3_toy_conflict_router.md`.
+- Recorded the result in `doc/experiments/phase3/phase3_toy_conflict_router.md`.
 - Created checkpoint deck:
   `presentations/2026-05-22-1626-conflict-router/conflict_router_checkpoint.pdf`.
 
@@ -715,7 +715,7 @@ functional modularity?
     step for top-branch modularity to persist;
   - it must last through a large fraction of training in this setup;
   - continuous pressure gives much stronger causal separation than late removal.
-- Recorded the result in `doc/phase3_toy_annealed_router.md`.
+- Recorded the result in `doc/experiments/phase3/phase3_toy_annealed_router.md`.
 - Created checkpoint deck:
   `presentations/2026-05-22-1709-annealed-router/annealed_router_checkpoint.pdf`.
 
@@ -750,7 +750,7 @@ functional modularity?
     functional branch modularity;
   - causal branch modularity consolidates later under sustained role-aligned
     routing pressure.
-- Recorded the result in `doc/phase3_toy_router_trajectory.md`.
+- Recorded the result in `doc/experiments/phase3/phase3_toy_router_trajectory.md`.
 - Created checkpoint deck:
   `presentations/2026-05-22-1745-router-trajectory/router_trajectory_checkpoint.pdf`.
 
@@ -780,7 +780,7 @@ functional modularity?
   - it does not establish branch modularity in Pythia, because these are ordinary
     attention heads rather than routed branches.
 - Recorded the result in
-  `doc/phase1_pythia14m_repeat_match_checkpoint_trajectory.md`.
+  `doc/experiments/phase1/phase1_pythia14m_repeat_match_checkpoint_trajectory.md`.
 - Created checkpoint deck:
   `presentations/2026-05-22-1759-pythia-repeat-trajectory/pythia_repeat_trajectory_checkpoint.pdf`.
 
@@ -818,7 +818,7 @@ functional modularity?
   - this supports weak, relabeled role universality, not branch modularity in
     ordinary Pythia heads.
 - Recorded the result in
-  `doc/phase1_pythia160m_repeat_match_alignment_trajectory.md`.
+  `doc/experiments/phase1/phase1_pythia160m_repeat_match_alignment_trajectory.md`.
 - Created checkpoint deck:
   `presentations/2026-05-22-1902-pythia160m-alignment-trajectory/pythia160m_alignment_trajectory_checkpoint.pdf`.
 
@@ -845,7 +845,7 @@ functional modularity?
   - the timing story is revised because causal aligned transfer is already
     detectable by step4000 in the 9-seed run, not only at later checkpoints.
 - Recorded the result in
-  `doc/phase1_pythia160m_seed9_alignment_selected_checkpoints.md`.
+  `doc/experiments/phase1/phase1_pythia160m_seed9_alignment_selected_checkpoints.md`.
 - Created checkpoint deck:
   `presentations/phase1/2026-05-22-2032-pythia160m-seed9-alignment/outputs/pythia160m_seed9_alignment_checkpoint.pdf`.
 
@@ -853,7 +853,7 @@ functional modularity?
 
 - Read and followed `/home/gavin/.codex/skills/autonomous-sleep-research/SKILL.md`.
 - Recorded autonomous block start and planned stop in
-  `doc/autonomous_sleep_log_2026-05-22.md`.
+  `doc/logs/autonomous_sleep/autonomous_sleep_log_2026-05-22.md`.
 - Added `scripts/pythia_local_copy_alignment.py`, a local-copy /
   previous-token contrast task:
   - sequence pattern `[x, SEP, x]`;
@@ -888,7 +888,7 @@ functional modularity?
   partial-output writes and `--target-seeds` chunking for the next attempt.
 - Added `scripts/analyze_local_copy_chunks.py` to merge completed local-copy
   target chunks as they become available.
-- Recorded the pilot in `doc/phase1_pythia160m_local_copy_pilot.md`.
+- Recorded the pilot in `doc/experiments/phase1/phase1_pythia160m_local_copy_pilot.md`.
 
 ## 2026-05-22 - Local-copy target seeds 4-6 completed
 
@@ -979,7 +979,7 @@ functional modularity?
   (`aligned-minus-same=0.6995`). It fixes different seeds while harming the
   original layer-3 seeds.
 - Wrote the follow-up memo:
-  `doc/phase1_pythia160m_local_copy_layer_selection.md`.
+  `doc/experiments/phase1/phase1_pythia160m_local_copy_layer_selection.md`.
 
 ## 2026-05-22 - Cross-layer candidate-pool local-copy transfer
 
@@ -1008,7 +1008,7 @@ functional modularity?
   relabeling, but the raw structural layer/head slot can shift across nearby
   layers.
 - Wrote the candidate-pool memo:
-  `doc/phase1_pythia160m_local_copy_candidate_pool.md`.
+  `doc/experiments/phase1/phase1_pythia160m_local_copy_candidate_pool.md`.
 
 ## 2026-05-22 - Candidate-pool local-copy checkpoint trajectory
 
@@ -1121,7 +1121,7 @@ functional modularity?
 
 ## 2026-05-22 - Naturalistic local-copy probe design
 
-- Wrote `doc/naturalistic_local_copy_probe_design.md`.
+- Wrote `doc/experiments/phase1/naturalistic_local_copy_probe_design.md`.
 - The memo proposes a repeated-natural-span task:
   `prefix + span + distractor + span`, scored on next-token prediction in the
   second span occurrence.
@@ -1133,7 +1133,7 @@ functional modularity?
 
 ## 2026-05-22 - Sleep checkpoint summary
 
-- Wrote `doc/autonomous_sleep_checkpoint_summary_2026-05-22.md`.
+- Wrote `doc/logs/autonomous_sleep/autonomous_sleep_checkpoint_summary_2026-05-22.md`.
 - The checkpoint memo summarizes repeat-match, fixed-layer local-copy,
   layer-selection, cross-layer candidate-pool, checkpoint trajectory, and
   model-size results.
@@ -1182,7 +1182,7 @@ functional modularity?
   cross-seed role-alignment signal in 160M and a weaker suggestive signal in
   410M. The result is much smaller than synthetic local-copy, so the paper claim
   should present it as external-validity support, not as the primary effect.
-- Full memo: `doc/phase1_naturalistic_span_candidate_pool.md`.
+- Full memo: `doc/experiments/phase1/phase1_naturalistic_span_candidate_pool.md`.
 
 ## 2026-05-23 - Naturalistic 160M larger-sample replication and step0 control
 
@@ -1291,7 +1291,7 @@ functional modularity?
 - Revised interpretation: the stricter natural-repeat task supports cross-seed
   role transfer only when the alignment basis is role-specific. Generic
   attention-score matching can miss a real but weak functional role.
-- Full memo: `doc/phase1_natural_repeat_ngram_candidate_pool.md`.
+- Full memo: `doc/experiments/phase1/phase1_natural_repeat_ngram_candidate_pool.md`.
 
 ## 2026-05-23 - Inserted natural-span task-specific alignment
 
@@ -1357,7 +1357,7 @@ functional modularity?
 
 ## 2026-05-23 - Alignment-basis summary
 
-- Wrote `doc/phase1_alignment_basis_summary.md`.
+- Wrote `doc/experiments/phase1/phase1_alignment_basis_summary.md`.
 - Consolidated the emerging methodological result:
   - synthetic local-copy is high-signal and transfers under generic Phase 0
     alignment;
@@ -1518,7 +1518,7 @@ functional modularity?
 
 ## 2026-05-23 - Natural-repeat heterogeneity inspection
 
-- Wrote `doc/phase1_natural_repeat_heterogeneity.md`.
+- Wrote `doc/experiments/phase1/phase1_natural_repeat_heterogeneity.md`.
 - Main finding: the weak 410M exact-repeat result is partly driven by
   same-index outliers and weak target own-head causality, not simply by
   aligned heads failing.
@@ -1617,7 +1617,7 @@ functional modularity?
 
 ## 2026-05-23 - Phase 1 paper-facing claims memo
 
-- Wrote `doc/phase1_paper_claims_and_methods.md`.
+- Wrote `doc/experiments/phase1/phase1_paper_claims_and_methods.md`.
 - Consolidated the current Phase 1 claim:
   functional repeat/copy roles are stable across seeds after role-level
   relabeling, but weak natural roles require role-specific alignment features.
@@ -1629,7 +1629,7 @@ functional modularity?
 
 ## 2026-05-23 - Phase 3 structural-to-functional synthesis
 
-- Wrote `doc/phase3_structural_to_functional_synthesis.md`.
+- Wrote `doc/experiments/phase3/phase3_structural_to_functional_synthesis.md`.
 - Consolidated the current answer to the user's reframed research question:
 
 ```text
@@ -1661,7 +1661,7 @@ computations to consolidate.
   `results/phase3_toy_trajectory_consolidation_end800/`.
 - Analysis:
   `results/phase3_toy_trajectory_consolidation_end800_analysis/`.
-- Wrote `doc/phase3_toy_router_consolidation_window.md`.
+- Wrote `doc/experiments/phase3/phase3_toy_router_consolidation_window.md`.
 - Main result:
   - first solved checkpoint with gate routed-role match 5/5: step 400;
   - first solved checkpoint with causal routed-role match 5/5: step 550;
@@ -1680,7 +1680,7 @@ computations to consolidate.
 - Combined these with the existing matched `step0` control and final
   `step143000` run in:
   `results/phase1_pythia160m_wikitext103_ordinary_repeat_trajectory/`.
-- Wrote `doc/phase1_pythia160m_ordinary_repeat_checkpoint_trajectory.md`.
+- Wrote `doc/experiments/phase1/phase1_pythia160m_ordinary_repeat_checkpoint_trajectory.md`.
 - Main trajectory:
   - step0: probe `0.0077`, own excess `0.0009`, aligned-minus-same `0.0012`;
   - step4000: probe `0.1115`, own excess `0.0205`, aligned-minus-same `0.0154`;
@@ -1707,7 +1707,7 @@ computations to consolidate.
   `SwitchHeadRope` succeeds with output shape `(2, 16, 32)`.
 - CPU smoke fails because the SwitchHead implementation uses Triton CVMM kernels
   that require GPU tensors.
-- Wrote `doc/switchhead_followup_feasibility.md`.
+- Wrote `doc/side_branches/switchhead/switchhead_followup_feasibility.md`.
 - Updated `doc/plan.md` and `doc/research_questions.md` to use
   `RobertCsordas/moe_attention` for training code and `RobertCsordas/switchhead`
   for the first local plug-in experiment.
@@ -1735,7 +1735,7 @@ computations to consolidate.
   - routed expert match: `0.20`;
   - gate distribution distance: `0.0032`;
   - causal expert distribution distance: `0.0087`.
-- Wrote `doc/phase3_toy_switchhead_competition.md`.
+- Wrote `doc/experiments/phase3/phase3_toy_switchhead_competition.md`.
 - Interpretation: this SwitchHead pilot solves the task but does not
   spontaneously separate local and induction into different experts.
 - Ran a 4-expert, `moe_k=2` variant:
@@ -1789,7 +1789,7 @@ computations to consolidate.
   steps. This makes the result stronger than active-loss compliance.
 - Ran a selector-window sweep with end steps 400, 425, 450, 500, 600, and 800,
   plus the no-supervision and full-supervision baselines.
-- Wrote `doc/phase3_toy_switchhead_selector_window_sweep.md`.
+- Wrote `doc/experiments/phase3/phase3_toy_switchhead_selector_window_sweep.md`.
 - Main sweep result:
   - no supervision: routed expert match `0.20`, gate distance `0.0032`, causal
     distance `0.0087`;
@@ -1823,7 +1823,7 @@ computations to consolidate.
   - mean local and induction accuracy both `1.0`: checkpoint 1500.
 - Boundary seed: seed 4 has gate split at checkpoints 425 and 450, but the
   causal local role does not move to expert 0 until checkpoint 500.
-- Wrote `doc/phase3_toy_switchhead_checkpoint_trajectory.md`.
+- Wrote `doc/experiments/phase3/phase3_toy_switchhead_checkpoint_trajectory.md`.
 - Interpretation update: direct within-run evidence supports the ordering
   `gate specialization -> causal functional modularity`.
 
@@ -1846,7 +1846,7 @@ computations to consolidate.
     distance `0.3460`;
   - weight `0.05`: routed expert match `1.00`, gate distance `0.4476`, causal
     distance `0.4240`.
-- Wrote `doc/phase3_toy_switchhead_weight_sweep.md`.
+- Wrote `doc/experiments/phase3/phase3_toy_switchhead_weight_sweep.md`.
 - Interpretation update: at the shortest reliable 450-step window, the first
   tested selector weight that reliably induces 5/5 causal expert modularity is
   `0.05`. Smaller weights still influence routing but do not cross the
@@ -1865,7 +1865,7 @@ computations to consolidate.
     `0.5823`, causal distance `0.4834`;
   - weight `0.03`, end step 800: routed expert match `1.00`, gate distance
     `0.7632`, causal distance `0.5528`.
-- Wrote `doc/phase3_toy_switchhead_strength_duration_tradeoff.md`.
+- Wrote `doc/experiments/phase3/phase3_toy_switchhead_strength_duration_tradeoff.md`.
 - Interpretation update: selector duration can compensate for selector strength.
   The reliable weight boundary moves from between `0.045` and `0.05` at end step
   450 to between `0.02` and `0.025` at end step 800.
@@ -1882,11 +1882,11 @@ computations to consolidate.
     gate distance `0.3936`, causal distance `0.4014`;
   - reversed target, weight `0.05`, end step 800: routed expert match `1.00`,
     gate distance `0.9646`, causal distance `0.5609`.
-- Wrote `doc/phase3_toy_switchhead_label_control.md`.
+- Wrote `doc/experiments/phase3/phase3_toy_switchhead_label_control.md`.
 - Interpretation update: under sufficient cue duration, the causal roles follow
   the requested expert labels. The 450-step asymmetry cautions that the exact
   threshold is optimization- and label-assignment-sensitive.
-- Updated `doc/phase3_structural_to_functional_synthesis.md` to incorporate the
+- Updated `doc/experiments/phase3/phase3_structural_to_functional_synthesis.md` to incorporate the
   SwitchHead spontaneous negative result, induced positive result,
   gate-before-causality trajectory, strength-duration threshold, and
   reversed-label control.
@@ -1921,7 +1921,7 @@ computations to consolidate.
     4/5 seeds;
   - induced local top was `L1E0` in 5/5 seeds; induction top was `L1E1` in 5/5
     seeds.
-- Wrote `doc/phase3_toy_switchhead_two_layer.md`.
+- Wrote `doc/experiments/phase3/phase3_toy_switchhead_two_layer.md`.
 - Interpretation update: extra SwitchHead depth does not create spontaneous role
   modularity, but induced causal expert modularity survives and localizes to the
   later layer.
@@ -1942,11 +1942,11 @@ computations to consolidate.
     `0.80`, gate distance `0.4155`, causal distance `0.5791`;
   - both layers: gate same-top `0.00`, causal same-top `0.00`, routed match
     `1.00`, gate distance `0.7066`, causal distance `0.6148`.
-- Wrote `doc/phase3_toy_switchhead_layer_specific_supervision.md`.
+- Wrote `doc/experiments/phase3/phase3_toy_switchhead_layer_specific_supervision.md`.
 - Interpretation update: upstream gate splitting alone is not enough. Direct
   role-aligned pressure on the later causal layer is much closer to sufficient,
   but both-layer pressure is the robust condition in this setup.
-- Updated `doc/phase3_structural_to_functional_synthesis.md` with the two-layer
+- Updated `doc/experiments/phase3/phase3_structural_to_functional_synthesis.md` with the two-layer
   and layer-specific SwitchHead results.
 
 ## 2026-05-23 - SwitchHead selector-type control
@@ -1971,7 +1971,7 @@ computations to consolidate.
   - both: local acc `0.9506`, induction acc `1.0000`, routed match `1.00`,
     output gate distance `0.6978`, value gate distance `0.7860`, causal distance
     `0.6327`.
-- Wrote `doc/phase3_toy_switchhead_selector_type.md`.
+- Wrote `doc/experiments/phase3/phase3_toy_switchhead_selector_type.md`.
 - Interpretation update: output selector pressure is the clean sufficient path.
   Value selector pressure alone can split value routing but does not produce
   causal role modularity; adding it to output pressure can hurt optimization.
@@ -1996,7 +1996,7 @@ computations to consolidate.
   - both: local acc `1.0000`, induction acc `1.0000`, routed match `0.80`,
     output gate distance `0.2764`, value gate distance `0.3518`, causal distance
     `0.7956`.
-- Wrote `doc/phase3_toy_switchhead_two_layer_selector_type.md`.
+- Wrote `doc/experiments/phase3/phase3_toy_switchhead_two_layer_selector_type.md`.
 - Interpretation update: value selector pressure is not null at the causal layer
   in a two-layer model, but output selector pressure remains the cleaner
   sufficient cue.
@@ -2020,7 +2020,7 @@ computations to consolidate.
   - routed expert match `1.00`;
   - output gate distance `0.7777`;
   - causal expert distance `0.5551`.
-- Wrote `doc/phase3_toy_switchhead_seed_robustness.md`.
+- Wrote `doc/experiments/phase3/phase3_toy_switchhead_seed_robustness.md`.
 - Interpretation update: the core output-selector induced-modularity result is
   robust across 10/10 one-layer seeds and 10/10 two-layer seeds. The two-layer
   causal localization to `L1E0` for local and `L1E1` for induction also holds in
@@ -2035,7 +2035,7 @@ computations to consolidate.
     `0.0061`, causal distance `0.0086`;
   - two-layer spontaneous seeds 6-10: routed match `0.00`, gate distance
     `0.0041`, causal distance `0.1209`.
-- Updated `doc/phase3_toy_switchhead_seed_robustness.md`.
+- Updated `doc/experiments/phase3/phase3_toy_switchhead_seed_robustness.md`.
 - Interpretation update: the negative spontaneous result also survives the
   expanded seed set.
 
@@ -2067,9 +2067,9 @@ computations to consolidate.
   - `swap_output_selector`: `1.0000/1.0000`;
   - `swap_o_and_output_selector`: `1.0000/1.0000`;
   - `swap_all`: `1.0000/1.0000`.
-- Wrote `doc/phase3_toy_switchhead_swap_interventions.md`.
-- Updated `doc/phase3_structural_to_functional_synthesis.md`,
-  `doc/phase3_toy_switchhead_selector_type.md`,
+- Wrote `doc/experiments/phase3/phase3_toy_switchhead_swap_interventions.md`.
+- Updated `doc/experiments/phase3/phase3_structural_to_functional_synthesis.md`,
+  `doc/experiments/phase3/phase3_toy_switchhead_selector_type.md`,
   `doc/research_questions.md`, and `doc/plan.md`.
 - Interpretation update: output-selector pressure remains the clean sufficient
   training cue, but the frozen inference-time code is fragile on the value side.
@@ -2103,9 +2103,9 @@ computations to consolidate.
   - all-layer `swap_o`: `0.9237/1.0000`;
   - paired value-side relabeling and full relabeling restored `1.0000/1.0000`
     for all layer groups.
-- Wrote `doc/phase3_toy_switchhead_two_layer_swap_interventions.md`.
-- Updated `doc/phase3_structural_to_functional_synthesis.md`,
-  `doc/phase3_toy_switchhead_swap_interventions.md`,
+- Wrote `doc/experiments/phase3/phase3_toy_switchhead_two_layer_swap_interventions.md`.
+- Updated `doc/experiments/phase3/phase3_structural_to_functional_synthesis.md`,
+  `doc/experiments/phase3/phase3_toy_switchhead_swap_interventions.md`,
   `doc/research_questions.md`, and `doc/plan.md`.
 - Interpretation update: the main two-role value-side codebook localizes to
   layer 1, while layer 0 still has local-supporting expert-label structure that
@@ -2133,8 +2133,8 @@ computations to consolidate.
   - query-position value gate distance `0.0134`;
   - source-position value gate distance `0.0029`;
   - attended value-gate distance `0.0091`.
-- Updated `doc/phase3_toy_switchhead_swap_interventions.md`,
-  `doc/phase3_structural_to_functional_synthesis.md`,
+- Updated `doc/experiments/phase3/phase3_toy_switchhead_swap_interventions.md`,
+  `doc/experiments/phase3/phase3_structural_to_functional_synthesis.md`,
   `doc/research_questions.md`, and `doc/plan.md`.
 - Interpretation update: the value-side swap fragility is not explained by
   simple marginal or attention-weighted local-vs-induction value-expert usage.
@@ -2251,7 +2251,7 @@ computations to consolidate.
 - Ran a 10-seed, nine-layout matched-budget sweep:
   `results/phase3_toy_competition_head_dim_modularity_sweep_20260523/`.
 - Added the memo:
-  `doc/phase3_attention_head_specialization_modularity_sweep.md`.
+  `doc/experiments/phase3/phase3_attention_head_specialization_modularity_sweep.md`.
 - Updated the direction lock:
   `doc/project_direction_attention_heads_primary.md`.
 - Main specialization result: in the one-64 heterogeneous layouts, the local
@@ -2280,7 +2280,7 @@ computations to consolidate.
 - Ran a 5-seed, six-layout matched-budget sweep:
   `results/phase3_toy_role_ontology_head_dim_20260523/`.
 - Added the memo:
-  `doc/phase3_toy_role_ontology_head_dim.md`.
+  `doc/experiments/phase3/phase3_toy_role_ontology_head_dim.md`.
 - Main structural role-affinity result: across the four one-64 heterogeneous
   layouts, local-copy and KV-lookup subroles chose the 64-dim structural type in
   `80/80` cases. Induction subroles split across 64/32/16, with
@@ -2309,7 +2309,7 @@ computations to consolidate.
   - `[48,80]`
   - `[16,112]`
 - Added memo:
-  `doc/phase3_toy_role_ontology_hetero2.md`.
+  `doc/experiments/phase3/phase3_toy_role_ontology_hetero2.md`.
 - Main baseline-vs-experiment table:
   - `uniform2`: specialization `0.636`, effective heads `2.25`, family gap
     `0.653`, ARI `1.000`.
@@ -2360,7 +2360,35 @@ computations to consolidate.
   - about 20 roles total.
 - Next planned artifact:
   - implement a Toy Ontology v2 smoke test before any full expensive sweep;
-  - compare `uniform4`, `uniform2`, best one-64 hetero4, `[48,80]`, and
-    `[16,112]`;
+  - compare `uniform4`, `uniform2`, all-distinct hetero4 configs such as
+    `[8,16,40,64]` or `[16,24,40,48]`, and all-distinct hetero2 configs such
+    as `[48,80]`;
   - report baseline-vs-hetero tables for affinity, specialization, and
     modularity.
+
+## 2026-05-23 - Document and role/task organization
+
+- Added `doc/README.md` to define the document layout.
+- Added `doc/role_task_organization.md` to make the experiment organization
+  explicit:
+  - ontology;
+  - family;
+  - role/subrole;
+  - scene or dataset;
+  - target positions;
+  - metric rows.
+- Clarified that the previous local/KV/induction setup is Toy Ontology v1:
+  three families with two subroles each, not three unrelated tasks.
+- Clarified that every role must have a dataset or probe scene before it can be
+  used in an experiment.
+- Moved time-variant reports out of the root `doc/` folder:
+  - phase reports to `doc/experiments/phase0/`,
+    `doc/experiments/phase1/`, and `doc/experiments/phase3/`;
+  - autonomous logs to `doc/logs/autonomous_sleep/`;
+  - SwitchHead side-branch notes to `doc/side_branches/switchhead/`.
+- Updated internal markdown references to the moved report paths.
+- Updated future non-uniform head-dimension policy:
+  - uniform baselines may repeat dimensions;
+  - non-uniform configs should use all-distinct dimensions;
+  - dimensions should be multiples of 8;
+  - total attention dimension should stay matched when comparing configs.

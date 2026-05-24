@@ -284,4 +284,4 @@ Main limitations:
   `results/phase1_pythia410m_naturalistic_span_task_alignment_seed9_all_layers_n128/`.
 - Pythia-410M task-span alignment `step0` control:
   `results/phase1_pythia410m_naturalistic_span_task_alignment_seed9_all_layers_step0/`.
-- Initial design memo: `doc/naturalistic_local_copy_probe_design.md`.
+- Initial design memo: `doc/experiments/phase1/naturalistic_local_copy_probe_design.md`.

@@ -227,7 +227,7 @@ Checkpoint trajectory:
 Interpretation: ordinary natural-repeat probes emerge by step4000, own-head
 causality is clear by step16000, and robust target-level aligned transfer
 appears by step64000 and strengthens at the final checkpoint. See
-`doc/phase1_pythia160m_ordinary_repeat_checkpoint_trajectory.md`.
+`doc/experiments/phase1/phase1_pythia160m_ordinary_repeat_checkpoint_trajectory.md`.
 
 Pythia-410M WikiText-103 ordinary-phrase exact 8-gram setup:
 
@@ -368,6 +368,6 @@ Weaker parts:
 - Pythia-410M WikiText-103 ordinary-phrase exact 8-gram Phase 0 alignment:
   `results/phase1_pythia410m_wikitext103_natural_repeat_8gram_ordinary_phase0_alignment_seed9_n64/`.
 - Natural-repeat heterogeneity memo:
-  `doc/phase1_natural_repeat_heterogeneity.md`.
+  `doc/experiments/phase1/phase1_natural_repeat_heterogeneity.md`.
 - Category helper:
   `scripts/analyze_natural_repeat_categories.py`.

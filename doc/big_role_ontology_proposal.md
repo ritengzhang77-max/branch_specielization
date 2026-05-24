@@ -262,12 +262,20 @@ is still open.
 Configs:
 
 ```text
-uniform4:          [32,32,32,32]
-uniform2:          [64,64]
-hetero4_best:      [16,64,16,32] or [16,32,64,16]
-hetero2_best:      [48,80]
-hetero2_extreme:   [16,112]
+uniform4:                 [32,32,32,32]
+uniform2:                 [64,64]
+hetero4_unique_mild:      [16,24,40,48]
+hetero4_unique_64:        [8,16,40,64]
+hetero4_unique_extreme:   [8,16,24,80]
+hetero2_unique_mild:      [48,80]
+hetero2_unique_mid:       [32,96]
+hetero2_unique_extreme:   [16,112]
 ```
+
+Uniform baselines necessarily repeat dimensions. Future non-uniform configs
+should use all-distinct dimensions, preferably multiples of 8 and matched for
+total attention dimension. Earlier duplicated-small-head layouts were useful
+one-large-head controls; the next phase should not rely on duplicates.
 
 Metrics:
 
@@ -375,7 +383,7 @@ heterogeneous head structure improves functional modularity.
 Implement Toy Ontology v2 with about 20 roles and run a smoke test:
 
 ```text
-uniform4 vs uniform2 vs hetero4_best vs hetero2_best
+uniform4 vs uniform2 vs hetero4_unique_64 vs hetero2_unique_mild
 ```
 
 Do not move to a full expensive sweep until the smoke test shows:
@@ -409,7 +417,7 @@ modularity follows.
 
 | Package | Must Include | Why It Matters |
 |---|---|---|
-| Toy Ontology v2 smoke | 20 roles, `uniform4`, `uniform2`, best hetero4, best hetero2, 2-3 seeds | Checks whether the larger ontology is learnable and measurable. |
+| Toy Ontology v2 smoke | 16 synthetic-friendly roles, `uniform4`, `uniform2`, all-distinct hetero4, all-distinct hetero2, 2-3 seeds | Checks whether the larger ontology is learnable and measurable. |
 | Toy Ontology v2 main sweep | same configs, 5-10 seeds, all three metrics | Main evidence for affinity, specialization, and modularity. |
 | Layout permutation control | move the largest head across positions | Separates head type from head index. |
 | Head-count/capacity controls | `uniform2`, hetero2, matched total head dimension | Prevents confusing "fewer wider heads" with heterogeneity. |

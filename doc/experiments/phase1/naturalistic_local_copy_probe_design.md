@@ -187,4 +187,4 @@ recovers a much stronger held-out transfer effect in both 160M and 410M. This
 makes alignment basis part of the core methodology rather than a secondary
 detail.
 
-Full memo: `doc/phase1_naturalistic_span_candidate_pool.md`.
+Full memo: `doc/experiments/phase1/phase1_naturalistic_span_candidate_pool.md`.

@@ -132,9 +132,9 @@ not final.
 - `scripts/pythia_local_copy_candidate_pool_alignment.py`
 - `scripts/analyze_candidate_pool_trajectory.py`
 - `scripts/analyze_transfer_significance.py`
-- `doc/phase1_pythia160m_local_copy_pilot.md`
-- `doc/phase1_pythia160m_local_copy_layer_selection.md`
-- `doc/phase1_pythia160m_local_copy_candidate_pool.md`
+- `doc/experiments/phase1/phase1_pythia160m_local_copy_pilot.md`
+- `doc/experiments/phase1/phase1_pythia160m_local_copy_layer_selection.md`
+- `doc/experiments/phase1/phase1_pythia160m_local_copy_candidate_pool.md`
 
 ## Best Next Step
 
@@ -149,4 +149,4 @@ not only arbitrary [x, SEP, x] triples?
 This is the right next step because it tests whether the current result is a
 general attention-head role or an artifact of the synthetic local-copy task.
 
-Design memo: `doc/naturalistic_local_copy_probe_design.md`.
+Design memo: `doc/experiments/phase1/naturalistic_local_copy_probe_design.md`.

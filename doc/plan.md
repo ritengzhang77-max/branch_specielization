@@ -221,6 +221,15 @@ These three numbers (S, C, M) are what the project should report for each archit
   entity/coreference families. This directly addresses the weakness that
   two-role or six-role experiments cannot make a convincing family-level
   modularity claim.
+- The role/dataset organization is now explicit in
+  `doc/role_task_organization.md`. Each role must have a scene or dataset,
+  target positions, controls, and a role x head causal row. The old local/KV/
+  induction setup should be treated as Toy Ontology v1: three families with two
+  subroles each, not as three unrelated tasks.
+- Future non-uniform head-dimension configs should use all-distinct dimensions
+  such as `[8,16,40,64]` or `[16,24,40,48]`, with dimensions kept as multiples
+  of 8 and total attention dimension matched to the baselines. Uniform baselines
+  still repeat dimensions by definition.
 - Adding another high-capacity head, or adding separate branch towers without
   routing, does not automatically produce role-specific functional modularity.
 - Oracle routing can produce branch-level functional modularity.

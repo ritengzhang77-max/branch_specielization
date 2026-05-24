@@ -326,8 +326,9 @@ by head capacity rather than heterogeneity alone.
 The next decisive test should separate heterogeneity from head capacity:
 
 1. Add matched controls with the same number of heads but less extreme
-   heterogeneity, e.g. `[24, 24, 40, 40]`, `[16, 48, 16, 48]`, and
-   `[8, 40, 40, 40]`.
+   heterogeneity. Future non-uniform controls should use all-distinct
+   dimensions, e.g. `[16, 24, 40, 48]`, `[8, 16, 40, 64]`, and
+   `[8, 16, 24, 80]`.
 2. Add a same-head-count wide-control if possible by increasing total attention
    dimension for a separate non-matched ablation, clearly labeled as
    non-matched.

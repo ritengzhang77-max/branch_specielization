@@ -102,10 +102,10 @@ can miss where the causal computation consolidates.
 A two-layer extension found the same overall ordering at the causal layer:
 layer-1 output-only supervision was reliable in 5/5 seeds, while layer-1
 value-only and both-selector supervision were both 4/5. See
-`doc/phase3_toy_switchhead_two_layer_selector_type.md`.
+`doc/experiments/phase3/phase3_toy_switchhead_two_layer_selector_type.md`.
 
 For the swap-intervention refinement, see
-`doc/phase3_toy_switchhead_swap_interventions.md`.
+`doc/experiments/phase3/phase3_toy_switchhead_swap_interventions.md`.
 
 ## Result Directories
 

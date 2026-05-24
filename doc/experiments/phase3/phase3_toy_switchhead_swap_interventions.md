@@ -187,7 +187,7 @@ Main limits:
 
 ## Next Step
 
-This was completed in `doc/phase3_toy_switchhead_two_layer_swap_interventions.md`.
+This was completed in `doc/experiments/phase3/phase3_toy_switchhead_two_layer_swap_interventions.md`.
 The two-layer result preserves the main value-side codebook pattern in layer 1,
 while showing that layer 0 swaps mainly damage the local role.
 
