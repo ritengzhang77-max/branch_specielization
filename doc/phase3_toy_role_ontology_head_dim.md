@@ -107,6 +107,79 @@ Here, `similarity = 1 - TV_distance`.
 
 All configs solved the task well enough to interpret head-role organization.
 
+## Baseline Results First
+
+### `uniform4` Baseline
+
+Configuration:
+
+```text
+[32, 32, 32, 32]
+```
+
+This is the main four-head uniform baseline. Since every head has the same
+dimension, it cannot show dimension affinity. The useful question is how roles
+spread over equal-width head indices.
+
+For local-copy and KV-lookup roles:
+
+```text
+20 role cases = 5 seeds x 4 roles
+top_dim = 32 in 20/20 cases
+```
+
+This top-dimension result is trivial because all heads are 32-dim.
+
+Top head-index counts for local-copy and KV-lookup roles:
+
+```text
+H0: 2/20
+H1: 9/20
+H2: 5/20
+H3: 4/20
+```
+
+Baseline metrics:
+
+```text
+specialization:    0.449
+effective heads:   4.15
+family gap:        0.511
+cluster ARI:       0.586
+```
+
+### `uniform2` Baseline
+
+Configuration:
+
+```text
+[64, 64]
+```
+
+This is the fewer/wider uniform-head baseline. Since every head is 64-dim,
+`top_dim = 64` is also trivial.
+
+For local-copy and KV-lookup roles:
+
+```text
+top head index H0: 16/20
+top head index H1:  4/20
+```
+
+Baseline metrics:
+
+```text
+specialization:    0.636
+effective heads:   2.25
+family gap:        0.653
+cluster ARI:       1.000
+```
+
+This is the strongest control in the ontology run. It shows that fewer/wider
+uniform heads can already produce high specialization and strong role-family
+clustering. Therefore heterogeneity claims must be compared against both
+`uniform4` and `uniform2`.
+
 | Config | Acc. mean | Acc. min | Spec. | Eff. heads | Within | Between | Family gap | ARI |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
 | `uniform4` | 0.9994 | 0.9961 | 0.449 | 4.15 | 0.821 | 0.310 | 0.511 | 0.586 |

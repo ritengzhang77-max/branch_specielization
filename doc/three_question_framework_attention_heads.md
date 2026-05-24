@@ -230,6 +230,99 @@ induction:  induction_short, induction_long
 For every trained model, every role, and every head, the script performed
 single-head causal ablation and measured role-specific loss increase.
 
+### Baselines First
+
+The baseline results must be stated before the heterogeneous result.
+
+#### Uniform4 Baseline
+
+Configuration:
+
+```text
+uniform4 = [32, 32, 32, 32]
+```
+
+There are four heads per layer, all with the same dimension. Therefore this
+baseline cannot show dimension affinity, because every head has the same
+structural dimension.
+
+For local-copy and KV-lookup roles:
+
+```text
+20 role cases = 5 seeds x 4 roles
+top_dim = 32 in 20/20 cases
+```
+
+This is trivial because all heads are 32-dim.
+
+The useful baseline is the top head-index distribution:
+
+```text
+H0: 2/20
+H1: 9/20
+H2: 5/20
+H3: 4/20
+```
+
+So in `uniform4`, local/KV roles are not all forced into one structural head
+type, because there is no dimension difference to select. The roles are spread
+over ordinary equal-width head indices.
+
+Uniform4 role-ontology metrics:
+
+```text
+specialization:    0.449
+effective heads:   4.15
+family gap:        0.511
+cluster ARI:       0.586
+```
+
+This is the main four-head uniform baseline.
+
+#### Uniform2 Baseline
+
+Configuration:
+
+```text
+uniform2 = [64, 64]
+```
+
+There are two heads per layer, both 64-dim. Therefore:
+
+```text
+top_dim = 64
+```
+
+is also trivial in this baseline, because every head is 64-dim.
+
+For local-copy and KV-lookup roles:
+
+```text
+top head index H0: 16/20
+top head index H1:  4/20
+```
+
+Uniform2 role-ontology metrics:
+
+```text
+specialization:    0.636
+effective heads:   2.25
+family gap:        0.653
+cluster ARI:       1.000
+```
+
+This is the strongest capacity/head-count baseline so far. It shows that fewer,
+wider uniform heads can already create high specialization and strong
+role-family clustering.
+
+Therefore any heterogeneity claim must beat or explain these two baselines:
+
+```text
+uniform4 tests equal-width four-head MHA.
+uniform2 tests fewer/wider equal-width heads.
+hetero layouts test unequal head types at matched total head dimension.
+```
+
 ### Why Structural Role Affinity Is Strong
 
 The key test moved the 64-dim head across positions:
@@ -294,6 +387,16 @@ If top-role assignment were random over head types, rough chance would be 25%.
 Observed local/KV result was 100%.
 ```
 
+Baseline comparison:
+
+```text
+uniform4 has no dimension type to select and local/KV roles are spread over
+head indices: H0 2/20, H1 9/20, H2 5/20, H3 4/20.
+
+hetero4-style layouts have one 64-dim type, and local/KV roles select that
+64-dim type in 80/80 cases across layout permutations.
+```
+
 Caveat:
 
 ```text
@@ -313,6 +416,16 @@ Specialization was measured by how concentrated each role's causal distribution
 was over heads.
 
 In the six-role ontology experiment:
+
+```text
+uniform4 specialization:          0.449
+uniform4 effective heads:         4.15
+
+uniform2 specialization:          0.636
+uniform2 effective heads:         2.25
+```
+
+Compared with those baselines:
 
 ```text
 uniform4 specialization:          0.449
