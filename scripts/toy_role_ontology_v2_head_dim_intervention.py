@@ -70,8 +70,29 @@ SPECIAL = {
     "negative_name_control": 20,
     "punct": 21,
     "pronoun": 22,
+    "v3_offset_prev1": 23,
+    "v3_offset_prev2": 24,
+    "v3_offset_prev3": 25,
+    "v3_offset_prev4": 26,
+    "v3_kv_lookup_2pair": 27,
+    "v3_kv_lookup_4pair": 28,
+    "v3_wrong_key_control": 29,
+    "v3_recency_key_conflict": 30,
+    "v3_induction_len4": 31,
+    "v3_induction_len8": 32,
+    "v3_induction_len12": 33,
+    "v3_induction_len16": 34,
+    "v3_bos_anchor": 35,
+    "v3_sep_anchor": 36,
+    "v3_punctuation_anchor": 37,
+    "v3_newline_anchor": 38,
+    "v3_distractor_suppression": 39,
+    "v3_anti_copy": 40,
+    "v3_false_induction": 41,
+    "v3_negative_name_control": 42,
+    "v3_newline": 43,
 }
-TOKEN_LOW = 32
+TOKEN_LOW = 96
 
 
 ROLE_ORDER = [
@@ -98,6 +119,30 @@ ROLE_ORDER = [
 ]
 
 
+ROLE_ORDER_V3 = [
+    "v3_offset_prev1",
+    "v3_offset_prev2",
+    "v3_offset_prev3",
+    "v3_offset_prev4",
+    "v3_kv_lookup_2pair",
+    "v3_kv_lookup_4pair",
+    "v3_wrong_key_control",
+    "v3_recency_key_conflict",
+    "v3_induction_len4",
+    "v3_induction_len8",
+    "v3_induction_len12",
+    "v3_induction_len16",
+    "v3_bos_anchor",
+    "v3_sep_anchor",
+    "v3_punctuation_anchor",
+    "v3_newline_anchor",
+    "v3_distractor_suppression",
+    "v3_anti_copy",
+    "v3_false_induction",
+    "v3_negative_name_control",
+]
+
+
 ROLE_FAMILIES = {
     "local_copy": "copy_transport",
     "previous_token": "copy_transport",
@@ -119,6 +164,26 @@ ROLE_FAMILIES = {
     "pronoun_antecedent": "entity_coreference",
     "simple_ioi_name_mover": "entity_coreference",
     "negative_name_control": "entity_coreference",
+    "v3_offset_prev1": "local_offset",
+    "v3_offset_prev2": "local_offset",
+    "v3_offset_prev3": "local_offset",
+    "v3_offset_prev4": "local_offset",
+    "v3_kv_lookup_2pair": "key_value_lookup",
+    "v3_kv_lookup_4pair": "key_value_lookup",
+    "v3_wrong_key_control": "key_value_lookup",
+    "v3_recency_key_conflict": "key_value_lookup",
+    "v3_induction_len4": "sequence_induction",
+    "v3_induction_len8": "sequence_induction",
+    "v3_induction_len12": "sequence_induction",
+    "v3_induction_len16": "sequence_induction",
+    "v3_bos_anchor": "boundary_anchor",
+    "v3_sep_anchor": "boundary_anchor",
+    "v3_punctuation_anchor": "boundary_anchor",
+    "v3_newline_anchor": "boundary_anchor",
+    "v3_distractor_suppression": "conflict_suppression",
+    "v3_anti_copy": "conflict_suppression",
+    "v3_false_induction": "conflict_suppression",
+    "v3_negative_name_control": "conflict_suppression",
 }
 
 
@@ -223,6 +288,106 @@ ROLE_METADATA = {
         "target": "At NEG_NAME_QUERY, predict the non-repeated name A.",
         "control": "The repeated name B is the distractor.",
     },
+    "v3_offset_prev1": {
+        "scene": "[a, OFFSET1_QUERY, a]",
+        "target": "At OFFSET1_QUERY, copy the token one position back.",
+        "control": "The copied token is random per example.",
+    },
+    "v3_offset_prev2": {
+        "scene": "[a, b, OFFSET2_QUERY, a]",
+        "target": "At OFFSET2_QUERY, copy the token two positions back.",
+        "control": "The intervening token b is a distractor.",
+    },
+    "v3_offset_prev3": {
+        "scene": "[a, b, c, OFFSET3_QUERY, a]",
+        "target": "At OFFSET3_QUERY, copy the token three positions back.",
+        "control": "Nearby tokens b and c are distractors.",
+    },
+    "v3_offset_prev4": {
+        "scene": "[a, b, c, d, OFFSET4_QUERY, a]",
+        "target": "At OFFSET4_QUERY, copy the token four positions back.",
+        "control": "Nearby tokens b/c/d are distractors.",
+    },
+    "v3_kv_lookup_2pair": {
+        "scene": "[KV2_SEP, k1,v1,k2,v2,kq,vq]",
+        "target": "At the query key kq, copy the paired value from a two-pair table.",
+        "control": "The queried key varies per example.",
+    },
+    "v3_kv_lookup_4pair": {
+        "scene": "[KV4_SEP, k1,v1,...,k4,v4,kq,vq]",
+        "target": "At the query key kq, copy the paired value from a four-pair table.",
+        "control": "More key-value distractors than the two-pair variant.",
+    },
+    "v3_wrong_key_control": {
+        "scene": "[WK_SEP,key,right,wrong,wrong_value,wrong,trap,key,right]",
+        "target": "At the final key, copy right while ignoring wrong-key decoys.",
+        "control": "Wrong-key tokens and values are repeated near the query.",
+    },
+    "v3_recency_key_conflict": {
+        "scene": "[RECENCY_SEP,key,old,key,recent,key,old]",
+        "target": "At the final key, copy the older value rather than the recent value.",
+        "control": "The recent value is closer and shares the same key.",
+    },
+    "v3_induction_len4": {
+        "scene": "[IND4_SEP, x1,...,x4,x1,...,x4]",
+        "target": "On the second copy, predict the continuation from the first occurrence.",
+        "control": "The base sequence is random.",
+    },
+    "v3_induction_len8": {
+        "scene": "[IND8_SEP, x1,...,x8,x1,...,x8]",
+        "target": "Same induction rule over length 8.",
+        "control": "Length differs from the other induction variants.",
+    },
+    "v3_induction_len12": {
+        "scene": "[IND12_SEP, x1,...,x12,x1,...,x12]",
+        "target": "Same induction rule over length 12.",
+        "control": "Length differs from the other induction variants.",
+    },
+    "v3_induction_len16": {
+        "scene": "[IND16_SEP, x1,...,x16,x1,...,x16]",
+        "target": "Same induction rule over length 16.",
+        "control": "Length differs from the other induction variants.",
+    },
+    "v3_bos_anchor": {
+        "scene": "[anchor,n1,n2,n3,BOS_ANCHOR_QUERY,anchor]",
+        "target": "At BOS_ANCHOR_QUERY, retrieve the first token in the segment.",
+        "control": "The anchor token is random.",
+    },
+    "v3_sep_anchor": {
+        "scene": "[SEP_ANCHOR,value,n1,n2,SEP_ANCHOR_QUERY,value]",
+        "target": "At SEP_ANCHOR_QUERY, retrieve the value after the separator.",
+        "control": "Noise tokens intervene between separator and query.",
+    },
+    "v3_punctuation_anchor": {
+        "scene": "[n1,PUNCT,value,n2,PUNCT_ANCHOR_QUERY,value]",
+        "target": "At PUNCT_ANCHOR_QUERY, retrieve the value after punctuation.",
+        "control": "The punctuation value changes per example.",
+    },
+    "v3_newline_anchor": {
+        "scene": "[n1,NEWLINE,value,n2,NEWLINE_ANCHOR_QUERY,value]",
+        "target": "At NEWLINE_ANCHOR_QUERY, retrieve the value after a newline marker.",
+        "control": "The newline value changes per example.",
+    },
+    "v3_distractor_suppression": {
+        "scene": "[SUPPRESS_SEP,target,distractor,distractor,SUPPRESS_QUERY,target]",
+        "target": "At SUPPRESS_QUERY, predict target while ignoring the repeated distractor.",
+        "control": "The repeated distractor is closer and more frequent.",
+    },
+    "v3_anti_copy": {
+        "scene": "[a,b,c,a,ANTI_COPY_QUERY,c]",
+        "target": "At ANTI_COPY_QUERY, predict c and ignore the misleading a->b continuation.",
+        "control": "The previous continuation b is a deliberate trap.",
+    },
+    "v3_false_induction": {
+        "scene": "[FALSE_IND_SEP,a,b,c,a,c]",
+        "target": "At the second a, predict c, not the previous continuation b.",
+        "control": "The earlier a->b continuation is a deliberate induction trap.",
+    },
+    "v3_negative_name_control": {
+        "scene": "[A,B,B,NEG_NAME_QUERY,A]",
+        "target": "At NEG_NAME_QUERY, predict the non-repeated name A.",
+        "control": "The repeated name B is the distractor.",
+    },
 }
 
 
@@ -316,7 +481,7 @@ def parse_args() -> argparse.Namespace:
         default=["uniform4", "uniform2", "hetero4_unique_mild", "hetero4_unique_64", "hetero2_unique_mild"],
     )
     parser.add_argument("--seeds", nargs="+", type=int, default=[1, 2, 3, 4, 5])
-    parser.add_argument("--role-set", default="v2_full", choices=["v2_synthetic", "v2_full"])
+    parser.add_argument("--role-set", default="v2_full", choices=["v2_synthetic", "v2_full", "v3_algorithmic"])
     parser.add_argument("--steps", type=int, default=1600)
     parser.add_argument("--batch-size", type=int, default=128)
     parser.add_argument("--eval-examples", type=int, default=512)
@@ -348,6 +513,8 @@ def roles_for_set(role_set: str) -> list[str]:
         return ROLE_ORDER[:16]
     if role_set == "v2_full":
         return list(ROLE_ORDER)
+    if role_set == "v3_algorithmic":
+        return list(ROLE_ORDER_V3)
     raise ValueError(f"Unknown role set: {role_set}")
 
 
@@ -489,6 +656,112 @@ def append_negative_name_control(row: list[int], rng: np.random.Generator, token
     return [start + 3]
 
 
+def append_v3_offset(row: list[int], rng: np.random.Generator, token_ids: np.ndarray, role: str, offset: int) -> list[int]:
+    tokens = choose(rng, token_ids, offset)
+    start = len(row)
+    row.extend(tokens)
+    row.extend([SPECIAL[role], tokens[0]])
+    return [start + offset]
+
+
+def append_v3_kv_lookup(
+    row: list[int],
+    rng: np.random.Generator,
+    token_ids: np.ndarray,
+    role: str,
+    n_pairs: int,
+) -> list[int]:
+    keys = choose(rng, token_ids, n_pairs)
+    values = choose(rng, token_ids, n_pairs)
+    query_idx = int(rng.integers(0, n_pairs))
+    start = len(row)
+    row.append(SPECIAL[role])
+    for key, value in zip(keys, values):
+        row.extend([key, value])
+    row.extend([keys[query_idx], values[query_idx]])
+    return [start + 1 + 2 * n_pairs]
+
+
+def append_v3_wrong_key_control(row: list[int], rng: np.random.Generator, token_ids: np.ndarray) -> list[int]:
+    key, right, wrong, wrong_value, trap = choose(rng, token_ids, 5)
+    start = len(row)
+    row.extend([SPECIAL["v3_wrong_key_control"], key, right, wrong, wrong_value, wrong, trap, key, right])
+    return [start + 7]
+
+
+def append_v3_recency_key_conflict(row: list[int], rng: np.random.Generator, token_ids: np.ndarray) -> list[int]:
+    key, old, recent = choose(rng, token_ids, 3)
+    start = len(row)
+    row.extend([SPECIAL["v3_recency_key_conflict"], key, old, key, recent, key, old])
+    return [start + 5]
+
+
+def append_v3_induction(row: list[int], rng: np.random.Generator, token_ids: np.ndarray, role: str, length: int) -> list[int]:
+    base = choose(rng, token_ids, length)
+    start = len(row)
+    row.append(SPECIAL[role])
+    row.extend(base)
+    second_start = len(row)
+    row.extend(base)
+    return list(range(second_start, second_start + length - 1))
+
+
+def append_v3_bos_anchor(row: list[int], rng: np.random.Generator, token_ids: np.ndarray) -> list[int]:
+    anchor, n1, n2, n3 = choose(rng, token_ids, 4)
+    start = len(row)
+    row.extend([anchor, n1, n2, n3, SPECIAL["v3_bos_anchor"], anchor])
+    return [start + 4]
+
+
+def append_v3_sep_anchor(row: list[int], rng: np.random.Generator, token_ids: np.ndarray) -> list[int]:
+    value, n1, n2 = choose(rng, token_ids, 3)
+    start = len(row)
+    row.extend([SPECIAL["v3_sep_anchor"], value, n1, n2, SPECIAL["v3_sep_anchor"], value])
+    return [start + 4]
+
+
+def append_v3_punctuation_anchor(row: list[int], rng: np.random.Generator, token_ids: np.ndarray) -> list[int]:
+    n1, value, n2 = choose(rng, token_ids, 3)
+    start = len(row)
+    row.extend([n1, SPECIAL["punct"], value, n2, SPECIAL["v3_punctuation_anchor"], value])
+    return [start + 4]
+
+
+def append_v3_newline_anchor(row: list[int], rng: np.random.Generator, token_ids: np.ndarray) -> list[int]:
+    n1, value, n2 = choose(rng, token_ids, 3)
+    start = len(row)
+    row.extend([n1, SPECIAL["v3_newline"], value, n2, SPECIAL["v3_newline_anchor"], value])
+    return [start + 4]
+
+
+def append_v3_distractor_suppression(row: list[int], rng: np.random.Generator, token_ids: np.ndarray) -> list[int]:
+    target, distractor = choose(rng, token_ids, 2)
+    start = len(row)
+    row.extend([SPECIAL["v3_distractor_suppression"], target, distractor, distractor, SPECIAL["v3_distractor_suppression"], target])
+    return [start + 4]
+
+
+def append_v3_anti_copy(row: list[int], rng: np.random.Generator, token_ids: np.ndarray) -> list[int]:
+    a, b, c = choose(rng, token_ids, 3)
+    start = len(row)
+    row.extend([a, b, c, a, SPECIAL["v3_anti_copy"], c])
+    return [start + 4]
+
+
+def append_v3_false_induction(row: list[int], rng: np.random.Generator, token_ids: np.ndarray) -> list[int]:
+    a, b, c = choose(rng, token_ids, 3)
+    start = len(row)
+    row.extend([SPECIAL["v3_false_induction"], a, b, c, a, c])
+    return [start + 4]
+
+
+def append_v3_negative_name_control(row: list[int], rng: np.random.Generator, token_ids: np.ndarray) -> list[int]:
+    a, b = choose(rng, token_ids, 2)
+    start = len(row)
+    row.extend([a, b, b, SPECIAL["v3_negative_name_control"], a])
+    return [start + 3]
+
+
 ROLE_APPENDERS = {
     "local_copy": append_local_copy,
     "previous_token": append_previous_token,
@@ -510,6 +783,26 @@ ROLE_APPENDERS = {
     "pronoun_antecedent": append_pronoun_antecedent,
     "simple_ioi_name_mover": append_simple_ioi_name_mover,
     "negative_name_control": append_negative_name_control,
+    "v3_offset_prev1": lambda row, rng, token_ids: append_v3_offset(row, rng, token_ids, "v3_offset_prev1", 1),
+    "v3_offset_prev2": lambda row, rng, token_ids: append_v3_offset(row, rng, token_ids, "v3_offset_prev2", 2),
+    "v3_offset_prev3": lambda row, rng, token_ids: append_v3_offset(row, rng, token_ids, "v3_offset_prev3", 3),
+    "v3_offset_prev4": lambda row, rng, token_ids: append_v3_offset(row, rng, token_ids, "v3_offset_prev4", 4),
+    "v3_kv_lookup_2pair": lambda row, rng, token_ids: append_v3_kv_lookup(row, rng, token_ids, "v3_kv_lookup_2pair", 2),
+    "v3_kv_lookup_4pair": lambda row, rng, token_ids: append_v3_kv_lookup(row, rng, token_ids, "v3_kv_lookup_4pair", 4),
+    "v3_wrong_key_control": append_v3_wrong_key_control,
+    "v3_recency_key_conflict": append_v3_recency_key_conflict,
+    "v3_induction_len4": lambda row, rng, token_ids: append_v3_induction(row, rng, token_ids, "v3_induction_len4", 4),
+    "v3_induction_len8": lambda row, rng, token_ids: append_v3_induction(row, rng, token_ids, "v3_induction_len8", 8),
+    "v3_induction_len12": lambda row, rng, token_ids: append_v3_induction(row, rng, token_ids, "v3_induction_len12", 12),
+    "v3_induction_len16": lambda row, rng, token_ids: append_v3_induction(row, rng, token_ids, "v3_induction_len16", 16),
+    "v3_bos_anchor": append_v3_bos_anchor,
+    "v3_sep_anchor": append_v3_sep_anchor,
+    "v3_punctuation_anchor": append_v3_punctuation_anchor,
+    "v3_newline_anchor": append_v3_newline_anchor,
+    "v3_distractor_suppression": append_v3_distractor_suppression,
+    "v3_anti_copy": append_v3_anti_copy,
+    "v3_false_induction": append_v3_false_induction,
+    "v3_negative_name_control": append_v3_negative_name_control,
 }
 
 

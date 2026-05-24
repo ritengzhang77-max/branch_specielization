@@ -2569,3 +2569,37 @@ computations to consolidate.
     modularity;
   - the fair next step is a predeclared Toy Ontology v3 with families designed
     as repeated variants of the same algorithmic primitive.
+
+## 2026-05-24 - Toy Ontology v3 algorithmic-family run
+
+- Added Toy Ontology v3 role set to
+  `scripts/toy_role_ontology_v2_head_dim_intervention.py`.
+- V3 has 5 families x 4 roles, with each family designed as repeated variants
+  of one algorithmic primitive:
+  - `local_offset`;
+  - `key_value_lookup`;
+  - `sequence_induction`;
+  - `boundary_anchor`;
+  - `conflict_suppression`.
+- Ran smoke:
+  `results/phase3_toy_role_ontology_v3_smoke_20260524`.
+- Ran main 5-seed comparison:
+  `results/phase3_toy_role_ontology_v3_main_2000_20260524`.
+- Added memo:
+  `doc/experiments/phase3/phase3_toy_role_ontology_v3_algorithmic.md`.
+- Main result:
+  - all configs reached near-perfect accuracy;
+  - `uniform8`: ontology alignment `0.139`, specialization `0.660`,
+    effective heads `3.586`;
+  - `hetero8_unique_spread`: ontology alignment `0.142`, specialization
+    `0.670`, effective heads `3.174`;
+  - `hetero8_unique_extreme`: ontology alignment `0.193`, specialization
+    `0.783`, effective heads `2.073`.
+- Interpretation:
+  - v3 is the strongest modularity evidence so far;
+  - extreme hetero improves ontology alignment by about `+0.055` over uniform
+    and wins 4/5 seeds on that metric;
+  - spread hetero improves separation-adjusted label-free clusterability in 5/5
+    seeds;
+  - the effect is promising but not yet a final proof because family-gap gains
+    are small and some families still weaken under heterogeneity.

@@ -1,6 +1,6 @@
 # Branch Specialization Research TODO
 
-Last updated: 2026-05-23
+Last updated: 2026-05-24
 
 ## Level 0: Non-Negotiable Scope
 
@@ -95,6 +95,21 @@ Last updated: 2026-05-23
   - more induction variants, especially because induction did not simply prefer the 64-dim head
 - [x] Inspect per-role rows, not only aggregate metrics, before drawing the next conclusion.
 - [x] Decide whether to pause toy capacity sweeps and move to broader task families, because hetero2 suggests capacity imbalance alone does not improve modularity over `uniform2`.
+- [x] Replace ARI as the main modularity diagnostic with ontology alignment.
+  - Artifact: `doc/ontology_alignment_metric.md`
+  - Main rule: modularity measures alignment between head-usage geometry and a
+    defensible ontology, not absolute proof of modularity.
+- [x] Run ontology-refinement analysis on Toy Ontology v2.
+  - Artifact:
+    `doc/experiments/phase3/phase3_ontology_refinement_modularity.md`
+  - Result: task-primitive ontology gave a weak positive hetero signal, but it
+    was too small to claim.
+- [x] Implement and run Toy Ontology v3 algorithmic-family experiment.
+  - Artifact:
+    `doc/experiments/phase3/phase3_toy_role_ontology_v3_algorithmic.md`
+  - Result root: `results/phase3_toy_role_ontology_v3_main_2000_20260524`
+  - Result: extreme hetero improved ontology alignment over `uniform8`, while
+    spread hetero improved separation-adjusted clusterability.
 
 ### Toy Ontology v2 Full Sweep Snapshot
 
@@ -178,6 +193,15 @@ Last updated: 2026-05-23
 ## Level 5: Paper Framing
 
 - [ ] Keep the current best claim narrow:
-  - heterogeneous head dimensions create structural role affinity and increase specialization in toy ordinary-head models.
-- [ ] Do not claim full functional modularity unless hetero beats strong capacity/head-count baselines.
+  - heterogeneous head dimensions create structural role affinity and increase
+    specialization in toy ordinary-head models;
+  - with a predeclared algorithmic ontology, extreme hetero gives the first
+    meaningful positive evidence for improved ontology-level modularity, but it
+    still needs robustness sweeps.
+- [ ] Do not claim full functional modularity unless hetero beats strong capacity/head-count baselines across more seeds and layout permutations.
 - [ ] Use `structural role affinity` as the central vocabulary for the user's intended claim.
+- [ ] Next decisive toy follow-up:
+  - run v3 with 10 seeds;
+  - add layout permutations of `[8,16,24,32,40,48,64,152]`;
+  - add moderate layouts between spread and extreme;
+  - rerun a 32-slot v3 control if the 10-seed result remains positive.

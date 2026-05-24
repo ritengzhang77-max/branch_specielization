@@ -133,28 +133,35 @@ def build_original_family_mapping(pair: pd.DataFrame) -> dict[str, str]:
 
 def candidate_payloads(pair: pd.DataFrame) -> dict[str, dict[str, object]]:
     original = build_original_family_mapping(pair)
-    return {
-        "original_v2_family": {
+    roles = set(original)
+    candidates = {
+        "original_family": {
             "kind": "single_label",
-            "description": "The original Toy Ontology v2 families.",
+            "description": "The predeclared family labels from the result file.",
             "mapping": original,
-        },
-        "task_primitive_3way": {
-            "kind": "single_label",
-            "description": "Coarser task primitives: direct pointer, repeated sequence, conflict choice.",
-            "mapping": TASK_PRIMITIVE_3,
-        },
-        "mechanism_group": {
-            "kind": "single_label",
-            "description": "Finer task-semantics groups defined from the synthetic scene generator.",
-            "mapping": MECHANISM_GROUP,
-        },
-        "mechanism_multilabel": {
-            "kind": "multilabel",
-            "description": "Multi-label task attributes with Jaccard ontology similarity.",
-            "mapping": MECHANISM_ATTRIBUTES,
-        },
+        }
     }
+    if roles <= set(TASK_PRIMITIVE_3):
+        candidates.update(
+            {
+                "task_primitive_3way": {
+                    "kind": "single_label",
+                    "description": "Coarser task primitives: direct pointer, repeated sequence, conflict choice.",
+                    "mapping": TASK_PRIMITIVE_3,
+                },
+                "mechanism_group": {
+                    "kind": "single_label",
+                    "description": "Finer task-semantics groups defined from the synthetic scene generator.",
+                    "mapping": MECHANISM_GROUP,
+                },
+                "mechanism_multilabel": {
+                    "kind": "multilabel",
+                    "description": "Multi-label task attributes with Jaccard ontology similarity.",
+                    "mapping": MECHANISM_ATTRIBUTES,
+                },
+            }
+        )
+    return candidates
 
 
 def ontology_similarity_for_pair(candidate: dict[str, object], role_a: str, role_b: str) -> float:
