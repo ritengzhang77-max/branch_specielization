@@ -2539,3 +2539,33 @@ computations to consolidate.
   - ontology-level functional modularity remains only modest and uneven;
   - use family gap plus ontology alignment and per-role neighbor margins, not
     ARI, in main result tables.
+
+## 2026-05-24 - Ontology refinement analysis for modularity claim
+
+- Added `scripts/analyze_ontology_refinement.py`.
+- Added memo:
+  `doc/experiments/phase3/phase3_ontology_refinement_modularity.md`.
+- Tested whether alternative, defensible ontology views make non-uniform heads
+  look more modular without retraining:
+  - original v2 family labels;
+  - coarse task-primitive 3-way ontology;
+  - finer mechanism-group ontology;
+  - mechanism multilabel ontology;
+  - label-free clusterability controls.
+- Clean 16-slot result:
+  - under original v2 labels, `uniform8` still had higher ontology alignment
+    (`0.130`) than hetero spread/extreme (`0.087`, `0.087`);
+  - under task-primitive 3-way labels, hetero improved over uniform
+    (`uniform8=0.004`, spread `0.034`, extreme `0.063`), but the effect was
+    small and not robust enough for a main claim;
+  - hetero had higher raw silhouette clusterability (`0.674`/`0.693` vs
+    `0.647`), but lower pairwise role separation, so separation-adjusted
+    clusterability still favored uniform.
+- 32-slot control stayed mixed:
+  - some ontology choices favored hetero spread;
+  - task-primitive and multilabel views favored uniform.
+- Interpretation:
+  - post-hoc ontology refinement does not yet prove non-uniform functional
+    modularity;
+  - the fair next step is a predeclared Toy Ontology v3 with families designed
+    as repeated variants of the same algorithmic primitive.
