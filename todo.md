@@ -25,6 +25,11 @@ Last updated: 2026-05-23
   - specialization: specialization and effective heads
   - modularity: family gap and ARI
 - [x] Update provenance and relevant plan docs after the hetero2 run.
+- [x] Draft the larger role-ontology proposal for the next phase.
+  - Artifact: `doc/big_role_ontology_proposal.md`
+  - Scope: ordinary attention heads only.
+  - New ontology target: about 20 roles across copy/transport, induction,
+    positional/boundary, suppression/conflict, and entity/coreference families.
 
 ### Hetero2 Result Snapshot
 
@@ -43,6 +48,27 @@ Last updated: 2026-05-23
 
 ## Level 2: Immediate Follow-Ups
 
+- [ ] Implement Toy Ontology v2 smoke test before any expensive sweep.
+  - Proposed families:
+    - `copy_transport`
+    - `induction`
+    - `position_boundary`
+    - `suppression_conflict`
+    - `entity_coreference`
+  - Proposed configs:
+    - `uniform4 = [32,32,32,32]`
+    - `uniform2 = [64,64]`
+    - best one-64 hetero4 layout
+    - `hetero2_best = [48,80]`
+    - `hetero2_extreme = [16,112]`
+  - Smoke-test criterion:
+    - all role families learn above chance;
+    - causal role x head matrices are not degenerate;
+    - baseline-vs-hetero tables are interpretable.
+- [ ] Present every Toy Ontology v2 result as a baseline comparison table:
+  - baseline result;
+  - heterogeneous result;
+  - interpretation.
 - [ ] Add more matched head-dimension controls.
   - `[24, 24, 40, 40]`
   - `[16, 48, 16, 48]`
@@ -57,18 +83,20 @@ Last updated: 2026-05-23
 
 ## Level 3: Broader Toy Task Expansion
 
-- [ ] Try more different task families, not only variants of the current local/KV/induction ontology.
-  - suppression/distractor tasks
-  - positional/BOS/SEP tasks
-  - copy-with-conflict tasks
-  - longer-range retrieval tasks
-  - compositional lookup tasks
-- [ ] Build an expanded role ontology and rerun:
+- [x] Build an expanded role ontology proposal.
+  - Artifact: `doc/big_role_ontology_proposal.md`
+- [ ] Turn the proposal into a runnable Toy Ontology v2 generator.
+- [ ] Rerun the expanded role ontology on:
   - `uniform4`
   - `uniform2`
   - best hetero4 controls
   - best hetero2 controls
 - [ ] Test whether family clustering remains stable as the ontology gets larger.
+- [ ] Add more task families after v2 smoke if needed.
+  - syntax/agreement templates
+  - topic/header anchors
+  - rare-word anchors
+  - code/list-format roles
 
 ## Level 4: Real-Model Validation
 
@@ -76,6 +104,8 @@ Last updated: 2026-05-23
   - Pythia local-copy probes
   - Pythia induction/repeated-ngram probes
   - Pythia KV-like retrieval probes if feasible
+  - delimiter/BOS/SEP probes
+  - copy-suppression and IOI-style probes where the model is capable enough
   - MultiBERTs follow-up if Pythia signal is clean
 - [ ] Report real-model results with the same table format:
   - baseline/head-index distribution

@@ -213,6 +213,14 @@ These three numbers (S, C, M) are what the project should report for each archit
   This sharpens the claim: heterogeneity reliably increases role affinity and
   concentration, but capacity imbalance alone does not improve modularity over
   the strong fewer/wider uniform baseline.
+- The next phase should expand the role ontology before drawing any stronger
+  modularity conclusion. The current proposal is
+  `doc/big_role_ontology_proposal.md`: it keeps ordinary attention heads as the
+  unit and expands the toy ontology from six roles to about twenty roles across
+  copy/transport, induction, positional/boundary, suppression/conflict, and
+  entity/coreference families. This directly addresses the weakness that
+  two-role or six-role experiments cannot make a convincing family-level
+  modularity claim.
 - Adding another high-capacity head, or adding separate branch towers without
   routing, does not automatically produce role-specific functional modularity.
 - Oracle routing can produce branch-level functional modularity.

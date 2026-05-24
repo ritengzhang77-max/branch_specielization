@@ -2327,3 +2327,40 @@ computations to consolidate.
   hetero2 modularity setting, `[48,80]`, ties ARI but has lower family gap than
   `uniform2`. Extreme imbalance `[16,112]` appears to collapse all roles onto
   the huge head and harms family clustering.
+
+## 2026-05-23 - Big role ontology proposal
+
+- Added the proposal:
+  `doc/big_role_ontology_proposal.md`.
+- Purpose:
+  - expand beyond the six-role toy ontology;
+  - keep ordinary attention heads as the unit;
+  - make the next modularity experiment meaningful by testing many role
+    families and subroles.
+- Literature anchors used:
+  - Clark et al. 2019 on BERT delimiter, positional, broad, syntax, and
+    coreference attention patterns;
+  - Voita et al. 2019 on specialized/prune-resistant positional, syntactic, and
+    rare-word heads;
+  - Elhage et al. 2021 and Olsson et al. 2022 on QK/OV framing,
+    previous-token heads, and induction heads;
+  - Wang et al. 2022 on IOI circuit head classes;
+  - McDougall et al. 2023 on copy-suppression / negative heads;
+  - Htut et al. 2019 on syntactic-dependency specialist heads;
+  - Pande et al. 2021 on broader head-role taxonomy and role co-location.
+- Proposed Toy Ontology v2:
+  - `copy_transport`;
+  - `induction`;
+  - `position_boundary`;
+  - `suppression_conflict`;
+  - `entity_coreference`.
+- Proposed scale:
+  - five families;
+  - four subroles per family;
+  - about 20 roles total.
+- Next planned artifact:
+  - implement a Toy Ontology v2 smoke test before any full expensive sweep;
+  - compare `uniform4`, `uniform2`, best one-64 hetero4, `[48,80]`, and
+    `[16,112]`;
+  - report baseline-vs-hetero tables for affinity, specialization, and
+    modularity.
