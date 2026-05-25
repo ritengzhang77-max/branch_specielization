@@ -2664,3 +2664,43 @@ computations to consolidate.
     ontology, especially via ontology alignment;
   - modularity is not yet as robust as specialization because label-free
     separation-adjusted clusterability remains mixed.
+
+## 2026-05-24 - Toy Ontology v3 larger-head control
+
+- Added named larger-head presets to
+  `scripts/toy_role_ontology_v2_head_dim_intervention.py`:
+  - `uniform12`;
+  - `hetero12_unique_moderate`;
+  - `hetero12_unique_spread`;
+  - `uniform16`;
+  - `hetero16_unique_moderate`;
+  - `hetero16_unique_extreme`.
+- Calibration:
+  - `uniform16` at total attention dimension 384 failed the accuracy gate, so
+    16 heads/layer was not used for the final claim.
+  - `uniform12` at 3000 steps showed an over-training instability in seed 4:
+    the model solved around step 2250 but degraded by step 3000.
+  - The final fair 12-head control therefore used a 2250-step stop point for
+    all configs.
+- Clean result root:
+  `results/phase3_toy_role_ontology_v3_large_heads_12h_2250_20260524`.
+- Added memo:
+  `doc/experiments/phase3/phase3_toy_role_ontology_v3_larger_head_control.md`.
+- Clean 12-head result:
+  - `uniform12`: accuracy `1.0000`, specialization `0.585`, effective heads
+    `5.721`, ontology alignment `0.179`, separation-adjusted clusterability
+    `0.432`;
+  - `hetero12_unique_moderate`: accuracy `1.0000`, specialization `0.524`,
+    effective heads `6.685`, ontology alignment `0.201`,
+    separation-adjusted clusterability `0.419`;
+  - `hetero12_unique_spread`: accuracy `1.0000`, specialization `0.643`,
+    effective heads `4.227`, ontology alignment `0.116`,
+    separation-adjusted clusterability `0.389`.
+- Interpretation:
+  - more head slots do not rescue the functional-modularity claim;
+  - mild 12-head heterogeneity slightly improves ontology alignment but weakens
+    specialization and label-free clusterability;
+  - spread 12-head heterogeneity improves specialization but weakens both main
+    modularity metrics;
+  - the current paper framing should treat functional modularity as mixed and
+    not yet robust.

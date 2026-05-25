@@ -264,9 +264,9 @@ especially in ontology alignment, but the modularity effect is not yet as robust
 as the specialization effect.
 ```
 
-## Next Decisive Step
+## Follow-Up
 
-The next toy experiment should be a larger-head v3 control:
+The next toy experiment was a larger-head v3 control:
 
 ```text
 same v3 ontology
@@ -284,5 +284,12 @@ family-level clusters. A larger-head control tests whether the mixed modularity
 result is an architectural limitation or a real weakness of the claim.
 ```
 
-After that, the next phase should return to real-model validation on ordinary
-pretrained heads.
+That follow-up is recorded in:
+
+```text
+doc/experiments/phase3/phase3_toy_role_ontology_v3_larger_head_control.md
+```
+
+The result did not rescue the modularity claim. After that larger-head control,
+the next phase should return to real-model validation on ordinary pretrained
+heads.
