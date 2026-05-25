@@ -2622,3 +2622,45 @@ computations to consolidate.
   - separation-adjusted clusterability.
 - Added the canonical metric-system document:
   `doc/current_metric_system.md`.
+
+## 2026-05-24 - Toy Ontology v3 robustness sweep
+
+- Added named robustness presets to
+  `scripts/toy_role_ontology_v2_head_dim_intervention.py`:
+  - `hetero8_unique_mid_104`;
+  - `hetero8_unique_mid_120`;
+  - `hetero8_extreme_152_first`;
+  - `hetero8_extreme_152_second`;
+  - `hetero8_extreme_152_middle`;
+  - `hetero8_extreme_152_seventh`.
+- Ran the 10-seed v3 main robustness analysis:
+  `results/phase3_toy_role_ontology_v3_main_10seed_2000_20260524`.
+- Ran the layout/moderate robustness sweep:
+  `results/phase3_toy_role_ontology_v3_layout_moderate_2000_20260524`.
+- Added memo:
+  `doc/experiments/phase3/phase3_toy_role_ontology_v3_robustness.md`.
+- 10-seed main result:
+  - `uniform8`: specialization `0.630`, effective heads `3.958`, ontology
+    alignment `0.184`, separation-adjusted clusterability `0.415`;
+  - `hetero8_unique_spread`: specialization `0.670`, effective heads `3.249`,
+    ontology alignment `0.182`, separation-adjusted clusterability `0.464`;
+  - `hetero8_unique_extreme`: specialization `0.784`, effective heads `2.080`,
+    ontology alignment `0.218`, separation-adjusted clusterability `0.445`.
+- Layout/moderate result:
+  - all configs stayed near-perfect on accuracy;
+  - every new hetero config had higher mean specialization and lower effective
+    head count than the 5-seed `uniform8` baseline;
+  - every new hetero config had higher mean ontology alignment than the 5-seed
+    `uniform8` baseline;
+  - separation-adjusted clusterability was mixed and layout-sensitive.
+- Structural-affinity diagnostic:
+  - `v3_offset_prev1`, `v3_kv_lookup_2pair`, and `v3_kv_lookup_4pair` followed
+    the 152-dim head across layout permutations in 20/20 cases per role;
+  - induction variants often preferred the 64-dim head, so the diagnostic is not
+    simply "everything chooses the largest head."
+- Current interpretation:
+  - specialization is robustly supported;
+  - functional modularity has positive evidence under the v3 algorithmic
+    ontology, especially via ontology alignment;
+  - modularity is not yet as robust as specialization because label-free
+    separation-adjusted clusterability remains mixed.

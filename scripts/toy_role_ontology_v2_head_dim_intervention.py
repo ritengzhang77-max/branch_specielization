@@ -43,7 +43,13 @@ CONFIG_PRESETS = {
     "hetero2_unique_mid": [32, 96],
     "hetero2_unique_extreme": [16, 112],
     "hetero8_unique_spread": [16, 24, 32, 40, 48, 56, 72, 96],
+    "hetero8_unique_mid_104": [8, 24, 32, 40, 48, 56, 72, 104],
+    "hetero8_unique_mid_120": [8, 16, 24, 32, 48, 56, 80, 120],
     "hetero8_unique_extreme": [8, 16, 24, 32, 40, 48, 64, 152],
+    "hetero8_extreme_152_first": [152, 8, 16, 24, 32, 40, 48, 64],
+    "hetero8_extreme_152_second": [8, 152, 16, 24, 32, 40, 48, 64],
+    "hetero8_extreme_152_middle": [8, 16, 24, 152, 32, 40, 48, 64],
+    "hetero8_extreme_152_seventh": [8, 16, 24, 32, 40, 48, 152, 64],
 }
 
 

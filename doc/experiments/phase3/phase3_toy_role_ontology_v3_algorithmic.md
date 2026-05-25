@@ -184,9 +184,9 @@ heterogeneous layout. The effect is promising but still needs replication with
 more layouts and seeds.
 ```
 
-## Next Step
+## Robustness Follow-Up
 
-The next decisive follow-up is a v3 robustness sweep:
+The next decisive follow-up was a v3 robustness sweep:
 
 ```text
 more seeds, e.g. 10
@@ -198,3 +198,9 @@ possibly 32-slot v3 control
 The key check is whether the ontology-alignment improvement follows the
 structural head type rather than a lucky head index or one seed-specific
 training path.
+
+That follow-up is recorded in:
+
+```text
+doc/experiments/phase3/phase3_toy_role_ontology_v3_robustness.md
+```

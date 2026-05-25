@@ -115,6 +115,23 @@ Last updated: 2026-05-24
   - Result root: `results/phase3_toy_role_ontology_v3_main_2000_20260524`
   - Result: extreme hetero improved ontology alignment over `uniform8`, while
     spread hetero improved separation-adjusted clusterability.
+- [x] Run Toy Ontology v3 robustness sweep.
+  - Artifact:
+    `doc/experiments/phase3/phase3_toy_role_ontology_v3_robustness.md`
+  - 10-seed main root:
+    `results/phase3_toy_role_ontology_v3_main_10seed_2000_20260524`
+  - Layout/moderate root:
+    `results/phase3_toy_role_ontology_v3_layout_moderate_2000_20260524`
+  - Result:
+    - accuracy stays solved;
+    - specialization is robustly stronger under non-uniform head dimensions;
+    - ontology alignment gives positive modularity evidence;
+    - separation-adjusted clusterability remains mixed/layout-sensitive.
+- [ ] Run larger-head Toy Ontology v3 control.
+  - Goal: test whether the mixed modularity result is partly caused by too few
+    ordinary head slots for sparse family clusters.
+  - Keep the same v3 ontology and current metric system.
+  - Compare matched-capacity uniform and non-uniform configs.
 
 ### Toy Ontology v2 Full Sweep Snapshot
 
@@ -198,18 +215,21 @@ Last updated: 2026-05-24
 ## Level 5: Paper Framing
 
 - [ ] Keep the current best claim narrow:
-  - heterogeneous head dimensions create structural role affinity and increase
-    specialization in toy ordinary-head models;
-  - with a predeclared algorithmic ontology, extreme hetero gives the first
-    meaningful positive evidence for improved ontology-level modularity, but it
-    still needs robustness sweeps.
+  - heterogeneous head dimensions create structural role affinity and robustly
+    increase specialization in toy ordinary-head models;
+  - with a predeclared algorithmic ontology, hetero configs give positive
+    evidence for ontology-level modularity;
+  - the modularity effect is not yet as robust as the specialization effect,
+    because separation-adjusted clusterability remains mixed/layout-sensitive.
 - [ ] Do not claim full functional modularity unless hetero beats strong capacity/head-count baselines across more seeds and layout permutations.
 - [ ] Use `structural role affinity` as the central vocabulary for the user's intended claim.
-- [ ] Next decisive toy follow-up:
+- [x] Completed v3 robustness follow-up:
   - run v3 with 10 seeds;
   - add layout permutations of `[8,16,24,32,40,48,64,152]`;
-  - add moderate layouts between spread and extreme;
-  - rerun a 32-slot v3 control if the 10-seed result remains positive.
+  - add moderate layouts between spread and extreme.
+- [ ] Next decisive toy follow-up:
+  - rerun a larger-head v3 control if the 10-seed/layout result remains
+    positive.
 - [ ] Future main tables should omit largest-top rate and Family Gap.
   - Keep largest/top-dimension data in raw CSVs only as structural-affinity
     diagnostics.
